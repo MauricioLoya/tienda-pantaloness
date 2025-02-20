@@ -21,3 +21,114 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Category {
+  id              Int               @id @default(autoincrement())
+  name            String
+  description     String
+  Product         Product[]
+  ProductCategory ProductCategory[]
+}
+
+model Product {
+  id              Int               @id @default(autoincrement())
+  name            String
+  description     String
+  basePrice       Float
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  active          Boolean           @default(false)
+  categoryId      Int
+  category        Category          @relation(fields: [categoryId], references: [id])
+  ProductCategory ProductCategory[]
+  ProductImage    ProductImage[]
+  ProductVariant  ProductVariant[]
+}
+
+model ProductImage {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  url       String
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model ProductCategory {
+  id         Int      @id @default(autoincrement())
+  productId  Int
+  categoryId Int
+  product    Product  @relation(fields: [productId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+}
+
+model ProductVariant {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  size      String
+  product   Product @relation(fields: [productId], references: [id])
+  price     Float
+  stock     Int
+}
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String
+  createdAt DateTime @default(now())
+  Order     Order[]
+}
+
+model Promotion {
+  id          Int      @id @default(autoincrement())
+  code        String
+  name        String
+  description String
+  discount    Float
+  startDate   DateTime
+  endDate     DateTime
+  active      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  Order       Order[]
+}
+
+model Order {
+  id             Int         @id @default(autoincrement())
+  customerId     Int
+  customer       Customer    @relation(fields: [customerId], references: [id])
+  orderDate      DateTime    @default(now())
+  totalAmount    Float
+  checkoutId     String
+  status         String
+  shipping_line1 String
+  shipping_line2 String
+  city           String
+  state          String
+  postalCode     String
+  country        String
+  promotionId    Int?
+  promotion      Promotion?  @relation(fields: [promotionId], references: [id])
+  OrderItem      OrderItem[]
+  Payment        Payment[]
+}
+
+model OrderItem {
+  id                 Int    @id @default(autoincrement())
+  productName        String
+  productDescription String
+  productImage       String
+  quantity           Int
+  price              Float
+  orderId            Int
+  order              Order  @relation(fields: [orderId], references: [id])
+}
+
+model Payment {
+  id            Int      @id @default(autoincrement())
+  orderId       Int
+  order         Order    @relation(fields: [orderId], references: [id])
+  stripePayment Float
+  paymentDate   DateTime
+  amount        Float
+  status        String
+  paymentType   String
+}
