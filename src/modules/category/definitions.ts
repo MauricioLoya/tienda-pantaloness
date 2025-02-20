@@ -6,6 +6,7 @@ interface ICategoryRepository {
   finsById(id: number): Promise<Category | null>
   update(id: number, data: Category): Promise<Category>
   create(data: Omit<Category, 'id'>): Promise<Category>
+  setProduct(id: number, productId: number): Promise<void>
 }
 
 export class CategoryRepository implements ICategoryRepository {
@@ -43,8 +44,36 @@ export class CategoryRepository implements ICategoryRepository {
   async getAll(): Promise<Category[]> {
     try {
       const categories = prisma.category.findMany()
-      await setTimeout(() => {}, 1000)
       return categories
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async setProduct(categoryId: number, productId: number): Promise<void> {
+    try {
+      const category = await prisma.category.findFirst({
+        where: { id: categoryId }
+      })
+
+      if (!category) {
+        throw new Error('Category not found')
+      }
+
+      const product = await prisma.product.findFirst({
+        where: { id: productId }
+      })
+
+      if (!product) {
+        throw new Error('Product not found')
+      }
+
+      await prisma.productCategory.create({
+        data: {
+          categoryId: categoryId,
+          productId
+        }
+      })
     } catch (error) {
       throw error
     }

@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prima/client'
+import { Product, ProductVariant } from '@prisma/client'
 
-type ItemProduct = {
+export type ItemProduct = {
   id: number
   name: string
   price: number
@@ -9,8 +10,15 @@ type ItemProduct = {
   isAvailable: boolean
 }
 
+export type ProductDetail = {
+  product: Product
+  variants: ProductVariant[]
+  images: string[]
+}
+
 interface IProductListRepository {
   getListItem(): Promise<ItemProduct[]>
+  productDetail(id: number): Promise<ProductDetail>
 }
 
 export class ProductListRepository implements IProductListRepository {
@@ -25,6 +33,7 @@ export class ProductListRepository implements IProductListRepository {
           }
         }
       })
+
       return products.map(product => ({
         id: product.id,
         name: product.name,
@@ -33,6 +42,32 @@ export class ProductListRepository implements IProductListRepository {
         hasDiscount: false,
         isAvailable: product.active
       }))
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async productDetail(id: number): Promise<ProductDetail> {
+    try {
+      const product = await prisma.product.findFirst({
+        where: { id },
+        include: {
+          ProductVariant: true,
+          ProductImage: {
+            select: {
+              url: true
+            }
+          }
+        }
+      })
+      if (!product) {
+        throw new Error('Product not found')
+      }
+      return {
+        product,
+        variants: product.ProductVariant,
+        images: product.ProductImage.map(image => image.url)
+      }
     } catch (error) {
       throw error
     }
