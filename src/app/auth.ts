@@ -1,3 +1,4 @@
+import { AuthRepository } from '@/modules/auth/definitions'
 import NextAuth, { DefaultSession } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 
@@ -29,15 +30,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         if (
-          credentials.username === 'demo' &&
-          credentials.password === 'demo'
+          !credentials.username ||
+          !credentials.password ||
+          typeof credentials.password !== 'string' ||
+          typeof credentials.username !== 'string'
         ) {
-          return {
-            name: 'Demo User'
-          }
+          return null
         }
 
-        return null
+        const authRepository = new AuthRepository()
+        try {
+          const user = authRepository.loginAdmin(
+            credentials.username,
+            credentials.password
+          )
+          if (!user) {
+            return null
+          }
+
+          return user
+        } catch (error) {
+          console.error(error)
+          return null
+        }
       }
     })
   ]
