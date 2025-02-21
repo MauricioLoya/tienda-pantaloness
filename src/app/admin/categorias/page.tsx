@@ -1,15 +1,17 @@
+import Loader from '@/lib/components/Loader'
+import Header from '@/modules/admin-dashboard/components/Header'
 import CategoryList from '@/modules/category/components/CategoryList'
-import { CategoryRepository } from '@/modules/category/definitions'
 import React, { Suspense } from 'react'
 
 const CategoryPage: React.FC = async () => {
-  const categoryRepo = new CategoryRepository()
-  const categories = await categoryRepo.getAll()
-
   return (
     <>
-      <Suspense fallback={<div>Loading...</div>}>
-        <CategoryList categories={categories.map(c => c.name)} />
+      <Header
+        title="📈 Tu dashboard"
+        description="Aquí puedes ver información relevante sobre el sistema."
+      />
+      <Suspense fallback={<Loader />}>
+        <CategoryList />
       </Suspense>
     </>
   )

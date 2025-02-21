@@ -10,10 +10,6 @@ interface IAuthRepository {
 
 export class AuthRepository implements IAuthRepository {
   async loginAdmin(email: string, password: string) {
-    const pass = 'securepass'
-    const hash = await bcrypt.hash(pass, 10)
-    console.log('hash', hash)
-
     try {
       const userFound = await prisma.user.findUnique({
         where: {

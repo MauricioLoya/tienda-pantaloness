@@ -1,11 +1,13 @@
 import React from 'react'
-type Props = {
-  categories: string[]
-}
-const CategoryList: React.FC<Props> = async ({ categories }) => {
+import { CategoryRepository } from '../definitions'
+
+const CategoryList: React.FC = async () => {
+  const categoryRepo = new CategoryRepository()
+  const categories = await (
+    await categoryRepo.getAll()
+  ).map(category => category.name)
   return (
     <>
-      <h1>Category List</h1>
       {categories.map((category, index) => (
         <div key={index}>{category}</div>
       ))}
