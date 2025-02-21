@@ -80,13 +80,14 @@ model Customer {
 
 model Promotion {
   id          Int      @id @default(autoincrement())
-  code        String
+  code        String   @unique
   name        String
   description String
   discount    Float
   startDate   DateTime
   endDate     DateTime
   active      Boolean  @default(false)
+  isDeleted   Boolean  @default(false)
   createdAt   DateTime @default(now())
   Order       Order[]
 }
