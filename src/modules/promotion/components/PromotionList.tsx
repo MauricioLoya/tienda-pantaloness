@@ -1,107 +1,112 @@
-import React, { useState } from 'react'
-import { PromotionRepository } from '@/modules/promotion/definitions'
-import { Promotion } from '@prisma/client'
+"use client"
 
-const promotionRepo = new PromotionRepository()
+import React, { useEffect, useState, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 
-const PromotionTest: React.FC = () => {
-  const [promotions, setPromotions] = useState<Promotion[]>([])
-  const [promotion, setPromotion] = useState<Promotion | null>(null)
-  const [error, setError] = useState<string | null>(null)
+const PromotionList: React.FC = () => {
+  const [promotions, setPromotions] = useState<any[]>([])
+  const [filter, setFilter] = useState<string>('')
+  const router = useRouter()
 
-  const handleGetAll = async () => {
-    try {
-      const data = await promotionRepo.getAll()
-      setPromotions(data)
-      setError(null)
-    } catch (err) {
-      setError('Failed to fetch promotions')
-    }
-  }
-
-  const handleGetById = async (id: number) => {
-    try {
-      const data = await promotionRepo.getById(id)
-      setPromotion(data)
-      setError(null)
-    } catch (err) {
-      setError('Failed to fetch promotion')
-    }
-  }
-
-  const handleCreate = async () => {
-    try {
-      const newPromotion = {
-        code: 'NEWCODE',
-        name: 'New Promotion',
-        description: 'Description of the new promotion',
-        discount: 10,
-        startDate: new Date(),
-        endDate: new Date(),
-        active: true,
+  useEffect(() => {
+    const fetchPromotions = async () => {
+      try {
+        const res = await fetch('/api/promotions')
+        if (res.ok) {
+          const data = await res.json()
+          setPromotions(data)
+        } else {
+          console.error('Error al obtener promociones')
+        }
+      } catch (error) {
+        console.error('Error al obtener promociones', error)
       }
-      const data = await promotionRepo.create(newPromotion)
-      setPromotion(data)
-      setError(null)
-    } catch (err) {
-      setError('Failed to create promotion')
     }
-  }
 
-  const handleUpdate = async (id: number) => {
-    try {
-      const updatedPromotion = {
-        name: 'Updated Promotion',
-      }
-      const data = await promotionRepo.update(id, updatedPromotion)
-      setPromotion(data)
-      setError(null)
-    } catch (err) {
-      setError('Failed to update promotion')
-    }
-  }
+    fetchPromotions()
+  }, [])
 
-  const handleDelete = async (id: number) => {
-    try {
-      await promotionRepo.delete(id)
-      setPromotion(null)
-      setError(null)
-    } catch (err) {
-      setError('Failed to delete promotion')
-    }
-  }
+  const filteredPromotions = useMemo(() => {
+    return promotions.filter(promotion =>
+      promotion.name.toLowerCase().includes(filter.toLowerCase())
+    )
+  }, [promotions, filter])
 
   return (
-    <div>
-      <h1>Promotion Test</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <button onClick={handleGetAll}>Get All Promotions</button>
-      <button onClick={() => handleGetById(1)}>Get Promotion By ID</button>
-      <button onClick={handleCreate}>Create Promotion</button>
-      <button onClick={() => handleUpdate(1)}>Update Promotion</button>
-      <button onClick={() => handleDelete(1)}>Delete Promotion</button>
-      <div>
-        <h2>All Promotions</h2>
-        {promotions.map((promo) => (
-          <div key={promo.id}>{promo.name}</div>
-        ))}
+    <div className="p-4">
+      <div className="flex justify-between items-center mb-4">
+        <button
+          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+          onClick={() => router.push('/admin/promociones/nuevo')}
+        >
+          Agregar Promoción
+        </button>
       </div>
-      {promotion && (
-        <div>
-          <h2>Promotion Details</h2>
-          <p>ID: {promotion.id}</p>
-          <p>Code: {promotion.code}</p>
-          <p>Name: {promotion.name}</p>
-          <p>Description: {promotion.description}</p>
-          <p>Discount: {promotion.discount}</p>
-          <p>Start Date: {promotion.startDate.toString()}</p>
-          <p>End Date: {promotion.endDate.toString()}</p>
-          <p>Active: {promotion.active ? 'Yes' : 'No'}</p>
-          <p>Created At: {promotion.createdAt.toString()}</p>
-        </div>
-      )}
+
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Filtrar por nombre"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="px-4 py-2 border rounded w-full"
+        />
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Código
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Nombre
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Descripción
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Descuento
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Activo
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Acciones
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {filteredPromotions.map((promotion) => (
+              <tr key={promotion.id}>
+                <td className="px-6 py-4 whitespace-nowrap">{promotion.code}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{promotion.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{promotion.description}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{promotion.discount}%</td>
+                <td className="px-6 py-4 whitespace-nowrap">{promotion.active ? 'Sí' : 'No'}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <button
+                    className="text-indigo-600 hover:text-indigo-900 transition"
+                    onClick={() => router.push(`/admin/promociones/${promotion.id}`)}
+                  >
+                    Ver Detalles
+                  </button>
+                </td>
+              </tr>
+            ))}
+            {filteredPromotions.length === 0 && (
+              <tr>
+                <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                  No se encontraron promociones.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
 
-export default PromotionTest
+export default PromotionList
