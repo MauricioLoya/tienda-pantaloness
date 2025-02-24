@@ -1,4 +1,3 @@
-// src/app/api/promotions/[id]/route.ts
 import { NextResponse } from 'next/server'
 import { PromotionRepository } from '@/modules/promotion/definitions'
 
