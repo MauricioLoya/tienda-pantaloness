@@ -23,6 +23,16 @@ const NavBar: React.FC = () => {
       name: 'Catalogo',
       href: '/admin/catalogo',
       emoji: '👖'
+    },
+    {
+      name: 'Promopciones',
+      href: '/admin/promociones',
+      emoji: '🎉'
+    },
+    {
+      name: 'Usuarios',
+      href: '/admin/users',
+      emoji: '👥'
     }
   ]
   return (
