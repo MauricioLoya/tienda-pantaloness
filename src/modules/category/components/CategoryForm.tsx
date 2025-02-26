@@ -22,7 +22,6 @@ const CategoryForm: React.FC<Props> = ({ category, id }) => {
       <p>ID: {id}</p>
       <p>Nombre: {category.name}</p>
       <p>Descripción: {category.description}</p>
-
       <button
         disabled={isPending}
         className="bg-red-500 text-white px-10 py-2"
