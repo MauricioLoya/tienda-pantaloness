@@ -1,13 +1,13 @@
-import Header from '@/modules/admin-dashboard/components/Header'
-import React from 'react'
+import Loader from '@/lib/components/Loader'
+import ListOrders from '@/modules/orders/components/ListOrders'
+import React, { Suspense } from 'react'
 
 const OrdenesPage: React.FC = () => {
   return (
     <>
-      <Header
-        title="📦 Ordenes de tu tienda online"
-        description="Administra las ordenes de tu tienda, revisa el estado de las ordenes, actualizalos, lo que necesites."
-      />
+      <Suspense fallback={<Loader />}>
+        <ListOrders />
+      </Suspense>
     </>
   )
 }
