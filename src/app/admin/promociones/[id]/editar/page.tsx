@@ -1,49 +1,25 @@
-"use client"
-
-import { useEffect, useState } from 'react'
-import { useRouter, useParams } from 'next/navigation'
 import PromotionForm from '@/modules/promotion/components/PromotionForm'
+import { PromotionRepository } from '@/modules/promotion/definitions'
+import React from 'react'
 
-export default function EditPromotionPage() {
-  const router = useRouter()
-  const params = useParams() as { id: string }
-  const [promotion, setPromotion] = useState<any>(null)
+type Props = {
+  params: { id: string }
+}
 
-  useEffect(() => {
-    const fetchPromotion = async () => {
-      const res = await fetch(`/api/promotions/${params.id}`)
-      if (res.ok) {
-        const data = await res.json()
-        setPromotion(data)
-      } else {
-        console.error('Error al obtener la promoción')
-      }
-    }
-    if (params.id) {
-      fetchPromotion()
-    }
-  }, [params.id])
+const EditPromotionPage: React.FC<Props> = async ({ params }) => {
+  const { id } = await params;
 
-  const handleUpdate = async (data: any) => {
-    const res = await fetch(`/api/promotions/${params.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
-    if (res.ok) {
-      router.push('/admin/promociones')
-    } else {
-      const errorData = await res.json()
-      throw new Error(errorData.error || 'Error al actualizar la promoción')
-    }
+  const promotionRepo = new PromotionRepository()
+  const promotion = await promotionRepo.getById(Number(id))
+  if (!promotion) {
+    return <div>Promoción no encontrada</div>
   }
-
-  if (!promotion) return <div className="p-4">Cargando...</div>
-
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Editar Promoción</h1>
-      <PromotionForm initialData={promotion} onSubmit={handleUpdate} mode="update" />
+      <PromotionForm id={id} initialData={promotion} mode="update" />
     </div>
   )
 }
+
+export default EditPromotionPage

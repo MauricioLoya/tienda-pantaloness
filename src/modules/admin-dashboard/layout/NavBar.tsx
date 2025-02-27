@@ -25,7 +25,7 @@ const NavBar: React.FC = () => {
       emoji: '👖'
     },
     {
-      name: 'Promopciones',
+      name: 'Promociones',
       href: '/admin/promociones',
       emoji: '🎉'
     },

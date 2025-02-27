@@ -1,15 +1,13 @@
-import Header from '@/modules/admin-dashboard/components/Header'
+import Loader from '@/lib/components/Loader'
 import PromotionList from '@/modules/promotion/components/PromotionList'
-import React from 'react'
+import React, { Suspense } from 'react'
 
-const PromotionPage: React.FC = () => {
+const PromotionPage: React.FC = async () => {
   return (
     <>
-      <Header
-        title="🎉 Promociones de tu tienda online"
-        description="Administra las ordenes de tu tienda, revisa el estado de las ordenes, actualizalos, lo que necesites."
-      />
-      <PromotionList />
+      <Suspense fallback={<Loader />}>
+        <PromotionList />
+      </Suspense>
     </>
   )
 }
