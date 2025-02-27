@@ -1,17 +1,10 @@
-"use client"
-
-import Header from '@/modules/admin-dashboard/components/Header'
 import UserList from '@/modules/user/components/UserList'
 import React from 'react'
 
-const UserPage: React.FC = () => {
+const UserPage: React.FC = async () => {
   return (
     <>
-      <Header
-        title="👥 Usuarios"
-        description="Gestiona los usuarios de la aplicación."
-      />
-      <UserList />
+        <UserList />
     </>
   )
 }

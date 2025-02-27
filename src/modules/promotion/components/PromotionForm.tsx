@@ -28,6 +28,7 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
   mode = "create",
 }) => {
   const router = useRouter();
+  const [isPending, startTransition] = React.useTransition();
   const initialValues = {
     code: initialData.code || "",
     name: initialData.name || "",
@@ -87,7 +88,6 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
     if (confirm("¿Estás seguro de eliminar esta promoción?")) {
       try {
         if (!id) throw new Error("ID no proporcionado");
-        const [isPending, startTransition] = React.useTransition();
         startTransition(async () => {
           await deletePromotionAction(Number(id));
           router.push("/admin/promociones");
