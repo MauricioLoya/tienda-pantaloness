@@ -14,14 +14,14 @@ datasource db {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  email      String   @unique
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
   name       String
   password   String
-  isDeleted  Boolean  @default(false)
-  superAdmin Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  isDeleted  Boolean   @default(false)
+  superAdmin Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   deletedAt  DateTime?
 }
 
@@ -29,7 +29,6 @@ model Category {
   id              Int               @id @default(autoincrement())
   name            String
   description     String
-  Product         Product[]
   ProductCategory ProductCategory[]
 }
 
@@ -41,8 +40,6 @@ model Product {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   active          Boolean           @default(false)
-  categoryId      Int
-  category        Category          @relation(fields: [categoryId], references: [id])
   ProductCategory ProductCategory[]
   ProductImage    ProductImage[]
   ProductVariant  ProductVariant[]
