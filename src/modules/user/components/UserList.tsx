@@ -6,13 +6,14 @@ import UserAddButton from "./UserAddButton";
 const UserList: React.FC = async () => {
   const userRepo = new UserRepository();
   const users = await userRepo.getAll();
-  return(
-  <>
-   <div className="flex justify-end items-center mb-4">
+  return (
+    <>
+      <div className="flex justify-end items-center mb-4">
         <UserAddButton />
       </div>
-    <UserTable values={users} />
-  </>)
+      <UserTable values={users} />
+    </>
+  );
 };
 
 export default UserList;

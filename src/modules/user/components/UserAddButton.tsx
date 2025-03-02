@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import React from 'react'
+import Link from "next/link";
+import React from "react";
 
 const UserAddButton: React.FC = () => {
   return (
@@ -11,7 +11,7 @@ const UserAddButton: React.FC = () => {
     >
       Agregar Usuario
     </Link>
-  )
-}
+  );
+};
 
-export default UserAddButton
+export default UserAddButton;

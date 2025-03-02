@@ -1,53 +1,76 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Promotion } from "@prisma/client";
 import { FaCopy } from "react-icons/fa";
+import DisplayInfo from "@/lib/components/DisplayInfo";
+import Link from "next/link";
 
 type Props = {
   promotion: Promotion;
 };
 
 const PromotionDetails: React.FC<Props> = ({ promotion }) => {
+  const [copied, setCopied] = useState(false);
+
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
   };
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow rounded">
-      <h1 className="text-2xl font-bold mb-4">Detalles de la Promoción</h1>
-      <p>
-      <strong>Código:</strong> {promotion.code}{" "}
-        <FaCopy
-          className="inline cursor-pointer text-blue-600"
-          onClick={() => copyToClipboard(promotion.code)}
+    <div className="p-2">
+      <Link className="text-xs text-blue-500 hover:underline" href="./">
+        Atras
+      </Link>
+      <h1 className="text-2xl font-semibold text-gray-900 my-2">
+        Detalles de la Promoción {promotion.name}
+      </h1>
+      <div className="grid gap-6">
+        <DisplayInfo
+          info={[
+            {
+              label: "Código",
+              value: (
+                <div>
+                  <span>{promotion.code}</span>
+                  <button
+                    onClick={() => copyToClipboard(promotion.code)}
+                    className={`ml-2 text-grey-500 hover:underline ${
+                      copied ? "text-green-500" : ""
+                    }`}
+                  >
+                    {copied ? "Copiado!" : <FaCopy />}
+                  </button>
+                </div>
+              ),
+            },
+            {
+              label: "Nombre",
+              value: promotion.name,
+            },
+            {
+              label: "Descripción",
+              value: promotion.description,
+            },
+            {
+              label: "Descuento",
+              value: `${promotion.discount}%`,
+            },
+            {
+              label: "Fecha de inicio",
+              value: new Date(promotion.startDate).toLocaleDateString(),
+            },
+            {
+              label: "Fecha de fin",
+              value: new Date(promotion.endDate).toLocaleDateString(),
+            },
+            {
+              label: "Activo",
+              value: promotion.active ? "Sí" : "No",
+            },
+          ]}
         />
-      </p>
-      <p>
-        <strong>Nombre:</strong> {promotion.name}
-      </p>
-      <p>
-        <strong>Descripción:</strong> {promotion.description}
-      </p>
-      <p>
-        <strong>Descuento:</strong> {promotion.discount}%
-      </p>
-      <p>
-        <strong>Fecha de inicio:</strong>{" "}
-        {new Date(promotion.startDate).toLocaleDateString()}
-      </p>
-      <p>
-        <strong>Fecha de fin:</strong>{" "}
-        {new Date(promotion.endDate).toLocaleDateString()}
-      </p>
-      <p>
-        <strong>Activo:</strong> {promotion.active ? "Sí" : "No"}
-      </p>
-      <div className="flex justify-end">
-        <a
-          href={`/admin/promociones/${promotion.id}/editar`}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-        >
-          Editar
-        </a>
       </div>
     </div>
   );

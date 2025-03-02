@@ -28,7 +28,7 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
   mode = "create",
 }) => {
   const router = useRouter();
-  const [isPending, startTransition] = React.useTransition();
+  const [_, startTransition] = React.useTransition();
   const initialValues = {
     code: initialData.code || "",
     name: initialData.name || "",
