@@ -1,14 +1,14 @@
-import Header from '@/modules/admin-dashboard/components/Header'
-import React from 'react'
+import Loader from '@/lib/components/Loader'
+import ProductList from '@/modules/catalogue/components/ProductList'
+import React, { Suspense } from 'react'
 
-const CatalogoPage: React.FC = () => {
+const CatalogoPage: React.FC = async () => {
   return (
     <>
-      <Header
-        title="👖 Catálogo de tu tienda online"
-        description="Administra el catálogo de tu tienda, agrega productos, actualizalos, lo que necesites."
-      />
-    </>
+    <Suspense fallback={<Loader />}>
+      <ProductList />
+    </Suspense>
+  </>
   )
 }
 

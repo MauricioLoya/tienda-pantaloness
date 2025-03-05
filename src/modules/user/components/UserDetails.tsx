@@ -1,8 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import { User } from "@prisma/client";
-import { FaCopy, FaArrowLeft } from "react-icons/fa";
+import { FaCopy } from "react-icons/fa";
 import DisplayInfo from "@/lib/components/DisplayInfo";
+import GoBack from "@/lib/components/GoBack";
 import Link from "next/link";
 
 type Props = {
@@ -21,12 +22,7 @@ const UserDetails: React.FC<Props> = ({ user }) => {
 
   return (
     <div className="p-2">
-      <Link
-        className="flex items-center text-xs text-blue-500 hover:underline mb-4"
-        href="./"
-      >
-        <FaArrowLeft className="mr-1" /> Atras
-      </Link>
+      <GoBack href="./" />
       <h1 className="text-2xl font-semibold text-gray-900 my-2">
         Detalles del usuario {user.name}
       </h1>
