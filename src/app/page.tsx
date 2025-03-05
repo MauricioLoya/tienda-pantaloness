@@ -9,6 +9,7 @@ export default function Home() {
         <div className="carousel  w-full rounded-lg">
           <div id="slide1" className="carousel-item relative w-full">
             <img
+              alt="promotion"
               src="https://img.daisyui.com/images/stock/photo-1625726411847-8cbb60cc71e6.webp"
               className="w-full object-cover h-full rounded-lg"
             />

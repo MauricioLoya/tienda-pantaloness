@@ -1,19 +1,26 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/navigation'
 import { deleteProductAction } from '../actions/deleteProductAction'
 import { createProductAction } from '../actions/createProductAction'
 import { updateProductAction } from '../actions/updateProductAction'
-import GoBack from "@/lib/components/GoBack";
+import GoBack from '@/lib/components/GoBack'
 import { CategoryItem } from '../definitions'
 // Tipos locales para manejar la parte visual de variantes
 type LocalVariant = {
   size: string
   price: number
   stock: number
+}
+
+type FormValues = {
+  name: string
+  description: string
+  basePrice: number
+  active: boolean
 }
 
 export interface ProductFormProps {
@@ -54,20 +61,20 @@ const ProductForm: React.FC<ProductFormProps> = ({
   })
 
   const [images, setImages] = useState<string[]>(
-    initialData.images ? initialData.images.map((img) => img.url) : []
+    initialData.images ? initialData.images.map(img => img.url) : []
   )
   const [imageInput, setImageInput] = useState('')
 
   const [categories, setCategories] = useState<string[]>(
     initialData.categories
-      ? initialData.categories.map((cat) => cat.id.toString())
+      ? initialData.categories.map(cat => cat.id.toString())
       : []
   )
   const [categoryInput, setCategoryInput] = useState('')
 
   const [variants, setVariants] = useState<LocalVariant[]>(
     initialData.variants
-      ? initialData.variants.map((v) => ({
+      ? initialData.variants.map(v => ({
           size: v.size,
           price: v.price,
           stock: v.stock
@@ -78,14 +85,17 @@ const ProductForm: React.FC<ProductFormProps> = ({
   const [variantPrice, setVariantPrice] = useState('')
   const [variantStock, setVariantStock] = useState('')
 
-  const handleSubmit = async (values: any, { setSubmitting, setStatus }: any) => {
+  const handleSubmit = async (
+    values: FormValues,
+    { setSubmitting, setStatus }: FormikHelpers<FormValues>
+  ) => {
     try {
-      const imagesArray = images.map((url) => ({ url }))
+      const imagesArray = images.map(url => ({ url }))
       const categoriesArray = categories
-        .map((cat) => parseInt(cat.trim(), 10))
-        .filter((num) => !isNaN(num))
-        .map((num) => ({ categoryId: num }))
-      const variantsArray = variants.map((v) => ({
+        .map(cat => parseInt(cat.trim(), 10))
+        .filter(num => !isNaN(num))
+        .map(num => ({ categoryId: num }))
+      const variantsArray = variants.map(v => ({
         size: v.size,
         price: v.price,
         stock: v.stock
@@ -112,8 +122,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
       if (product) {
         router.push(`/admin/catalogo/${product.id}`)
       }
-    } catch (error: any) {
-      setStatus(error.message || 'Error al procesar la solicitud')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setStatus(error.message || 'Error al procesar la solicitud')
+      } else {
+        console.log(error)
+      }
     } finally {
       setSubmitting(false)
     }
@@ -174,35 +188,71 @@ const ProductForm: React.FC<ProductFormProps> = ({
                   <label className="label">
                     <span className="label-text">Nombre</span>
                   </label>
-                  <Field name="name" type="text" className="input input-bordered" />
-                  <ErrorMessage name="name" component="div" className="text-error" />
+                  <Field
+                    name="name"
+                    type="text"
+                    className="input input-bordered"
+                  />
+                  <ErrorMessage
+                    name="name"
+                    component="div"
+                    className="text-error"
+                  />
                 </div>
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text">Descripción</span>
                   </label>
-                  <Field name="description" as="textarea" className="textarea textarea-bordered" />
-                  <ErrorMessage name="description" component="div" className="text-error" />
+                  <Field
+                    name="description"
+                    as="textarea"
+                    className="textarea textarea-bordered"
+                  />
+                  <ErrorMessage
+                    name="description"
+                    component="div"
+                    className="text-error"
+                  />
                 </div>
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text">Precio Base</span>
                   </label>
-                  <Field name="basePrice" type="number" className="input input-bordered" />
-                  <ErrorMessage name="basePrice" component="div" className="text-error" />
+                  <Field
+                    name="basePrice"
+                    type="number"
+                    className="input input-bordered"
+                  />
+                  <ErrorMessage
+                    name="basePrice"
+                    component="div"
+                    className="text-error"
+                  />
                 </div>
                 <div className="form-control flex items-center">
                   <label className="cursor-pointer label">
                     <span className="label-text">Activo</span>
                   </label>
-                  <Field name="active" type="checkbox" className="toggle toggle-accent" />
+                  <Field
+                    name="active"
+                    type="checkbox"
+                    className="toggle toggle-accent"
+                  />
                 </div>
                 <div className="flex gap-4 mt-4">
-                  <button type="submit" disabled={isSubmitting} className="btn btn-primary">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="btn btn-primary"
+                  >
                     {mode === 'create' ? 'Crear producto' : 'Guardar cambios'}
                   </button>
                   {mode === 'update' && (
-                    <button type="button" onClick={handleDelete} className="btn btn-error">
+                    <button
+                      type="button"
+                      onClick={handleDelete}
+                      className="btn btn-error"
+                    >
                       Eliminar producto
                     </button>
                   )}
@@ -216,25 +266,29 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     type="text"
                     placeholder="Tamaño"
                     value={variantSize}
-                    onChange={(e) => setVariantSize(e.target.value)}
+                    onChange={e => setVariantSize(e.target.value)}
                     className="input input-bordered"
                   />
                   <input
                     type="number"
                     placeholder="Precio"
                     value={variantPrice}
-                    onChange={(e) => setVariantPrice(e.target.value)}
+                    onChange={e => setVariantPrice(e.target.value)}
                     className="input input-bordered"
                   />
                   <input
                     type="number"
                     placeholder="Stock"
                     value={variantStock}
-                    onChange={(e) => setVariantStock(e.target.value)}
+                    onChange={e => setVariantStock(e.target.value)}
                     className="input input-bordered"
                   />
                 </div>
-                <button type="button" className="btn btn-secondary" onClick={addVariant}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={addVariant}
+                >
                   Agregar Variante
                 </button>
                 {variants.length > 0 && (
@@ -259,7 +313,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
                                 type="button"
                                 className="btn btn-xs btn-circle btn-error"
                                 onClick={() =>
-                                  setVariants(variants.filter((_, i) => i !== index))
+                                  setVariants(
+                                    variants.filter((_, i) => i !== index)
+                                  )
                                 }
                               >
                                 ✕
@@ -284,18 +340,18 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     <span className="label-text">URL de la imagen</span>
                   </label>
                   <div className="flex gap-2">
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={imageInput}
-                      onChange={(e) => setImageInput(e.target.value)}
+                      onChange={e => setImageInput(e.target.value)}
                       placeholder="https://..."
-                      className="input input-bordered flex-1" 
+                      className="input input-bordered flex-1"
                     />
-                    <button 
+                    <button
                       type="button"
                       className="btn btn-secondary"
                       onClick={() => {
-                        if(imageInput.trim()){
+                        if (imageInput.trim()) {
                           setImages([...images, imageInput.trim()])
                           setImageInput('')
                         }
@@ -310,10 +366,16 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     <div className="flex space-x-2">
                       {images.map((url, index) => (
                         <div key={index} className="relative">
-                          <img src={url} alt={`Imagen ${index}`} className="w-20 h-20 object-cover rounded-lg" />
-                          <button 
+                          <img
+                            src={url}
+                            alt={`Imagen ${index}`}
+                            className="w-20 h-20 object-cover rounded-lg"
+                          />
+                          <button
                             type="button"
-                            onClick={() => setImages(images.filter((_, i) => i !== index))}
+                            onClick={() =>
+                              setImages(images.filter((_, i) => i !== index))
+                            }
                             className="absolute top-0 left-0 btn btn-xs btn-circle btn-error"
                           >
                             ✕
@@ -329,13 +391,15 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 <h2 className="card-title mb-4">Categorías</h2>
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Agregar categoría (ID numérico)</span>
+                    <span className="label-text">
+                      Agregar categoría (ID numérico)
+                    </span>
                   </label>
                   <div className="flex gap-2">
-                    <input 
+                    <input
                       type="text"
                       value={categoryInput}
-                      onChange={(e) => setCategoryInput(e.target.value)}
+                      onChange={e => setCategoryInput(e.target.value)}
                       placeholder="ID de la categoría"
                       className="input input-bordered flex-1"
                     />
@@ -343,7 +407,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                       type="button"
                       className="btn btn-secondary"
                       onClick={() => {
-                        if(categoryInput.trim()){
+                        if (categoryInput.trim()) {
                           setCategories([...categories, categoryInput.trim()])
                           setCategoryInput('')
                         }
@@ -358,10 +422,14 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     {categories.map((cat, index) => (
                       <div key={index} className="badge badge-outline gap-2">
                         {cat}
-                        <button 
+                        <button
                           type="button"
                           className="btn btn-xs btn-circle btn-error"
-                          onClick={() => setCategories(categories.filter((_, i) => i !== index))}
+                          onClick={() =>
+                            setCategories(
+                              categories.filter((_, i) => i !== index)
+                            )
+                          }
                         >
                           ✕
                         </button>
