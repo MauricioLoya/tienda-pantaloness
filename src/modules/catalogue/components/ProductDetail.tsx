@@ -1,17 +1,17 @@
-import React from "react";
-import { ProductDetail as Product } from "../definitions";
-import DisplayInfo from "@/lib/components/DisplayInfo";
-import DisplayTableInfo from "@/lib/components/DisplayTableInfo";
-import GoBack from "@/lib/components/GoBack";
-import Link from "next/link";
+import React from 'react'
+import { ProductDetail as Product } from '../definitions'
+import DisplayInfo from '@/lib/components/DisplayInfo'
+import DisplayTableInfo from '@/lib/components/DisplayTableInfo'
+import GoBack from '@/lib/components/GoBack'
+import Link from 'next/link'
 
 type Props = {
-  productProp: Product;
-};
+  productProp: Product
+}
 
 const ProductDetail: React.FC<Props> = ({ productProp }) => {
-  const { product, images, categories, variants } = productProp;
-  const variantHeaders = ["ID", "Tamaño", "Precio", "Stock"];
+  const { product, images, categories, variants } = productProp
+  const variantHeaders = ['ID', 'Tamaño', 'Precio', 'Stock']
   return (
     <div className="p-2">
       <GoBack href="./" />
@@ -31,64 +31,66 @@ const ProductDetail: React.FC<Props> = ({ productProp }) => {
         <DisplayInfo
           info={[
             {
-              label: "Nombre",
-              value: product.name,
+              label: 'Nombre',
+              value: product.name
             },
             {
-              label: "Descripción",
-              value: product.description,
-            },
+              label: 'Descripción',
+              value: product.description
+            }
           ]}
         />
         <DisplayInfo
           info={[
             {
-              label: "Precio Base",
-              value: `$${product.basePrice}`,
+              label: 'Precio Base',
+              value: `$${product.basePrice}`
             },
             {
-              label: "Activo",
-              value: `${product.active ? "Sí" : "No"}`,
-            },
+              label: 'Activo',
+              value: `${product.active ? 'Sí' : 'No'}`
+            }
           ]}
         />
 
         <DisplayInfo
           info={[
             {
-              label: "Creado",
-              value: `${new Date(product.createdAt).toLocaleDateString()}`,
+              label: 'Creado',
+              value: `${new Date(product.createdAt).toLocaleDateString()}`
             },
             {
-              label: "Actualizado",
-              value: `${new Date(product.updatedAt).toLocaleDateString()}`,
-            },
+              label: 'Actualizado',
+              value: `${new Date(product.updatedAt).toLocaleDateString()}`
+            }
           ]}
         />
       </div>
-      <h3 className="text-lg text-black font-bold mb-2">Imágenes</h3>
-      {images.length > 0 ? (
-        <div className="grid grid-cols-3 gap-2">
-          {images.map((img) => (
-            <div key={img.id} className="relative">
-              <img
-                src={img.url}
-                alt="Imagen"
-                className="w-full h-24 object-cover rounded"
-              />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-sm text-black">No hay imágenes.</p>
-      )}
+      <div className="grid py-5">
+        <h3 className="text-lg text-black font-bold mb-2">Imágenes</h3>
+        {images.length > 0 ? (
+          <div className="grid grid-cols-3 gap-2">
+            {images.map(img => (
+              <div key={img.id} className="relative">
+                <img
+                  src={img.url}
+                  alt="Imagen"
+                  className="w-auto h-56 object-cover rounded-md border-2 border-gray-200"
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-black">No hay imágenes.</p>
+        )}
+      </div>
 
       <div className="divider"></div>
 
       <h3 className="text-lg text-black font-bold mb-2">Categorías</h3>
       {categories.length > 0 ? (
         <div className="flex flex-wrap gap-2">
-          {categories.map((cat) => (
+          {categories.map(cat => (
             <span key={cat.id} className="badge badge-outline">
               {cat.name}
             </span>
@@ -104,7 +106,7 @@ const ProductDetail: React.FC<Props> = ({ productProp }) => {
         <DisplayTableInfo headers={variantHeaders} data={variants} />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProductDetail;
+export default ProductDetail

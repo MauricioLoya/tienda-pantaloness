@@ -29,31 +29,37 @@ const ImagesForm: React.FC<ImagesFormProps> = ({ productId, images }) => {
 
   return (
     <div className="card shadow p-4">
-      <h2 className="text-xl font-bold mb-2">Imágenes</h2>
-      <div className="flex gap-2 mb-2">
-        <input
-          type="text"
-          className="input input-bordered flex-1"
-          placeholder="URL de la imagen"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-        />
-        <button className="btn btn-secondary" onClick={handleAdd}>
-          Agregar
-        </button>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {images.map(img => (
-          <div key={img.id} className="relative">
-            <img src={img.url} alt="imagen" className="w-20 h-20 object-cover rounded" />
-            <button
-              className="btn btn-xs btn-circle btn-error absolute top-0 left-0"
-              onClick={() => handleRemove(img.id)}
-            >
-              ✕
-            </button>
-          </div>
-        ))}
+      <div className="grid gap-5 ">
+        <h2 className="text-xl font-bold mb-2">Imágenes</h2>
+        <div className="flex gap-2 mb-2">
+          <input
+            type="text"
+            className="input input-bordered flex-1"
+            placeholder="URL de la imagen"
+            value={url}
+            onChange={e => setUrl(e.target.value)}
+          />
+          <button className="btn btn-secondary" onClick={handleAdd}>
+            Agregar
+          </button>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {images.map(img => (
+            <div key={img.id} className="relative">
+              <img
+                src={img.url}
+                alt="imagen"
+                className="w-auto h-48 object-cover rounded-lg border-2 border-gray-200"
+              />
+              <button
+                className="btn btn-xs btn-circle btn-error absolute top-0 left-0"
+                onClick={() => handleRemove(img.id)}
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
