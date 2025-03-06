@@ -3,10 +3,10 @@ import React from 'react'
 
 const NavBar: React.FC = () => {
   return (
-    <nav className="navbar bg-primary ">
+    <nav className="navbar bg-white shadow-lg fixed z-50">
       <div className="navbar max-w-7xl mx-auto">
         <div className="flex-1">
-          <Link href={'/'} className="btn btn-ghost text-xl text-white">
+          <Link href={'/'} className="btn btn-ghost text-xl text-primary">
             {"JosePhine Jean's"}
           </Link>
         </div>
@@ -20,7 +20,7 @@ const NavBar: React.FC = () => {
               <div className="indicator">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-white"
+                  className="h-5 w-5 text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

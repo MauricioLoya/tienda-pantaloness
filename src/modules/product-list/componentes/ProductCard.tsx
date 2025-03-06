@@ -1,31 +1,72 @@
 import React from 'react'
+import Link from 'next/link'
+import { formatPrice } from '@/lib/utils'
+
 type Props = {
+  id: string
   name: string
   description: string
   basePrice: number
-  discount?: number
+  discountedPrice?: number
   discountPercentage?: number
   thumbnail: string
   isAvailable: boolean
 }
-const ProductCard: React.FC<Props> = ({ thumbnail, name }) => {
+
+const ProductCard: React.FC<Props> = ({
+  id,
+  thumbnail,
+  name,
+  description,
+  basePrice,
+  discountedPrice,
+  discountPercentage,
+  isAvailable
+}) => {
   return (
-    <div className="card card-compact bg-base-100 sm:w-72 shadow-xl">
-      <figure>
-        <img
-          className="h-96 w-full object-cover"
-          src="https://i5.walmartimages.com/asr/afb47936-56fb-4143-8ecb-f7987badd210.4fd411fedb4ad42fa50b63e12948f2fc.jpeg"
-          alt="Shoes"
-        />
-      </figure>
-      <div className="card-body">
-        <h2 className="card-title">{name}</h2>
-        <p>If a dog chews shoes whose shoes does he choose?</p>
-        <div className="card-actions justify-end">
-          <button className="btn btn-primary">Buy Now</button>
+    <Link href={`/productos/${id}`} className="block">
+      <div className="card card-compact bg-base-100 w-72 shadow-xl h-[600px] flex flex-col group hover:shadow-2xl transition-shadow duration-300">
+        <figure className="h-80 overflow-hidden">
+          <img
+            className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
+            src={thumbnail}
+            alt={name}
+          />
+        </figure>
+        <div className="card-body flex flex-col flex-1">
+          <h2 className="card-title line-clamp-1">{name}</h2>
+          <p className="line-clamp-3 text-sm text-gray-600">{description}</p>
+          <div className="flex flex-col gap-2 mt-auto">
+            <div className="flex flex-col">
+              {discountedPrice && discountPercentage ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl font-bold line-through text-gray-400">
+                      {formatPrice(basePrice)}
+                    </span>
+                    <span className="text-sm text-green-500">
+                      -{discountPercentage}%
+                    </span>
+                  </div>
+                  <span className="text-2xl font-bold text-primary">
+                    {formatPrice(discountedPrice)}
+                  </span>
+                </>
+              ) : (
+                <span className="text-2xl font-bold">
+                  {formatPrice(basePrice)}
+                </span>
+              )}
+            </div>
+            <div className="card-actions justify-end">
+              <button className="btn btn-primary" disabled={!isAvailable}>
+                {isAvailable ? 'Ver detalles' : 'Out of Stock'}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
 

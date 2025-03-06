@@ -18,7 +18,7 @@ export type ProductDetail = {
 
 interface IProductListRepository {
   getListItem(): Promise<ItemProduct[]>
-  productDetail(id: number): Promise<ProductDetail>
+  productDetail(id: number): Promise<ProductDetail | null>
 }
 
 export class ProductListRepository implements IProductListRepository {
@@ -47,7 +47,7 @@ export class ProductListRepository implements IProductListRepository {
     }
   }
 
-  async productDetail(id: number): Promise<ProductDetail> {
+  async productDetail(id: number): Promise<ProductDetail | null> {
     try {
       const product = await prisma.product.findFirst({
         where: { id },
@@ -60,15 +60,18 @@ export class ProductListRepository implements IProductListRepository {
           }
         }
       })
+
       if (!product) {
-        throw new Error('Product not found')
+        return null
       }
+
       return {
         product,
         variants: product.ProductVariant,
         images: product.ProductImage.map(image => image.url)
       }
     } catch (error) {
+      console.error('Error fetching product:', error)
       throw error
     }
   }

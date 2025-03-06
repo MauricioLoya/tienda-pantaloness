@@ -4,6 +4,102 @@ import SectionBox from '@/modules/landing/SectionBox'
 import ProductCard from '@/modules/product-list/componentes/ProductCard'
 
 export default function Home() {
+  const featuredProducts = [
+    {
+      id: '1',
+      name: 'Classic Leather Jacket',
+      description:
+        'Premium quality leather jacket with modern design. Made with genuine leather and featuring a timeless style that suits any occasion.',
+      basePrice: 299.99,
+      thumbnail:
+        'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=500',
+      isAvailable: true,
+      discountedPrice: 239.99,
+      discountPercentage: 20
+    },
+    {
+      id: '2',
+      name: 'Vintage Denim Jeans',
+      description:
+        'Comfortable and stylish denim jeans with perfect fit and classic wash. Made with high-quality denim that lasts.',
+      basePrice: 89.99,
+      thumbnail:
+        'https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=500',
+      isAvailable: true
+    },
+    {
+      id: '3',
+      name: 'Designer Sunglasses',
+      description:
+        'UV protected trendy sunglasses with polarized lenses. Perfect for both style and eye protection.',
+      basePrice: 159.99,
+      thumbnail:
+        'https://images.unsplash.com/photo-1572635196237-14b3f281503f?q=80&w=500',
+      isAvailable: true,
+      discountedPrice: 119.99,
+      discountPercentage: 25
+    },
+    {
+      id: '4',
+      name: 'Smart Watch Pro',
+      description:
+        'Latest generation smartwatch with health tracking features. Includes heart rate monitoring and sleep tracking.',
+      basePrice: 199.99,
+      thumbnail:
+        'https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=500',
+      isAvailable: true
+    }
+  ]
+
+  const saleProducts = [
+    {
+      id: '5',
+      name: 'Summer T-Shirt',
+      description:
+        'Cotton blend casual t-shirt perfect for summer days. Breathable fabric with modern cut.',
+      basePrice: 29.99,
+      thumbnail:
+        'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=500',
+      isAvailable: true,
+      discountedPrice: 19.99,
+      discountPercentage: 33
+    },
+    {
+      id: '6',
+      name: 'Running Shoes',
+      description:
+        'Lightweight performance running shoes with advanced cushioning technology. Perfect for daily training.',
+      basePrice: 129.99,
+      thumbnail:
+        'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=500',
+      isAvailable: true,
+      discountedPrice: 84.49,
+      discountPercentage: 35
+    },
+    {
+      id: '7',
+      name: 'Backpack',
+      description:
+        'Durable everyday backpack with multiple compartments. Water-resistant material and comfortable straps.',
+      basePrice: 79.99,
+      thumbnail:
+        'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=500',
+      isAvailable: false
+    },
+    {
+      id: '8',
+      name: 'Winter Scarf',
+      description:
+        'Warm and cozy winter scarf made from premium wool blend. Perfect for cold weather.',
+      basePrice: 24.99,
+      thumbnail:
+        'https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?q=80&w=500',
+      isAvailable: true,
+      discountedPrice: 17.99,
+      discountPercentage: 28
+    }
+  ]
+
   return (
     <>
       <NavBar />
@@ -34,18 +130,11 @@ export default function Home() {
           Productos Seleccionados
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          <div className="mx-auto">
-            <ProductCard />
-          </div>
-          <div className="mx-auto">
-            <ProductCard />
-          </div>
-          <div className="mx-auto">
-            <ProductCard />
-          </div>
-          <div className="mx-auto">
-            <ProductCard />
-          </div>
+          {featuredProducts.map((product, index) => (
+            <div key={index} className="mx-auto">
+              <ProductCard {...product} />
+            </div>
+          ))}
         </div>
         <div className="flex justify-center">
           <button className="btn btn-secondary">Ver más</button>
@@ -78,18 +167,11 @@ export default function Home() {
           Liquidacion de temporada
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          <div className="mx-auto">
-            <ProductCard />
-          </div>
-          <div className="mx-auto">
-            <ProductCard />
-          </div>
-          <div className="mx-auto">
-            <ProductCard />
-          </div>
-          <div className="mx-auto">
-            <ProductCard />
-          </div>
+          {saleProducts.map((product, index) => (
+            <div key={index} className="mx-auto">
+              <ProductCard {...product} />
+            </div>
+          ))}
         </div>
         <div className="flex justify-center">
           <button className="btn btn-primary">Ver más</button>
