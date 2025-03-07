@@ -4,26 +4,27 @@ import { Metadata } from 'next'
 import React, { Suspense } from 'react'
 
 type Props = {
-  params: { slug: string }
-  searchParams: { size?: string }
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ size?: string }>
 }
 
 export const generateMetadata = async ({
   params
 }: Props): Promise<Metadata> => {
+  const { slug } = await params
   return {
-    title: `Product ${params.slug} - Tienda Pantalones`
+    title: `Product ${slug} - Tienda Pantalones`
   }
 }
 
-const DetalleProducto: React.FC<Props> = ({ params, searchParams }) => {
-  const { slug } = params
-  const selectedSize = searchParams.size
+const DetalleProducto: React.FC<Props> = async ({ params, searchParams }) => {
+  const { slug } = await params
+  const { size } = await searchParams
 
   return (
     <>
       <Suspense fallback={<ProductDetailsSkeleton />}>
-        <ProductDetail slug={slug} selectedSize={selectedSize} />
+        <ProductDetail slug={slug} selectedSize={size} />
       </Suspense>
     </>
   )

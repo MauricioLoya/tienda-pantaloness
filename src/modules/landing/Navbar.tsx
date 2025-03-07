@@ -1,3 +1,4 @@
+import CartButton from '@/modules/landing/cart/CartButton'
 import Link from 'next/link'
 import React from 'react'
 
@@ -11,7 +12,8 @@ const NavBar: React.FC = () => {
           </Link>
         </div>
         <div className="flex-none">
-          <div className="dropdown dropdown-end">
+          <CartButton />
+          {/* <div className="dropdown dropdown-end">
             <div
               tabIndex={0}
               role="button"
@@ -49,7 +51,7 @@ const NavBar: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </nav>

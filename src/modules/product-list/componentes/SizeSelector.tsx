@@ -1,45 +1,66 @@
 'use client'
 
-import { ProductVariant } from '@prisma/client'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+import React from 'react'
 
-interface SizeSelectorProps {
-  variants: ProductVariant[]
+interface Props {
+  variants: Array<{
+    id: number
+    size: string
+    stock: number
+  }>
   selectedSize?: string
   productId: number
+  onSizeSelect?: (size: string, variantId: number) => void
 }
 
 const SizeSelector = ({
   variants,
   selectedSize,
-  productId
-}: SizeSelectorProps) => {
+  productId,
+  onSizeSelect
+}: Props) => {
   const router = useRouter()
-  const searchParams = useSearchParams()
 
-  const handleSizeSelect = (size: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('size', size)
-
-    // Update URL with the selected size
-    router.push(`/productos/${productId}?${params.toString()}`)
+  const handleSizeClick = (size: string, variantId: number) => {
+    if (onSizeSelect) {
+      // If callback provided, use it (for client-side handling)
+      onSizeSelect(size, variantId)
+    } else {
+      // Otherwise use router navigation (for URL-based selection)
+      router.push(`/products/${productId}?size=${size}`)
+    }
   }
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-3">Selecciona tu talla</h2>
-      <div className="flex gap-2 flex-wrap">
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold">Selecciona talla</h2>
+      <div className="flex flex-wrap gap-3">
         {variants.map(variant => {
           const isSelected = selectedSize === variant.size
+          const isOutOfStock = variant.stock <= 0
+
           return (
             <button
               key={variant.id}
-              onClick={() => handleSizeSelect(variant.size)}
-              className={`w-16 h-16 ${
-                isSelected
-                  ? 'bg-yellow-300 font-bold'
-                  : 'bg-yellow-100 hover:bg-yellow-200'
-              } rounded-lg flex items-center justify-center font-medium`}
+              onClick={() =>
+                !isOutOfStock && handleSizeClick(variant.size, variant.id)
+              }
+              disabled={isOutOfStock}
+              className={`
+                h-10 w-10 rounded-full flex items-center justify-center 
+                ${
+                  isSelected
+                    ? 'border-2 border-primary'
+                    : 'border border-gray-300'
+                } 
+                ${
+                  isOutOfStock
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'hover:border-gray-400'
+                }
+              `}
+              title={isOutOfStock ? 'Agotado' : `Talla ${variant.size}`}
             >
               {variant.size}
             </button>

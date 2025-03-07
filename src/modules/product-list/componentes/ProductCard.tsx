@@ -25,7 +25,7 @@ const ProductCard: React.FC<Props> = ({
 }) => {
   return (
     <Link href={`/productos/${id}`} className="block">
-      <div className="card card-compact bg-base-100 w-72 shadow-xl h-[600px] flex flex-col group hover:shadow-2xl transition-shadow duration-300">
+      <div className="card card-compact bg-base-100 lg:w-72 shadow-xl h-[600px] flex flex-col group hover:shadow-2xl transition-shadow duration-300">
         <figure className="h-80 overflow-hidden">
           <img
             className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
