@@ -4,6 +4,7 @@ import { Product, ProductVariant } from '@prisma/client'
 export type ItemProduct = {
   id: number
   name: string
+  description: string
   price: number
   thumbnail: string
   hasDiscount: boolean
@@ -37,8 +38,9 @@ export class ProductListRepository implements IProductListRepository {
       return products.map(product => ({
         id: product.id,
         name: product.name,
+        description: product.description,
         price: product.basePrice,
-        thumbnail: product.ProductImage[0].url,
+        thumbnail: product.ProductImage[0]?.url ?? 'not-found',
         hasDiscount: false,
         isAvailable: product.active
       }))

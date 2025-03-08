@@ -28,7 +28,6 @@ const ProductVariantSelector = ({
   productName,
   productImage
 }: ProductVariantSelectorProps) => {
-  const MAX_QUANTITY_ALLOWED = 5
   const router = useRouter()
   const searchParams = useSearchParams()
   const [quantity, setQuantity] = useState(1)
@@ -79,6 +78,17 @@ const ProductVariantSelector = ({
       setSelectedVariant(availableVariant)
     }
   }, [selectedVariant, variants])
+
+  // Reset quantity if it exceeds the available stock when variant changes
+  useEffect(() => {
+    if (selectedVariant) {
+      // Set quantity to the minimum between current quantity and available stock
+      const maxAllowedQuantity = Math.min(quantity, selectedVariant.stock)
+      if (quantity !== maxAllowedQuantity) {
+        setQuantity(maxAllowedQuantity || 1) // Default to 1 if stock is 0
+      }
+    }
+  }, [selectedVariant, quantity])
 
   const hasDiscount =
     selectedVariant &&
@@ -147,12 +157,10 @@ const ProductVariantSelector = ({
           <span className="text-gray-900 font-semibold">{quantity}</span>
           <button
             onClick={() => {
-              if (quantity === MAX_QUANTITY_ALLOWED) {
+              if (selectedVariant && quantity >= selectedVariant.stock) {
                 return
               }
-              if (selectedVariant && selectedVariant.stock > 0) {
-                setQuantity(quantity + 1)
-              }
+              setQuantity(quantity + 1)
             }}
             className="btn btn-square btn-secondary btn-outline border-2 p-2"
             disabled={!selectedVariant || selectedVariant.stock <= 0}
@@ -160,6 +168,15 @@ const ProductVariantSelector = ({
             +
           </button>
         </div>
+
+        {/* Display available stock information */}
+        {selectedVariant && (
+          <p className="text-sm text-gray-600">
+            {selectedVariant.stock > 0
+              ? `${selectedVariant.stock} disponibles`
+              : 'Agotado'}
+          </p>
+        )}
       </div>
 
       {/* Price */}
