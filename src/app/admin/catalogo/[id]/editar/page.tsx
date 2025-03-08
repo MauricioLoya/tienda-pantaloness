@@ -5,13 +5,15 @@ import ImagesForm from '@/modules/catalogue/components/ImagesForm'
 import CategoriesForm from '@/modules/catalogue/components/CategoriesForm'
 import VariantsForm from '@/modules/catalogue/components/VariantsForm'
 import { CategoryRepository } from '@/modules/category/definitions'
+import { notFound } from 'next/navigation'
 
 type Props = {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default async function UpdateProductPage({ params }: Props) {
-  const productId = await Number(params.id)
+  const { id } = await params
+  const productId = await Number(id)
   const productRepo = new ProductRepository()
   const productDetail = await productRepo.getProductById(productId)
 
@@ -19,7 +21,7 @@ export default async function UpdateProductPage({ params }: Props) {
   const allCategories = await catRepo.getAll()
 
   if (!productDetail) {
-    return <div>Producto no encontrado</div>
+    return notFound()
   }
 
   const basicData = {
