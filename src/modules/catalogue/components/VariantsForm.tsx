@@ -1,35 +1,56 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import { addVariantAction } from '../actions/addVariantAction'
-import { removeVariantAction } from '../actions/removeVariantAction'
-import { useRouter } from 'next/navigation'
-import { VariantItem } from '../definitions'
+import React, { useState } from "react";
+import { addVariantAction } from "../actions/addVariantAction";
+import { removeVariantAction } from "../actions/removeVariantAction";
+import { useRouter } from "next/navigation";
+import { VariantItem } from "../definitions";
+import DisplayTableInfo from "@/lib/components/DisplayTableInfo";
+import ActionButton from "@/lib/components/ActionButton";
 
 interface VariantsFormProps {
-  productId: number
-  variants: VariantItem[]
+  productId: number;
+  variants: VariantItem[];
 }
 
 const VariantsForm: React.FC<VariantsFormProps> = ({ productId, variants }) => {
-  const [size, setSize] = useState('')
-  const [price, setPrice] = useState('')
-  const [stock, setStock] = useState('')
-  const router = useRouter()
+  const [size, setSize] = useState("");
+  const [price, setPrice] = useState("");
+  const [stock, setStock] = useState("");
+  const router = useRouter();
+
+  const variantsData = variants.map((variant) => ({
+    id: variant.id,
+    Tamaño: variant.size,
+    Precio: variant.price,
+    Stock: variant.stock,
+  }));
 
   async function handleAdd() {
-    if (!size.trim() || !price || !stock) return
-    await addVariantAction(productId, size.trim(), parseFloat(price), parseInt(stock, 10))
-    setSize('')
-    setPrice('')
-    setStock('')
-    router.refresh()
+    if (!size.trim() || !price || !stock) return;
+    await addVariantAction(
+      productId,
+      size.trim(),
+      parseFloat(price),
+      parseInt(stock, 10)
+    );
+    setSize("");
+    setPrice("");
+    setStock("");
+    router.refresh();
   }
 
   async function handleRemove(variantId: number) {
-    await removeVariantAction(variantId)
-    router.refresh()
+    await removeVariantAction(variantId);
+    router.refresh();
   }
+
+  const renderCustomCell = (header: string, row: any) => {
+    if (header === "Eliminar") {
+      return <ActionButton onClick={() => handleRemove(row.id)} />;
+    }
+    return undefined;
+  };
 
   return (
     <div className="card shadow p-4">
@@ -38,59 +59,42 @@ const VariantsForm: React.FC<VariantsFormProps> = ({ productId, variants }) => {
         <input
           type="text"
           placeholder="Tamaño"
-          className="input input-bordered"
           value={size}
           onChange={(e) => setSize(e.target.value)}
+          className="input input-bordered"
         />
         <input
           type="number"
           placeholder="Precio"
-          className="input input-bordered"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
+          className="input input-bordered"
         />
         <input
           type="number"
           placeholder="Stock"
-          className="input input-bordered"
           value={stock}
           onChange={(e) => setStock(e.target.value)}
+          className="input input-bordered"
         />
       </div>
-      <button className="btn btn-secondary mb-4" onClick={handleAdd}>
+      <button
+        type="button"
+        className="btn btn-secondary mb-4"
+        onClick={handleAdd}
+      >
         Agregar Variante
       </button>
       <div className="overflow-x-auto">
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th>Tamaño</th>
-              <th>Precio</th>
-              <th>Stock</th>
-              <th>Eliminar</th>
-            </tr>
-          </thead>
-          <tbody>
-            {variants.map(v => (
-              <tr key={v.id}>
-                <td>{v.size}</td>
-                <td>{v.price}</td>
-                <td>{v.stock}</td>
-                <td>
-                  <button
-                    className="btn btn-xs btn-circle btn-error"
-                    onClick={() => handleRemove(v.id)}
-                  >
-                    ✕
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DisplayTableInfo
+          headers={["Tamaño", "Precio", "Stock", "Eliminar"]}
+          data={variantsData}
+          keyField="id"
+          renderCustomCell={renderCustomCell}
+        />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default VariantsForm
+export default VariantsForm;

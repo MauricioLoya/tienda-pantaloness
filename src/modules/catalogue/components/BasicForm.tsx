@@ -34,7 +34,6 @@ const BasicForm: React.FC<BasicFormProps> = ({ productId, initialData }) => {
 
   return (
     <div className="card shadow p-4">
-      <h2 className="text-xl font-bold mb-2">Editar Producto</h2>
       <Formik
         initialValues={initialData}
         validationSchema={schema}
