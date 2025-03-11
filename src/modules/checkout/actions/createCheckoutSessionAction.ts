@@ -1,154 +1,130 @@
-"use server";
+'use server'
 
-import Stripe from "stripe";
-import { prisma } from "@/lib/prima/client";
+import Stripe from 'stripe'
+import { ServerActionResult } from '@/lib/types'
+import {
+  CheckoutErrorCode,
+  CheckoutInput,
+  CheckoutSessionData,
+  processPromoCode,
+  validateAndProcessCartItems
+} from '../validations'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
-export interface CartItem {
-  productId: number;
-  variantId: number;
-  quantity: number;
-}
-
-export interface CheckoutInput {
-  items: CartItem[];
-  customerInfo?: {
-    email?: string;
-    name?: string;
-  };
-  shipping?: {
-    address: string;
-    city: string;
-    country: string;
-    postalCode: string;
-  };
-  couponCode?: string;
-}
-
-export async function createCheckoutSessionAction(input: CheckoutInput) {
-  console.log("createCheckoutSessionAction input:", input);
+/**
+ * Creates a checkout session for the provided cart items
+ * @param input - Cart items and customer information
+ * @returns Checkout session details or error information
+ */
+export async function createCheckoutSessionAction(
+  input: CheckoutInput
+): Promise<ServerActionResult<CheckoutSessionData | null>> {
+  console.log('createCheckoutSessionAction input:', input)
   try {
     if (!input.items || input.items.length === 0) {
-      throw new Error("No hay productos en el carrito.");
-    }
-    const errors: string[] = [];
-    let subtotal = 0;
-    const lineItems: any = []
-    for (const item of input.items) {
-      if (item.quantity <= 0) {
-        errors.push(
-          `La cantidad para el item con variantId ${item.variantId} debe ser mayor que 0.`
-        );
-        continue;
+      return {
+        success: false,
+        message: 'No hay productos en el carrito.',
+        data: null,
+        error: 'El carrito está vacío',
+        errorCode: CheckoutErrorCode.EMPTY_CART
       }
-      const product = await prisma.product.findFirst({
-        where: {
-          id: item.productId
-        },
-        select: {
-          name: true
-        }
-      })
-      if (!product) {
-        errors.push(
-          `El producto ${item.productId} no existe.`
-        );
-        continue;
-      }
-      const variant = await prisma.productVariant.findFirst({
-        where: {
-          id: item.variantId,
-          productId: item.productId,
-        },
-        select: {
-          price: true,
-          stock: true,
-          size: true,
-        },
-      });
-      if (!variant) {
-        errors.push(
-          `La variante ${item.variantId} del producto ${item.productId} no existe.`
-        );
-        continue;
-      }
-      if (variant.stock < item.quantity) {
-        errors.push(
-          `Stock insuficiente para la variante ${item.variantId} del producto ${item.productId}.`
-        );
-        continue;
-      }
-      subtotal += variant.price * item.quantity;
-      lineItems.push({
-        price_data: {
-          currency: "mxn",
-          product_data: {
-            name: `${product.name} - ${variant.size}`,
-            description: "Producto del carrito",
-          },
-          unit_amount: Math.round(variant.price * 100),
-        },
-        quantity: item.quantity,
-      });
     }
 
-    if (errors.length > 0) {
-      console.log("errors:", errors);
-      throw new Error(errors.join(" "));
-    }
+    // Validate and process cart items
+    const { isValid, lineItems, subtotal, errors } =
+      await validateAndProcessCartItems(input.items)
 
-    let discountAmount = 0;
-    let promotionId: number | undefined = undefined;
-    if (input.couponCode) {
-      console.log("input.couponCode:", input.couponCode);
-      const now = new Date();
-      const promotion = await prisma.promotion.findFirst({
-        where: {
-          code: input.couponCode,
-          active: true,
-          isDeleted: false,
-          startDate: { lte: now },
-          endDate: { gte: now },
-        },
-      });
-      if (!promotion) {
-        throw new Error(`El cupón ${input.couponCode} no es válido.`);
+    if (!isValid) {
+      console.log('errors:', errors)
+      return {
+        success: false,
+        message: 'Error al procesar los items del carrito.',
+        data: null,
+        error: errors.join(' '),
+        errorCode: CheckoutErrorCode.INVALID_CART
       }
-      discountAmount = subtotal * (promotion.discount / 100);
-      promotionId = promotion.id;
     }
 
-    const total = subtotal - discountAmount;
+    // Process promotion code if provided
+    const {
+      isValidPromo,
+      errors: promoErrors,
+      discountAmount,
+      promotionId
+    } = await processPromoCode(input.couponCode, subtotal)
+
+    if (!isValidPromo) {
+      return {
+        success: false,
+        message: 'Error al procesar el código de promoción.',
+        data: null,
+        error: promoErrors.join(' '),
+        errorCode: CheckoutErrorCode.INVALID_COUPON
+      }
+    }
+
+    console.log('promotionId:', promotionId)
+
+    const total = subtotal - discountAmount
     if (total < 0) {
-      throw new Error("El descuento supera el subtotal.");
+      return {
+        success: false,
+        message: 'El descuento supera el subtotal.',
+        data: null,
+        error: 'Descuento mayor al subtotal',
+        errorCode: CheckoutErrorCode.DISCOUNT_EXCEEDS_TOTAL
+      }
     }
 
+    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: lineItems,
-      mode: "payment",
+      payment_method_types: ['card'],
+      line_items: lineItems as Stripe.Checkout.SessionCreateParams.LineItem[],
+      mode: 'payment',
       customer_email: input.customerInfo?.email || undefined,
       success_url: `${process.env.APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.APP_URL}/checkout/cancel`,
-    });
+      cancel_url: `${process.env.APP_URL}cart`
+    })
 
     return {
       success: true,
-      message: "Sesión de checkout creada exitosamente.",
+      message: 'Sesión de checkout creada exitosamente.',
       data: {
         sessionId: session.id,
-        checkoutUrl: session.url,
-      },
-      errors: [],
-    };
-  } catch (error: any) {
-    console.error("Error en createCheckoutSessionAction:", error);
+        checkoutUrl: session.url || ''
+      }
+    }
+  } catch (error: unknown) {
+    console.error('Error en createCheckoutSessionAction:', error)
+
+    if (error instanceof Stripe.errors.StripeError) {
+      return {
+        success: false,
+        message: 'Error en el procesador de pagos.',
+        data: null,
+        error: error.message,
+        errorCode: CheckoutErrorCode.STRIPE_ERROR
+      }
+    }
+
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: 'Error interno al crear la sesión de checkout.',
+        data: null,
+        error: error.message,
+        errorCode: CheckoutErrorCode.UNKNOWN_ERROR
+      }
+    }
+
     return {
       success: false,
-      message: "Error interno al crear la sesión de checkout.",
+      message: 'Error interno al crear la sesión de checkout.',
       data: null,
-      errors: [error?.message || "Error desconocido"],
-    };
+      error: 'Error desconocido',
+      errorCode: CheckoutErrorCode.UNKNOWN_ERROR
+    }
   }
 }

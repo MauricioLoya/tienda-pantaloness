@@ -4,4 +4,5 @@ export type ServerActionResult<T = void> = {
   data?: T
   fieldErrors?: Record<string, string | null>
   error?: string
+  errorCode?: string
 }
