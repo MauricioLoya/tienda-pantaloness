@@ -31,22 +31,23 @@ export default function CartPage() {
           quantity: item.quantity,
         })),
         customerInfo: {
-          email: "",
-          name: "",
+          email: '',
+          name: '',
         },
         shipping: {
-          address: "",
-          city: "",
-          country: "",
-          postalCode: "",
+          address: "Test Address",
+          city: "Test City",
+          country: "Test Country",
+          postalCode: "12345",
         },
         couponCode: "",
       };
-
+      console.log(cartForCheckout);
       const session = await createCheckoutSessionAction(cartForCheckout);
       console.log(session);
       if (session && session.success && session.data?.checkoutUrl) {
-        router.push(session.data.checkoutUrl);
+        // router.push(session.data.checkoutUrl);
+        console.log(session.data.checkoutUrl)
       } else {
         throw new Error("No se pudo generar la sesión de pago.");
       }
@@ -57,7 +58,7 @@ export default function CartPage() {
           "Hubo un problema con el pago. Por favor, intenta de nuevo."
       );
     } finally {
-      clearCart();
+      // clearCart();
       setIsCheckingOut(false);
     }
   };

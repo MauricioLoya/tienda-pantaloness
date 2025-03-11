@@ -27,16 +27,32 @@ export interface CheckoutInput {
 }
 
 export async function createCheckoutSessionAction(input: CheckoutInput) {
+  console.log("createCheckoutSessionAction input:", input);
   try {
     if (!input.items || input.items.length === 0) {
       throw new Error("No hay productos en el carrito.");
     }
     const errors: string[] = [];
     let subtotal = 0;
+    const lineItems: any = []
     for (const item of input.items) {
       if (item.quantity <= 0) {
         errors.push(
           `La cantidad para el item con variantId ${item.variantId} debe ser mayor que 0.`
+        );
+        continue;
+      }
+      const product = await prisma.product.findFirst({
+        where: {
+          id: item.productId
+        },
+        select: {
+          name: true
+        }
+      })
+      if (!product) {
+        errors.push(
+          `El producto ${item.productId} no existe.`
         );
         continue;
       }
@@ -47,6 +63,8 @@ export async function createCheckoutSessionAction(input: CheckoutInput) {
         },
         select: {
           price: true,
+          stock: true,
+          size: true,
         },
       });
       if (!variant) {
@@ -55,21 +73,35 @@ export async function createCheckoutSessionAction(input: CheckoutInput) {
         );
         continue;
       }
+      if (variant.stock < item.quantity) {
+        errors.push(
+          `Stock insuficiente para la variante ${item.variantId} del producto ${item.productId}.`
+        );
+        continue;
+      }
       subtotal += variant.price * item.quantity;
-      console.log("subtotal", subtotal);
+      lineItems.push({
+        price_data: {
+          currency: "mxn",
+          product_data: {
+            name: `${product.name} - ${variant.size}`,
+            description: "Producto del carrito",
+          },
+          unit_amount: Math.round(variant.price * 100),
+        },
+        quantity: item.quantity,
+      });
     }
+
     if (errors.length > 0) {
-      return {
-        success: false,
-        message: "Errores en la validación del carrito.",
-        data: null,
-        errors,
-      };
+      console.log("errors:", errors);
+      throw new Error(errors.join(" "));
     }
 
     let discountAmount = 0;
-
+    let promotionId: number | undefined = undefined;
     if (input.couponCode) {
+      console.log("input.couponCode:", input.couponCode);
       const now = new Date();
       const promotion = await prisma.promotion.findFirst({
         where: {
@@ -84,25 +116,17 @@ export async function createCheckoutSessionAction(input: CheckoutInput) {
         throw new Error(`El cupón ${input.couponCode} no es válido.`);
       }
       discountAmount = subtotal * (promotion.discount / 100);
+      promotionId = promotion.id;
     }
+
     const total = subtotal - discountAmount;
     if (total < 0) {
       throw new Error("El descuento supera el subtotal.");
     }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: "Carrito de compras",
-            },
-            unit_amount: Math.round(total),
-          },
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       mode: "payment",
       customer_email: input.customerInfo?.email || undefined,
       success_url: `${process.env.APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
