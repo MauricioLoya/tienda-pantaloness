@@ -46,7 +46,8 @@ const AddToCartButton = ({
       size: variant.size,
       quantity: quantity,
       image: productImage,
-      variantId: variant.id
+      variantId: variant.id,
+      maxQuantity: variant.stock
     })
   }
 

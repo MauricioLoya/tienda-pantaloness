@@ -4,7 +4,6 @@ import React from 'react'
 const ProductosPage: React.FC = () => {
   return (
     <>
-      <h1>Productos</h1>
       <ProductList />
     </>
   )

@@ -1,5 +1,5 @@
 import React from 'react'
-import { auth } from '../auth'
+import { auth } from '../../auth'
 import Link from 'next/link'
 import NavBar from '@/modules/admin-dashboard/layout/NavBar'
 type Props = {

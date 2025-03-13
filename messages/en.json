@@ -1,0 +1,31 @@
+{
+  "HomePage": {
+    "title": "Selection of the house",
+    "about": "Go to the about page",
+    "go_to_category": "Go to category",
+    "featured_products": "Featured Products",
+    "view_more": "View more",
+    "season_sale": "Season Sale",
+    "sample_description": "Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.",
+    "house_selection": "House Selection",
+    "contact_title": "Box Office News!",
+    "get_started": "Get Started"
+  },
+  "CartPage": {
+    "your_cart_is_empty": "Your cart is empty",
+    "why_not_add_products": "Why not add some products?",
+    "view_products": "View products",
+    "your_cart": "Your cart",
+    "size": "Size",
+    "order_summary": "Order summary",
+    "total": "Total",
+    "processing": "Processing...",
+    "proceed_to_payment": "Proceed to payment",
+    "continue_shopping": "Continue shopping"
+  },
+  "CheckoutSuccessPage": {
+    "thank_you": "Thank you for your purchase!",
+    "order_success_message": "Your order has been successfully processed. We have sent you an email with the details of your purchase.",
+    "return_to_store": "Return to the store"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "HomePage": {
+    "title": "Selección de la casa",
+    "about": "Go to the about page",
+    "go_to_category": "Ir a la categoría",
+    "featured_products": "Productos Seleccionados",
+    "view_more": "Ver más",
+    "season_sale": "Liquidación de temporada",
+    "sample_description": "Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.",
+    "house_selection": "Selección de la casa",
+    "contact_title": "Box Office News!",
+    "get_started": "Get Started"
+  },
+  "CartPage": {
+    "your_cart_is_empty": "Tu carrito está vacío",
+    "why_not_add_products": "¿Por qué no agregas algunos productos?",
+    "view_products": "Ver productos",
+    "your_cart": "Tu carrito",
+    "size": "Talla",
+    "order_summary": "Resumen del pedido",
+    "total": "Total",
+    "processing": "Procesando...",
+    "proceed_to_payment": "Proceder al pago",
+    "continue_shopping": "Seguir comprando"
+  },
+  "CheckoutSuccessPage": {
+    "thank_you": "¡Gracias por tu compra!",
+    "order_success_message": "Tu pedido ha sido procesado con éxito. Te hemos enviado un correo con los detalles de tu compra.",
+    "return_to_store": "Volver a la tienda"
+  }
+}
