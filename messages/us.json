@@ -21,11 +21,34 @@
     "total": "Total",
     "processing": "Processing...",
     "proceed_to_payment": "Proceed to payment",
-    "continue_shopping": "Continue shopping"
+    "continue_shopping": "Continue shopping",
+    "add_to_cart": "Add to cart"
   },
   "CheckoutSuccessPage": {
     "thank_you": "Thank you for your purchase!",
     "order_success_message": "Your order has been successfully processed. We have sent you an email with the details of your purchase.",
     "return_to_store": "Return to the store"
+  },
+  "NotFoundPage": {
+    "product_not_found": "Product Not Found",
+    "product_not_found_message": "Sorry, we couldn't find the product you're looking for.",
+    "error_code": "404",
+    "return_home": "Return to Home"
+  },
+  "ProductVariantSelector": {
+    "select_size": "Select your size",
+    "sold_out": "Sold out",
+    "size_selected": "Size {size} selected",
+    "quantity": "Quantity",
+    "available_items": "{stock} available",
+    "sold_out_status": "Sold out",
+    "final_price": "Final price",
+    "discount_percentage": "%{percentage} OFF"
+  },
+  "Navbar": {
+    "brand_name": "JosePhine Jean's",
+    "products": "Products",
+    "categories": "Categories",
+    "contact": "Contact"
   }
 }

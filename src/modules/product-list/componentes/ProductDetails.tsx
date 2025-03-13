@@ -59,7 +59,7 @@ const ProductDetails = async ({ slug, selectedSize }: Props) => {
     )
   } catch (error) {
     console.log(error)
-    notFound()
+    return notFound()
   }
 }
 

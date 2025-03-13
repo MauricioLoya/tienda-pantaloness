@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import AddToCartButton from '@/modules/landing/cart/AddToCartButton'
 import { formatPrice } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface Variant {
   id: number
@@ -31,6 +32,7 @@ const ProductVariantSelector = ({
   const router = useRouter()
   const searchParams = useSearchParams()
   const [quantity, setQuantity] = useState(1)
+  const t = useTranslations('ProductVariantSelector')
 
   const [currentSize, setCurrentSize] = useState<string | undefined>(
     selectedSize
@@ -104,7 +106,7 @@ const ProductVariantSelector = ({
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Selecciona tu talla</h2>
+      <h2 className="text-xl font-semibold">{t('select_size')}</h2>
 
       <div className="flex flex-wrap gap-2">
         {variants.map(variant => (
@@ -127,20 +129,22 @@ const ProductVariantSelector = ({
             disabled={variant.stock <= 0}
           >
             {variant.size}
-            {variant.stock <= 0 && <span className="ml-1">(Agotado)</span>}
+            {variant.stock <= 0 && (
+              <span className="ml-1">({t('sold_out')})</span>
+            )}
           </button>
         ))}
       </div>
 
       {currentSize && (
         <p className="text-sm text-green-600">
-          Talla {currentSize} seleccionada
+          {t('size_selected', { size: currentSize })}
         </p>
       )}
 
       {/* Quantity */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Cantidad</h2>
+        <h2 className="text-xl font-semibold">{t('quantity')}</h2>
         <div className="flex items-center gap-4">
           <button
             onClick={() => {
@@ -173,15 +177,15 @@ const ProductVariantSelector = ({
         {selectedVariant && (
           <p className="text-sm text-gray-600">
             {selectedVariant.stock > 0
-              ? `${selectedVariant.stock} disponibles`
-              : 'Agotado'}
+              ? t('available_items', { stock: selectedVariant.stock })
+              : t('sold_out_status')}
           </p>
         )}
       </div>
 
       {/* Price */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Precio final</h2>
+        <h2 className="text-xl font-semibold">{t('final_price')}</h2>
         {selectedVariant && (
           <div className="flex items-center gap-4">
             {hasDiscount && (
@@ -194,7 +198,7 @@ const ProductVariantSelector = ({
             </span>
             {hasDiscount && (
               <span className="bg-red-100 text-red-600 px-2 py-1 rounded">
-                %{discountPercentage} OFF
+                {t('discount_percentage', { percentage: discountPercentage })}
               </span>
             )}
           </div>

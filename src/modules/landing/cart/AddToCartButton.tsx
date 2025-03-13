@@ -3,6 +3,7 @@
 import { useCart } from '@/context/CartContext'
 import { v4 as uuidv4 } from 'uuid'
 import React from 'react'
+import { useTranslations } from 'next-intl'
 
 interface Variant {
   id: number
@@ -29,6 +30,7 @@ const AddToCartButton = ({
   disabled = false
 }: AddToCartButtonProps) => {
   const { addItem } = useCart()
+  const t = useTranslations('CartPage')
 
   const handleAddToCart = () => {
     if (!variant) return
@@ -57,7 +59,7 @@ const AddToCartButton = ({
       className="btn btn-block btn-primary text-lg "
       disabled={disabled}
     >
-      Añadir al carrito
+      {t('add_to_cart')}
     </button>
   )
 }
