@@ -19,6 +19,7 @@ export interface CartItem {
   quantity: number
   image: string
   variantId: number
+  maxQuantity: number
 }
 
 // Define cart context interface
@@ -61,6 +62,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   // Add item to cart (or increase quantity if it already exists)
   const addItem = (newItem: CartItem) => {
     setItems(currentItems => {
+      if (newItem.quantity > newItem.maxQuantity) {
+        newItem.quantity = newItem.maxQuantity
+      }
       const existingItemIndex = currentItems.findIndex(
         item => item.variantId === newItem.variantId
       )
@@ -87,7 +91,21 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     if (quantity < 1) return
 
     setItems(currentItems =>
-      currentItems.map(item => (item.id === id ? { ...item, quantity } : item))
+      // currentItems.map(item => (item.id === id ? { ...item, quantity } : item))
+      currentItems.map(item => {
+        if (item.id === id) {
+          if (quantity > item.maxQuantity) {
+            console.log('quantity > item.maxQuantity')
+
+            item.quantity = item.maxQuantity
+          } else {
+            console.log('else', { quantity, max: item.maxQuantity })
+
+            item.quantity = quantity
+          }
+        }
+        return item
+      })
     )
   }
 

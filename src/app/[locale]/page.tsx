@@ -2,8 +2,10 @@ import FooterPage from '@/modules/landing/FooterPage'
 import NavBar from '@/modules/landing/Navbar'
 import SectionBox from '@/modules/landing/SectionBox'
 import ProductCard from '@/modules/product-list/componentes/ProductCard'
+import { useTranslations } from 'next-intl'
 
 export default function Home() {
+  const t = useTranslations('HomePage')
   const featuredProducts = [
     {
       id: '1',
@@ -114,20 +116,16 @@ export default function Home() {
           <div className="hero-overlay bg-opacity-60 rounded-lg"></div>
           <div className="hero-content text-neutral-content h-full w-full">
             <div className="h-full w-full flex flex-col justify-end items-start">
-              <h2 className="mb-5 text-5xl font-bold">Selección de la casa</h2>
-              <p className="mb-5 max-w-md">
-                Provident cupiditate voluptatem et in. Quaerat fugiat ut
-                assumenda excepturi exercitationem quasi. In deleniti eaque aut
-                repudiandae et a id nisi.
-              </p>
-              <button className="btn btn-primary">Ir a la categoria</button>
+              <h2 className="mb-5 text-5xl font-bold">{t('title')}</h2>
+              <p className="mb-5 max-w-md">{t('sample_description')}</p>
+              <button className="btn btn-primary">{t('go_to_category')}</button>
             </div>
           </div>
         </div>
       </SectionBox>
       <SectionBox bgColor="bg-primary" className="grid gap-6">
         <h2 className="text-white font-semibold text-4xl">
-          Productos Seleccionados
+          {t('featured_products')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {featuredProducts.map((product, index) => (
@@ -137,7 +135,7 @@ export default function Home() {
           ))}
         </div>
         <div className="flex justify-center">
-          <button className="btn btn-secondary">Ver más</button>
+          <button className="btn btn-secondary">{t('view_more')}</button>
         </div>
       </SectionBox>
       <SectionBox>
@@ -151,20 +149,18 @@ export default function Home() {
           <div className="hero-overlay bg-opacity-60 rounded-lg"></div>
           <div className="hero-content text-neutral-content h-full w-full">
             <div className="h-full w-full flex flex-col justify-end items-start">
-              <h2 className="mb-5 text-5xl font-bold">Selección de la casa</h2>
-              <p className="mb-5 max-w-md">
-                Provident cupiditate voluptatem et in. Quaerat fugiat ut
-                assumenda excepturi exercitationem quasi. In deleniti eaque aut
-                repudiandae et a id nisi.
-              </p>
-              <button className="btn btn-primary">Ir a la categoria</button>
+              <h2 className="mb-5 text-5xl font-bold">
+                {t('house_selection')}
+              </h2>
+              <p className="mb-5 max-w-md">{t('sample_description')}</p>
+              <button className="btn btn-primary">{t('go_to_category')}</button>
             </div>
           </div>
         </div>
       </SectionBox>
       <SectionBox bgColor="bg-secondary" className="grid gap-6">
         <h2 className="text-white font-semibold text-4xl">
-          Liquidacion de temporada
+          {t('season_sale')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {saleProducts.map((product, index) => (
@@ -174,7 +170,7 @@ export default function Home() {
           ))}
         </div>
         <div className="flex justify-center">
-          <button className="btn btn-primary">Ver más</button>
+          <button className="btn btn-primary">{t('view_more')}</button>
         </div>
       </SectionBox>
       <SectionBox bgColor="bg-white" className="grid gap-6">
@@ -186,13 +182,9 @@ export default function Home() {
               className="max-w-sm rounded-lg shadow-2xl"
             />
             <div>
-              <h1 className="text-5xl font-bold">Box Office News!</h1>
-              <p className="py-6">
-                Provident cupiditate voluptatem et in. Quaerat fugiat ut
-                assumenda excepturi exercitationem quasi. In deleniti eaque aut
-                repudiandae et a id nisi.
-              </p>
-              <button className="btn btn-primary">Get Started</button>
+              <h1 className="text-5xl font-bold">{t('contact_title')}</h1>
+              <p className="py-6">{t('sample_description')}</p>
+              <button className="btn btn-primary">{t('get_started')}</button>
             </div>
           </div>
         </div>

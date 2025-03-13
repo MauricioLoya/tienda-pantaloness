@@ -8,8 +8,10 @@ import { formatPrice } from '@/lib/utils'
 import SectionBox from '@/modules/landing/SectionBox'
 import { createCheckoutSessionAction } from '@/modules/checkout/actions/createCheckoutSessionAction'
 import { CheckoutInput } from '@/modules/checkout/validations'
+import { useTranslations } from 'next-intl'
 
 export default function CartPage() {
+  const t = useTranslations('CartPage')
   const { items, removeItem, updateQuantity, total } = useCart()
   const router = useRouter()
   const [isCheckingOut, setIsCheckingOut] = useState(false)
@@ -49,7 +51,6 @@ export default function CartPage() {
     } catch (err) {
       console.error('Error during checkout:', err)
     } finally {
-      // clearCart();
       setIsCheckingOut(false)
     }
   }
@@ -57,13 +58,13 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <SectionBox>
-        <h1 className="text-3xl font-bold mb-6">Tu carrito está vacío</h1>
-        <p className="mb-8">¿Por qué no agregas algunos productos?</p>
+        <h1 className="text-3xl font-bold mb-6">{t('your_cart_is_empty')}</h1>
+        <p className="mb-8">{t('why_not_add_products')}</p>
         <Link
           href="/productos"
           className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800"
         >
-          Ver productos
+          {t('view_products')}
         </Link>
       </SectionBox>
     )
@@ -71,7 +72,7 @@ export default function CartPage() {
 
   return (
     <SectionBox>
-      <h1 className="text-3xl font-bold mb-8">Tu carrito</h1>
+      <h1 className="text-3xl font-bold mb-8">{t('your_cart')}</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 ">
         <div className="md:col-span-2 bg-gray-50 p-6 rounded-lg">
           {items.map(item => (
@@ -85,7 +86,9 @@ export default function CartPage() {
               </div>
               <div className="ml-5 flex-grow">
                 <h3 className="font-medium">{item.name}</h3>
-                <p className="text-sm text-gray-600">Talla: {item.size}</p>
+                <p className="text-sm text-gray-600">
+                  {t('size')}: {item.size}
+                </p>
                 <p className="font-medium">{formatPrice(item.price)}</p>
                 <div className="flex items-center mt-2">
                   <button
@@ -122,7 +125,7 @@ export default function CartPage() {
 
         <div className="bg-primary p-6 rounded-lg h-fit">
           <h2 className="text-xl text-white font-bold mb-4">
-            Resumen del pedido
+            {t('order_summary')}
           </h2>
           <div className="space-y-2 mb-4">
             {items.map(item => (
@@ -136,7 +139,7 @@ export default function CartPage() {
           </div>
           <div className="border-t pt-4 mt-4">
             <div className="flex justify-between font-bold">
-              <span className="text-white">Total</span>
+              <span className="text-white">{t('total')}</span>
               <span className="text-white">{formatPrice(total)}</span>
             </div>
           </div>
@@ -146,13 +149,13 @@ export default function CartPage() {
             disabled={isCheckingOut}
             className="btn btn-block btn-white mt-6 py-3 disabled:bg-gray-400"
           >
-            {isCheckingOut ? 'Procesando...' : 'Proceder al pago'}
+            {isCheckingOut ? t('processing') : t('proceed_to_payment')}
           </button>
           <button
             onClick={() => router.push('/productos')}
             className="btn btn-block btn-secondary mt-4"
           >
-            Seguir comprando
+            {t('continue_shopping')}
           </button>
         </div>
       </div>

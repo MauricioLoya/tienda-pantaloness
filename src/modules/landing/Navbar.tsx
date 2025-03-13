@@ -1,6 +1,7 @@
 import CartButton from '@/modules/landing/cart/CartButton'
 import Link from 'next/link'
 import React from 'react'
+import LanguageSwitcher from './LanguageSwitcher'
 
 const NavBar: React.FC = () => {
   return (
@@ -12,6 +13,7 @@ const NavBar: React.FC = () => {
           </Link>
         </div>
         <div className="flex-none">
+          <LanguageSwitcher />
           <CartButton />
           {/* <div className="dropdown dropdown-end">
             <div
