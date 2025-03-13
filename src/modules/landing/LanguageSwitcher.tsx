@@ -6,8 +6,8 @@ import { useLocale } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 
 const locales = [
-  { code: 'es', label: 'Español', flag: '🇪🇸' },
-  { code: 'en', label: 'English', flag: '🇺🇸' }
+  { code: 'mx', label: 'Mexico', flag: '🇲🇽' },
+  { code: 'us', label: 'USA', flag: '🇺🇸' }
 ]
 
 export default function LanguageSwitcher() {
