@@ -9,16 +9,16 @@ import { FaEye } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 
 interface ImagesFormProps {
-  productId: number;
-  images: ImageItem[];
+  productId?: number;
+  images?: ImageItem[];
 }
 
-const ImagesForm: React.FC<ImagesFormProps> = ({ productId, images }) => {
+const ImagesForm: React.FC<ImagesFormProps> = ({ productId, images = [] }) => {
   const [url, setUrl] = useState("");
   const router = useRouter();
 
   async function handleAdd() {
-    if (!url.trim()) return;
+    if (!url.trim() || !productId) return;
     await addImageAction(productId, url.trim());
     setUrl("");
     router.refresh();
@@ -31,17 +31,22 @@ const ImagesForm: React.FC<ImagesFormProps> = ({ productId, images }) => {
 
   return (
     <div className="card shadow p-4">
-      <div className="grid gap-5 ">
+      <div className="grid gap-5">
         <h2 className="text-xl font-bold mb-2">Imágenes</h2>
         <div className="flex gap-2 mb-2">
           <input
             type="text"
             className="input input-bordered flex-1"
-            placeholder="URL de la imagen"
+            placeholder="https://..."
             value={url}
             onChange={(e) => setUrl(e.target.value)}
           />
-          <button className="btn btn-secondary" onClick={handleAdd}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleAdd}
+            disabled={!productId}
+          >
             Agregar
           </button>
         </div>
@@ -54,14 +59,16 @@ const ImagesForm: React.FC<ImagesFormProps> = ({ productId, images }) => {
                 className="w-auto h-48 object-cover rounded-lg border-2 border-gray-200"
               />
               <button
-                className="btn btn-xs btn-circle btn-error absolute top-0 left-0 m-1"
+                type="button"
                 onClick={() => handleRemove(img.id)}
+                className="btn btn-xs btn-circle btn-error absolute top-0 left-0 m-1"
               >
                 <IoClose />
               </button>
               <button
-                className="btn btn-xs btn-circle btn-info absolute top-0 right-0 m-1"
+                type="button"
                 onClick={() => window.open(img.url, "_blank")}
+                className="btn btn-xs btn-circle btn-info absolute top-0 right-0 m-1"
               >
                 <FaEye />
               </button>

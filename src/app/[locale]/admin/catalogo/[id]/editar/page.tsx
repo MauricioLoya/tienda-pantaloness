@@ -41,10 +41,6 @@ export default async function UpdateProductPage({ params }: Props) {
         </div>
         <div className="flex flex-col flex-2">
           <ImagesForm productId={productId} images={productDetail.images} />
-          {/* <CarouselImagesForm
-            productId={productId}
-            initialImages={productDetail.images}
-          /> */}
           <CategoriesForm
             productId={productId}
             categories={productDetail.categories}

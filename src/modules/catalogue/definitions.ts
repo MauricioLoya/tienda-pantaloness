@@ -96,6 +96,16 @@ export class ProductRepository {
     return { product, images, categories, variants }
   }
 
+  async createBasic(data: ProductInput): Promise<Product> {
+    return prisma.product.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        basePrice: data.basePrice,
+        active: data.active
+      }
+    })
+  }
   async updateBasic(id: number, data: ProductInput): Promise<Product> {
     return prisma.product.update({
       where: { id },

@@ -7,38 +7,37 @@ import { useRouter } from "next/navigation";
 import { CategoryItem } from "../definitions";
 
 interface CategoriesFormProps {
-  productId: number;
-  categories: CategoryItem[]; // las categorías ya asociadas
-  allCategories: CategoryItem[]; // TODAS las categorías disponibles en el sistema
+  productId?: number;
+  categories?: CategoryItem[];
+  allCategories: CategoryItem[];
 }
 
 const CategoriesForm: React.FC<CategoriesFormProps> = ({
   productId,
-  categories,
+  categories = [],
   allCategories,
 }) => {
   const [selectedCat, setSelectedCat] = useState("");
   const router = useRouter();
 
-  // Filtramos las categorías que aún no están asociadas
   const availableCats = allCategories.filter(
     (c) => !categories.some((cc) => cc.id === c.id)
   );
 
   async function handleAdd() {
-    if (!selectedCat) return;
+    if (!selectedCat || !productId) return;
     const catId = parseInt(selectedCat, 10);
     await addCategoryAction(productId, catId);
     router.refresh();
   }
 
   async function handleRemove(categoryId: number) {
-    await removeCategoryAction(productId, categoryId);
+    if (productId) await removeCategoryAction(productId, categoryId);
     router.refresh();
   }
 
   return (
-    <div className="card  shadow p-4">
+    <div className="card shadow p-4">
       <div className="grid gap-5">
         <h2 className="text-xl font-bold">Categorías</h2>
         <div className="flex gap-2">
@@ -54,7 +53,11 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
               </option>
             ))}
           </select>
-          <button className="btn btn-secondary" onClick={handleAdd}>
+          <button
+            className="btn btn-secondary"
+            onClick={handleAdd}
+            disabled={!productId}
+          >
             Agregar
           </button>
         </div>
@@ -62,8 +65,13 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
           {categories.map((cat) => (
             <div key={cat.id} className="flex gap-2">
               <button className="btn flex-wrap">
-              {cat.name}
-                <div className="btn btn-xs btn-circle btn-error" onClick={() => handleRemove(cat.id)}>X</div>
+                {cat.name}
+                <div
+                  className="btn btn-xs btn-circle btn-error"
+                  onClick={() => handleRemove(cat.id)}
+                >
+                  X
+                </div>
               </button>
             </div>
           ))}

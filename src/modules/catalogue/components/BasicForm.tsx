@@ -4,20 +4,26 @@ import React from 'react'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/navigation'
-import { updateBasicAction } from '../actions/updateBasicAction'
+import { createProductAction } from '../actions/createProductAction'
 import { ProductInput } from '../definitions'
 
 interface BasicFormProps {
-  productId: number
-  initialData: {
-    name: string
-    description: string
-    basePrice: number
-    active: boolean
-  }
+  mode?: 'create' | 'update'
+  productId?: number
+  initialData?: Partial<ProductInput>
+
 }
 
-const BasicForm: React.FC<BasicFormProps> = ({ productId, initialData }) => {
+const BasicForm: React.FC<BasicFormProps> = ({ 
+  mode = 'create', 
+  productId,
+  initialData = {
+    name: '',
+    description: '',
+    basePrice: 0,
+    active: true
+  }
+}) => {
   const router = useRouter()
 
   const schema = Yup.object().shape({
@@ -28,14 +34,18 @@ const BasicForm: React.FC<BasicFormProps> = ({ productId, initialData }) => {
   })
 
   async function handleSubmit(values: ProductInput) {
-    await updateBasicAction(productId, values)
-    router.refresh()
+    if (mode === 'create') {
+      const newProduct = await createProductAction(values)
+      if (newProduct) {
+        router.push(`/admin/catalogo/${newProduct.id}`)
+      }
+    }
   }
 
   return (
     <div className="card shadow p-4">
       <Formik
-        initialValues={initialData}
+        initialValues={initialData as ProductInput}
         validationSchema={schema}
         onSubmit={handleSubmit}
       >
@@ -61,7 +71,7 @@ const BasicForm: React.FC<BasicFormProps> = ({ productId, initialData }) => {
               <Field name="active" type="checkbox" className="toggle" />
             </div>
             <button type="submit" disabled={isSubmitting} className="btn btn-primary mt-2">
-              Guardar
+              {mode === 'create' ? 'Crear Producto' : 'Guardar'}
             </button>
           </Form>
         )}

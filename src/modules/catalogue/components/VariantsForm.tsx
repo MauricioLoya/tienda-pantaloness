@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from "react";
 import { addVariantAction } from "../actions/addVariantAction";
@@ -9,11 +9,11 @@ import DisplayTableInfo from "@/lib/components/DisplayTableInfo";
 import ActionButton from "@/lib/components/ActionButton";
 
 interface VariantsFormProps {
-  productId: number;
-  variants: VariantItem[];
+  productId?: number;
+  variants?: VariantItem[];
 }
 
-const VariantsForm: React.FC<VariantsFormProps> = ({ productId, variants }) => {
+const VariantsForm: React.FC<VariantsFormProps> = ({ productId, variants = [] }) => {
   const [size, setSize] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
@@ -27,7 +27,7 @@ const VariantsForm: React.FC<VariantsFormProps> = ({ productId, variants }) => {
   }));
 
   async function handleAdd() {
-    if (!size.trim() || !price || !stock) return;
+    if (!size.trim() || !price || !stock || !productId) return;
     await addVariantAction(
       productId,
       size.trim(),
@@ -82,6 +82,7 @@ const VariantsForm: React.FC<VariantsFormProps> = ({ productId, variants }) => {
         type="button"
         className="btn btn-secondary mb-4"
         onClick={handleAdd}
+        disabled={!productId}
       >
         Agregar Variante
       </button>
