@@ -24,6 +24,8 @@ export type VariantItem = {
   size: string;
   price: number;
   stock: number;
+  discount?: number;
+  discountPrice?: number | null;
 };
 
 export type ProductDetail = {
@@ -90,7 +92,9 @@ export class ProductRepository {
       id: v.id,
       size: v.size,
       price: v.price,
-      stock: v.stock
+      stock: v.stock,
+      discount: v.discount,
+      discountPrice: v.discountPrice
     }))
 
     return { product, images, categories, variants }
@@ -140,16 +144,35 @@ export class ProductRepository {
     })
   }
 
-  async addVariant(productId: number, size: string, price: number, stock: number) {
+  async addVariant(
+    productId: number,
+    size: string,
+    price: number,
+    stock: number,
+    discount?: number
+  ) {
     const exist = await prisma.productVariant.findFirst({
       where: { productId, size }
-    })
-    if (exist) throw new Error("Ya existe una variante con ese tamaño")
-
+    });
+    if (exist) throw new Error("Ya existe una variante con ese tamaño");
+    const discountVal = discount ?? 0;
+    console.log("discountVal",discountVal )
+    const discountPrice = price * (1 - discountVal / 100);
+    console.log("discountPrice",discountPrice )
+    console.log("Math",Math.round(discountPrice * 100) / 100 )
+    
     return prisma.productVariant.create({
-      data: { productId, size, price, stock }
-    })
+      data: { 
+        productId, 
+        size, 
+        price, 
+        stock, 
+        discount: discountVal,
+        discountPrice: Math.round(discountPrice * 100) / 100
+      }
+    });
   }
+  
 
   async removeVariant(variantId: number) {
     return prisma.productVariant.delete({ where: { id: variantId } })

@@ -4,6 +4,7 @@ import { Promotion } from "@prisma/client";
 import { FaCopy } from "react-icons/fa";
 import DisplayInfo from "@/lib/components/DisplayInfo";
 import Link from "next/link";
+import HeaderContent from "@/lib/components/HeaderContent";
 
 type Props = {
   promotion: Promotion;
@@ -20,12 +21,7 @@ const PromotionDetails: React.FC<Props> = ({ promotion }) => {
   };
   return (
     <div className="p-2">
-      <Link className="text-xs text-blue-500 hover:underline" href="./">
-        Atras
-      </Link>
-      <h1 className="text-2xl font-semibold text-gray-900 my-2">
-        Detalles de la Promoción {promotion.name}
-      </h1>
+      <HeaderContent title={`Detalles de la Promoción ${promotion.name}`} href="./"   />
       <div className="grid gap-6">
         <DisplayInfo
           info={[

@@ -15,11 +15,11 @@ const CreateProductPage: React.FC = async () => {
           <BasicForm mode="create" />
         </div>
         <div className="flex flex-col flex-2">
-          <ImagesForm mode="create" />
-          <CategoriesForm mode="create" allCategories={ await new CategoryRepository().getAll()} />
+          <ImagesForm />
+          <CategoriesForm allCategories={ await new CategoryRepository().getAll()} />
         </div>
       </div>
-      <VariantsForm mode="create" />
+      <VariantsForm />
     </>
   )
 }
