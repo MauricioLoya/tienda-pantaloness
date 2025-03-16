@@ -29,9 +29,12 @@ model Region {
   code     String     @id
   name     String
   flag     String
+  currencyCode   String?    // Código de moneda para la región
+  taxRate        Float?     // Tasa de impuesto específica por región
   Product  Product[]
   Order    Order[]
   Category Category[]
+  Promotion Promotion[]
 }
 
 model Category {
@@ -105,6 +108,8 @@ model Promotion {
   isDeleted   Boolean  @default(false)
   createdAt   DateTime @default(now())
   Order       Order[]
+  regionId    String?
+  region      Region?    @relation(fields: [regionId], references: [code])
 }
 
 model Order {
