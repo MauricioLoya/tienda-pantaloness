@@ -18,12 +18,12 @@ export type ProductDetail = {
 }
 
 interface IProductListRepository {
-  getListItem(): Promise<ItemProduct[]>
+  getListItem(regionCode: string): Promise<ItemProduct[]>
   productDetail(id: number): Promise<ProductDetail | null>
 }
 
 export class ProductListRepository implements IProductListRepository {
-  async getListItem(): Promise<ItemProduct[]> {
+  async getListItem(regionCode: string): Promise<ItemProduct[]> {
     try {
       const products = await prisma.product.findMany({
         include: {
@@ -32,6 +32,9 @@ export class ProductListRepository implements IProductListRepository {
               url: true
             }
           }
+        },
+        where: {
+          regionId: regionCode
         }
       })
 

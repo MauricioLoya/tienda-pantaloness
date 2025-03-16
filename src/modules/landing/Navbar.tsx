@@ -54,6 +54,7 @@ const NavBar: React.FC = () => {
             </li>
           </ul>
           <LanguageSwitcher />
+          <CartButton />
         </div>
       </div>
 
@@ -73,10 +74,10 @@ const NavBar: React.FC = () => {
           </ul>
           <div className="flex justify-center mt-4">
             <LanguageSwitcher />
+            <CartButton />
           </div>
         </div>
       )}
-      <CartButton />
     </nav>
   )
 }

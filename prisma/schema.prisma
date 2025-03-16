@@ -25,11 +25,22 @@ model User {
   deletedAt  DateTime?
 }
 
+model Region {
+  code     String     @id
+  name     String
+  flag     String
+  Product  Product[]
+  Order    Order[]
+  Category Category[]
+}
+
 model Category {
   id              Int               @id @default(autoincrement())
   name            String
   description     String
   ProductCategory ProductCategory[]
+  regionId        String?
+  region          Region?           @relation(fields: [regionId], references: [code])
 }
 
 model Product {
@@ -43,6 +54,8 @@ model Product {
   ProductCategory ProductCategory[]
   ProductImage    ProductImage[]
   ProductVariant  ProductVariant[]
+  regionId        String?
+  region          Region?           @relation(fields: [regionId], references: [code])
 }
 
 model ProductImage {
@@ -61,13 +74,13 @@ model ProductCategory {
 }
 
 model ProductVariant {
-  id        Int     @id @default(autoincrement())
-  productId Int
-  size      String
-  product   Product @relation(fields: [productId], references: [id])
-  price     Float
-  stock     Int
-  discount  Float   @default(0)
+  id            Int     @id @default(autoincrement())
+  productId     Int
+  size          String
+  product       Product @relation(fields: [productId], references: [id])
+  price         Float
+  stock         Int
+  discount      Float   @default(0)
   discountPrice Float?
 }
 
@@ -112,6 +125,8 @@ model Order {
   promotion      Promotion?  @relation(fields: [promotionId], references: [id])
   OrderItem      OrderItem[]
   Payment        Payment[]
+  regionId       String?
+  region         Region?     @relation(fields: [regionId], references: [code])
 }
 
 model OrderItem {
