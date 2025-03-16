@@ -16,7 +16,7 @@ export interface UserFormProps {
     password?: string;
     superAdmin?: boolean;
   };
-  mode?: "create" | "update" | "detail";
+  mode?: "create" | "update";
 }
 
 const UserForm: React.FC<UserFormProps> = ({
@@ -79,7 +79,7 @@ const UserForm: React.FC<UserFormProps> = ({
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white shadow rounded">
+    <div>
       <Formik
         initialValues={initialValues}
         validationSchema={UserSchema}

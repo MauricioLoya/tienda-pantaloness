@@ -32,8 +32,8 @@ export default {
           'base-100': '#ffffff',
           info: '#023d79',
           success: '#1d1d1b',
-          warning: '#d4af37',
-          error: '#ff0000'
+          error: '#ff0000',
+          warning: '#FDE68A'
         }
       }
     ]

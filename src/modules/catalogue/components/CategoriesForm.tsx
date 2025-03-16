@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import { addCategoryAction } from "../actions/addCategoryAction";
 import { removeCategoryAction } from "../actions/removeCategoryAction";
@@ -15,11 +14,11 @@ interface CategoriesFormProps {
 const CategoriesForm: React.FC<CategoriesFormProps> = ({
   productId,
   categories = [],
-  allCategories,
+  allCategories = []
 }) => {
   const [selectedCat, setSelectedCat] = useState("");
   const router = useRouter();
-
+  
   const availableCats = allCategories.filter(
     (c) => !categories.some((cc) => cc.id === c.id)
   );

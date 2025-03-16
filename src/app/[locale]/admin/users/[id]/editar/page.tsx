@@ -1,6 +1,7 @@
 import UserForm from '@/modules/user/components/UserForm'
 import { UserRepository } from '@/modules/user/definitions'
 import React from 'react'
+import HeaderContent from "@/lib/components/HeaderContent";
 
 type Props = {
   params: { id: string }
@@ -14,8 +15,8 @@ const EditUserPage: React.FC<Props> = async ({ params }) => {
     return <div>Usuario no encontrado</div>
   }
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Editar Usuario</h1>
+    <div>
+      <HeaderContent title={`Editar Usuario ${user.name}`} href="./" />
       <UserForm id={id} initialData={user} mode="update" />
     </div>
   )
