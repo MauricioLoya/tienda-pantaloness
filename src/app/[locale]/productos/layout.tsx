@@ -7,7 +7,7 @@ const ProductosLayout: React.FC<Props> = ({ children }) => {
   return (
     <>
       <NavBar />
-      <div className="pt-20">{children}</div>
+      <div className="pt-28">{children}</div>
     </>
   )
 }

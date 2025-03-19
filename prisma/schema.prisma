@@ -54,6 +54,7 @@ model Product {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   active          Boolean           @default(false)
+  searchWords     String?
   ProductCategory ProductCategory[]
   ProductImage    ProductImage[]
   ProductVariant  ProductVariant[]
