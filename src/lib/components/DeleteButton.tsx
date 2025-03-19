@@ -5,6 +5,7 @@ import { FaTrash } from "react-icons/fa";
 
 type DeleteButtonProps = {
   label?: string;
+  color?: string;
   onClick: () => void;
 };
 

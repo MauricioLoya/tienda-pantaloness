@@ -7,12 +7,15 @@ import { CategoryItem } from "../definitions";
 import { RegionItem } from "@/modules/region/definitions";
 import { useRouter } from "next/navigation";
 import { updateCategoryAction } from "../action/updateCategoryAction";
-interface UpdateCategoryModalProps {
+import { FaEdit } from "react-icons/fa";
+
+
+interface UpdateCategoryProps {
   category: CategoryItem;
   regions: RegionItem[];
 }
 
-const UpdateCategoryModal: React.FC<UpdateCategoryModalProps> = ({
+const UpdateCategory: React.FC<UpdateCategoryProps> = ({
   category,
   regions,
 }) => {
@@ -38,8 +41,9 @@ const UpdateCategoryModal: React.FC<UpdateCategoryModalProps> = ({
   return (
     <ModalGeneric
       title={`Actualizar Categoría`}
-      triggerBtnTitle="Actualizar Categoría"
+      triggerBtnTitle="Actualizar"
       actionBtnText="Actualizar Cambios"
+      triggerBtnContent={<FaEdit />}
       cancelBtnText="Cancelar"
       actionBtnFunction={handleSubmit}
       cancelBtnFunction={() => console.log("Cancelar")}
@@ -54,4 +58,4 @@ const UpdateCategoryModal: React.FC<UpdateCategoryModalProps> = ({
   );
 };
 
-export default UpdateCategoryModal;
+export default UpdateCategory;

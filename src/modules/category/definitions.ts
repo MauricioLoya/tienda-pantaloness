@@ -29,6 +29,7 @@ export interface ICategoryRepository {
   update(id: number, data: CategoryItem): Promise<CategoryItem>;
   create(data: CategoryItem): Promise<CategoryItem>;
   delete(id: number): Promise<void>;
+  activate(id: number): Promise<void>;
 }
 
 export class CategoryRepository implements ICategoryRepository {
@@ -77,21 +78,36 @@ export class CategoryRepository implements ICategoryRepository {
         id: cat.id,
         name: cat.name,
         description: cat.description,
-        idDeleted: cat.isDeleted,
+        isDeleted: cat.isDeleted,
         regionId: cat.regionId ?? undefined,
       }));
     } catch (error) {
       throw error;
     }
   }
-  async delete(id: number): Promise<void> {
+  async updateIsDeleted(id: number, isDeleted:boolean): Promise<void> {
     try {
       await prisma.category.update({
         where: { id },
         data: {
-          isDeleted: true,
+          isDeleted: isDeleted,
         },
       });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async delete(id: number): Promise<void> {
+    try {
+      await this.updateIsDeleted(id, true);
+    } catch (error) {
+      throw error;
+    }
+  }
+  async activate(id: number): Promise<void> {
+    try {
+      await this.updateIsDeleted(id, false);
     } catch (error) {
       throw error;
     }

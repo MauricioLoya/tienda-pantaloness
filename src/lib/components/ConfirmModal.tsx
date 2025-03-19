@@ -7,8 +7,10 @@ export interface ConfirmModalProps {
   title: string;
   message: string;
   triggerBtnTitle: string;
+  triggerBtnContent?: React.ReactNode;
   confirmBtnText: string;
   cancelBtnText: string;
+  btnColor?: string;
   onConfirm: () => Promise<void> | void;
   onCancel?: () => void;
   fullScreen?: boolean;
@@ -18,8 +20,10 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   title,
   message,
   triggerBtnTitle,
+  triggerBtnContent,
   confirmBtnText,
   cancelBtnText,
+  btnColor,
   onConfirm,
   onCancel,
   fullScreen = false,
@@ -36,9 +40,11 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   return (
     <ModalGeneric
       title={title}
+      triggerBtnContent={triggerBtnContent}
       triggerBtnTitle={triggerBtnTitle}
       actionBtnText={confirmBtnText}
       cancelBtnText={cancelBtnText}
+      btnColor={btnColor}
       actionBtnFunction={(close) => handleConfirm(close)}
       cancelBtnFunction={onCancel}
       fullScreen={fullScreen}

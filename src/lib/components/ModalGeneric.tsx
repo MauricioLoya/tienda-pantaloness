@@ -1,17 +1,32 @@
 import React, { useRef } from "react";
-import { ModalCreateProps } from "../types";
 
-const ModalGeneric = (props: ModalCreateProps) => {
+export interface ModalCreateProps {
+  title: string;
+  triggerBtnTitle: string;
+  triggerBtnContent?: React.ReactNode;
+  children: React.ReactNode;
+  actionBtnText: string;
+  cancelBtnText: string;
+  btnColor?: string;
+  actionBtnFunction: (close: () => void) => void;
+  cancelBtnFunction?: () => void;
+  fullScreen?: boolean;
+}
+
+const ModalGeneric: React.FC<ModalCreateProps> = (props) => {
   const {
     title,
     triggerBtnTitle,
+    triggerBtnContent,
     children,
     actionBtnText,
     cancelBtnText,
+    btnColor = "btn-primary",
     actionBtnFunction,
     cancelBtnFunction,
     fullScreen,
   } = props;
+
   const modalRef = useRef<HTMLDialogElement>(null);
 
   const close = () => {
@@ -22,6 +37,7 @@ const ModalGeneric = (props: ModalCreateProps) => {
     cancelBtnFunction && cancelBtnFunction();
     close();
   };
+
   const modalBoxClasses = fullScreen
     ? "modal-box w-full h-full max-w-full p-6"
     : "modal-box w-12/12 max-w-5xl";
@@ -29,11 +45,14 @@ const ModalGeneric = (props: ModalCreateProps) => {
   return (
     <div className="flex justify-end items-center mb-4">
       <button
-        className="btn btn-active btn-primary"
+        className={`btn btn-active ${btnColor}`}
         data-backdrop="static"
         onClick={() => modalRef?.current?.showModal()}
       >
-        {triggerBtnTitle}
+        <div className="flex items-center gap-2">
+          {triggerBtnContent}
+          {triggerBtnTitle}
+        </div>
       </button>
       <dialog id="my_modal_4" ref={modalRef} className="modal">
         <div className={modalBoxClasses}>
