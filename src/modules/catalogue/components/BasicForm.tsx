@@ -1,83 +1,130 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
-import * as Yup from 'yup'
-import { useRouter } from 'next/navigation'
-import { createProductAction } from '../actions/createProductAction'
-import { ProductInput } from '../definitions'
+import React, { useEffect } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { createProductAction } from "../actions/createProductAction";
+import { updateProductAction } from "../actions/updateProductAction";
+import { ProductInput } from "../definitions";
+import { RegionItem } from "@/modules/region/definitions";
+import { generateSlug } from "@/lib/utils";
 
 interface BasicFormProps {
-  mode?: 'create' | 'update'
-  productId?: number
-  initialData?: Partial<ProductInput>
-
+  productId?: number;
+  initialData?: Partial<ProductInput>;
+  regions: RegionItem[];
 }
 
-const BasicForm: React.FC<BasicFormProps> = ({ 
-  mode = 'create', 
+const BasicForm: React.FC<BasicFormProps> = ({
   productId,
   initialData = {
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     basePrice: 0,
-    active: true
-  }
+    active: true,
+    slug: "",
+    regionId: "",
+  },
+  regions,
 }) => {
-  const router = useRouter()
-
   const schema = Yup.object().shape({
-    name: Yup.string().required('Nombre requerido'),
-    description: Yup.string().required('Descripción requerida'),
-    basePrice: Yup.number().min(0).required('Precio requerido'),
-    active: Yup.boolean()
-  })
+    name: Yup.string().required("Nombre requerido"),
+    description: Yup.string().required("Descripción requerida"),
+    basePrice: Yup.number().min(0).required("Precio requerido"),
+    active: Yup.boolean(),
+    regionId: Yup.string().required("Región es requerida"),
+    slug: Yup.string(),
+  });
 
   async function handleSubmit(values: ProductInput) {
-    if (mode === 'create') {
-      const newProduct = await createProductAction(values)
-      if (newProduct) {
-        router.push(`/admin/catalogo/${newProduct.id}`)
-      }
+    if (!productId) {
+      await createProductAction(values);
+    } else {
+      await updateProductAction(productId, values);
     }
   }
 
   return (
     <div className="card shadow p-4">
+      <h2 className="text-xl font-bold mb-2">Información base</h2>
       <Formik
         initialValues={initialData as ProductInput}
         validationSchema={schema}
         onSubmit={handleSubmit}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, setFieldValue }) => (
           <Form className="flex flex-col gap-3">
             <div>
-              <label>Nombre</label>
-              <Field name="name" type="text" className="input input-bordered w-full" />
+              <label className="block text-gray-700">Nombre</label>
+              <Field
+                name="name"
+                type="text"
+                className="input input-bordered w-full"
+                onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+                  const newSlug = generateSlug(e.target.value);
+                  setFieldValue("slug", newSlug);
+                }}
+              />
               <ErrorMessage name="name" component="div" className="text-error" />
             </div>
             <div>
-              <label>Descripción</label>
-              <Field name="description" as="textarea" className="textarea textarea-bordered w-full" />
-              <ErrorMessage name="description" component="div" className="text-error" />
+              <label className="block text-gray-700">Slug</label>
+              <Field
+                name="slug"
+                type="text"
+                className="input input-bordered w-full"
+                disabled
+              />
             </div>
             <div>
-              <label>Precio Base</label>
-              <Field name="basePrice" type="number" className="input input-bordered w-full" />
-              <ErrorMessage name="basePrice" component="div" className="text-error" />
+              <label className="block text-gray-700">Descripción</label>
+              <Field
+                name="description"
+                as="textarea"
+                className="textarea textarea-bordered w-full"
+              />
+              <ErrorMessage
+                name="description"
+                component="div"
+                className="text-error"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700">Región</label>
+              <Field
+                as="select"
+                name="regionId"
+                className="select select-bordered w-full"
+              >
+                <option value="">Selecciona una región</option>
+                {regions.map((r) => (
+                  <option key={r.code} value={r.code}>
+                    {r.flag} {r.name}
+                  </option>
+                ))}
+              </Field>
+              <ErrorMessage
+                name="regionId"
+                component="div"
+                className="text-error"
+              />
             </div>
             <div className="flex items-center gap-2">
-              <label>Activo</label>
+              <label className="text-gray-700">Activo</label>
               <Field name="active" type="checkbox" className="toggle" />
             </div>
-            <button type="submit" disabled={isSubmitting} className="btn btn-primary mt-2">
-              {mode === 'create' ? 'Crear Producto' : 'Guardar'}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn btn-primary mt-2"
+            >
+              Guardar
             </button>
           </Form>
         )}
       </Formik>
     </div>
-  )
-}
+  );
+};
 
-export default BasicForm
+export default BasicForm;

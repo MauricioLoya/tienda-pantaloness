@@ -80,7 +80,6 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
       >
         {({ handleSubmit }) => (
           <Form onSubmit={handleSubmit}>
-            {/* {status && <div className="mb-4 text-red-500">{status}</div>} */}
             <div className="mb-4">
               <label className="block text-gray-700">Código:</label>
               <Field

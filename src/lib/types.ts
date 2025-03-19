@@ -15,4 +15,5 @@ export interface ModalCreateProps {
   cancelBtnText: string;
   actionBtnFunction: (close: () => void) => void;
   cancelBtnFunction?: () => void;
+  fullScreen?: boolean;
 }

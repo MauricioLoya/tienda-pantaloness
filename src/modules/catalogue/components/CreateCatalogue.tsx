@@ -6,8 +6,9 @@ import CategoriesForm from "./CategoriesForm";
 import ImagesForm from "./ImagesForm";
 import BasicForm from "./BasicForm";
 import { CategoryItem } from "../definitions";
+import { RegionItem } from '@/modules/region/definitions'
 
-const CreateCatalogue = ({allCategories} : {allCategories: CategoryItem[]}) => {
+const CreateCatalogue = ({allCategories, regions} : {allCategories: CategoryItem[], regions: RegionItem[]}) => {  
   return (
     <>
       <ModalGeneric
@@ -22,11 +23,12 @@ const CreateCatalogue = ({allCategories} : {allCategories: CategoryItem[]}) => {
         }}
         cancelBtnText="Cancelar"
         cancelBtnFunction={() => console.log("click action cancel")}
+        fullScreen={true}
       >
         <>
           <div className="flex justify-center mx-auto p-6">
             <div className="flex flex-initial">
-              <BasicForm mode="create" />
+              <BasicForm regions={regions}/>
             </div>
             <div className="flex flex-col flex-2">
               <ImagesForm />

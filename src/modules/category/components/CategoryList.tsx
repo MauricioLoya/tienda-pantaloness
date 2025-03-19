@@ -3,8 +3,7 @@ import { CategoryRepository } from '../definitions'
 import CategoryTable from './CategotyTable'
 
 const CategoryList: React.FC = async () => {
-  const categoryRepo = new CategoryRepository()
-  const categories = await categoryRepo.getAll()
+  const categories = await new CategoryRepository().getAll()
 
   return (
     <>

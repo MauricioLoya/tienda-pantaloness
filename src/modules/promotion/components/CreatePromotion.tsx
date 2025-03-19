@@ -28,7 +28,6 @@ const CreatePromotion = () => {
 
   const handleValuesChange = (values: FormPromotionsValues) => {
     setFormState(values);
-    console.log("Estado actualizado en el padre:", values);
   };
 
   const handleSubmit = async (close: () => void) => {
@@ -38,16 +37,11 @@ const CreatePromotion = () => {
         code: formState.code ? formState.code : '',
         startDate: formState.startDate ? new Date(formState.startDate) : new Date(),
         endDate: formState.endDate ? new Date(formState.endDate) : new Date(),
+        regionId: null,
       };
-      // if (mode === "create") {
       await createPromotionAction(submissionData);
-      // } else if (mode === "update") {
-      //   if (!id) throw new Error("ID no proporcionado");
-      //   await updatePromotionAction(Number(id), submissionData);
-      // }
       close();
     } catch (error: any) {
-      // setStatus(error.message || "Error al procesar la solicitud");
       console.error("Error al procesar la solicitud");
       
     }

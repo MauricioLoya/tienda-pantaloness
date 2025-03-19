@@ -1,81 +1,99 @@
-import { prisma } from '@/lib/prima/client'
-import { Category } from '@prisma/client'
+import { prisma } from '@/lib/prima/client';
+import { Category } from '@prisma/client';
 
-interface ICategoryRepository {
-  getAll(): Promise<Category[]>
-  finsById(id: number): Promise<Category | null>
-  update(id: number, data: Category): Promise<Category>
-  create(data: Omit<Category, 'id'>): Promise<Category>
-  setProduct(id: number, productId: number): Promise<void>
+export interface CategoryItem {
+  id: number;
+  name: string;
+  description: string;
+  isDeleted?: boolean;
+  regionId?: string | undefined; 
+}
+
+export interface CategoryInput {
+  name: string;
+  description: string;
+  regionId: string;
+}
+
+export const fromDatabase = (cat: Category): CategoryItem => ({
+  id: cat.id,
+  name: cat.name,
+  description: cat.description,
+  regionId: cat.regionId ?? undefined,
+  isDeleted: cat.isDeleted,
+});
+
+export interface ICategoryRepository {
+  getAll(): Promise<CategoryItem[]>;
+  finsById(id: number): Promise<CategoryItem | null>;
+  update(id: number, data: CategoryItem): Promise<CategoryItem>;
+  create(data: CategoryItem): Promise<CategoryItem>;
+  delete(id: number): Promise<void>;
 }
 
 export class CategoryRepository implements ICategoryRepository {
-  finsById(id: number): Promise<Category | null> {
+  async finsById(id: number): Promise<CategoryItem | null> {
     try {
-      const found = prisma.category.findFirst({
-        where: { id }
-      })
-      return found
-    } catch (error) {
-      throw error
-    }
-  }
-  update(id: number, data: Category): Promise<Category> {
-    try {
-      const updated = prisma.category.update({
+      const cat = await prisma.category.findFirst({
         where: { id },
-        data
-      })
-      return updated
+      });
+      if (!cat) return null;
+      return fromDatabase(cat);
     } catch (error) {
-      throw error
-    }
-  }
-  create(data: Omit<Category, 'id'>): Promise<Category> {
-    try {
-      const created = prisma.category.create({
-        data
-      })
-      return created
-    } catch (error) {
-      throw error
-    }
-  }
-  async getAll(): Promise<Category[]> {
-    try {
-      const categories = prisma.category.findMany()
-      return categories
-    } catch (error) {
-      throw error
+      throw error;
     }
   }
 
-  async setProduct(categoryId: number, productId: number): Promise<void> {
+  async update(id: number, data: CategoryItem): Promise<CategoryItem> {
     try {
-      const category = await prisma.category.findFirst({
-        where: { id: categoryId }
-      })
-
-      if (!category) {
-        throw new Error('Category not found')
-      }
-
-      const product = await prisma.product.findFirst({
-        where: { id: productId }
-      })
-
-      if (!product) {
-        throw new Error('Product not found')
-      }
-
-      await prisma.productCategory.create({
+      const updatedCategory = await prisma.category.update({
+        where: { id },
         data: {
-          categoryId: categoryId,
-          productId
-        }
-      })
+          name: data.name,
+          description: data.description,
+          regionId: data.regionId,
+        },
+      });
+      console.log(updatedCategory);
+      return fromDatabase(updatedCategory);
     } catch (error) {
-      throw error
+      throw error;
+    }
+  }
+
+  async create(data: CategoryItem): Promise<CategoryItem> {
+    try {
+      const createdCategory = await prisma.category.create({ data });
+      return fromDatabase(createdCategory);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAll(): Promise<CategoryItem[]> {
+    try {
+      const categories = await prisma.category.findMany();
+      return categories.map((cat) => ({
+        id: cat.id,
+        name: cat.name,
+        description: cat.description,
+        idDeleted: cat.isDeleted,
+        regionId: cat.regionId ?? undefined,
+      }));
+    } catch (error) {
+      throw error;
+    }
+  }
+  async delete(id: number): Promise<void> {
+    try {
+      await prisma.category.update({
+        where: { id },
+        data: {
+          isDeleted: true,
+        },
+      });
+    } catch (error) {
+      throw error;
     }
   }
 }

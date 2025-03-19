@@ -10,6 +10,7 @@ const ModalGeneric = (props: ModalCreateProps) => {
     cancelBtnText,
     actionBtnFunction,
     cancelBtnFunction,
+    fullScreen,
   } = props;
   const modalRef = useRef<HTMLDialogElement>(null);
 
@@ -21,6 +22,9 @@ const ModalGeneric = (props: ModalCreateProps) => {
     cancelBtnFunction && cancelBtnFunction();
     close();
   };
+  const modalBoxClasses = fullScreen
+    ? "modal-box w-full h-full max-w-full p-6"
+    : "modal-box w-12/12 max-w-5xl";
 
   return (
     <div className="flex justify-end items-center mb-4">
@@ -32,7 +36,7 @@ const ModalGeneric = (props: ModalCreateProps) => {
         {triggerBtnTitle}
       </button>
       <dialog id="my_modal_4" ref={modalRef} className="modal">
-        <div className="modal-box w-12/12 max-w-5xl">
+        <div className={modalBoxClasses}>
           <h1 className="font-bold text-xl mb-6">{title}</h1>
           {children}
           <div className="modal-action">

@@ -7,5 +7,5 @@ export async function updateProductAction(
   input: Partial<ProductInput>
 ) {
   const repo = new ProductRepository();
-  return repo.updateProduct(id, input);
+  return repo.updateBasic(id, input);
 }
