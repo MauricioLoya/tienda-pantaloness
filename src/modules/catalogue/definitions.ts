@@ -100,7 +100,6 @@ export class ProductRepository {
       discount: v.discount,
       discountPrice: v.discountPrice,
     }));
-    console.log(product, images, categories, variants)
     return { product, images, categories, variants };
   }
 
@@ -183,5 +182,36 @@ export class ProductRepository {
 
   async removeVariant(variantId: number) {
     return prisma.productVariant.delete({ where: { id: variantId } });
+  }
+
+  async getProductsForCategory(categoryId: number): Promise<ProductAdminTableRow[]> {
+    const products = await prisma.product.findMany({
+      where: {
+        ProductCategory: {
+          some: {
+            categoryId,
+          },
+        },
+      },
+      include: {
+        ProductCategory: { include: { category: true } },
+        ProductImage: { include: { product: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    return products.map((prod) => {
+      const categoryNames = prod.ProductCategory.map((pc) => pc.category.name).join(", ");
+      return {
+        id: prod.id,
+        name: prod.name,
+        basePrice: prod.basePrice,
+        active: prod.active,
+        slug: prod.slug ?? "",
+        regionId: prod.regionId ?? "",
+        categories: categoryNames,
+        createdAt: prod.createdAt,
+        imageUrl: prod.ProductImage[0]?.url,
+      };
+    });
   }
 }

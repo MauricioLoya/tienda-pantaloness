@@ -17,3 +17,5 @@ export interface ModalCreateProps {
   cancelBtnFunction?: () => void;
   fullScreen?: boolean;
 }
+
+export type ToastType = 'success' | 'error' | 'info';

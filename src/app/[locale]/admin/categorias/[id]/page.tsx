@@ -4,22 +4,25 @@ import { notFound } from "next/navigation";
 import HeaderContent from "@/lib/components/HeaderContent";
 import CategoryDetail from "@/modules/category/components/CategoryDetail";
 import { RegionRepository } from "@/modules/region/definitions";
+import { ProductRepository } from "@/modules/catalogue/definitions";
 import UpdateCategory from "@/modules/category/components/UpdateCategory";
 import DeleteCategory from "@/modules/category/components/DeleteCategory";
 import ActivateCategory from "@/modules/category/components/ActivateCategory";
+
 type Props = {
   params: Promise<{ id: string }>;
 };
 
-const CategoryDetailsPage: React.FC<Props> = async ({ params }) => {
+export default async function CategoryDetailsPage({ params }: Props) {
   const { id } = await params;
-  const categoryRepo = new CategoryRepository();
-  const category = await categoryRepo.finsById(Number(id));
+  const categoryId = Number(id);
+  const category = await new CategoryRepository().finsById(categoryId);
   if (!category) return notFound();
-  const regionRepo = new RegionRepository();
   const region = category.regionId
-    ? await regionRepo.getById(category.regionId)
+    ? await new RegionRepository().getById(category.regionId)
     : null;
+
+  const products = await new ProductRepository().getProductsForCategory(categoryId);
 
   return (
     <>
@@ -36,10 +39,8 @@ const CategoryDetailsPage: React.FC<Props> = async ({ params }) => {
             <DeleteCategory category={category} />
           )}
         </div>
-        <CategoryDetail category={category} region={region} />
+        <CategoryDetail category={category} region={region} products={products}/>
       </div>
     </>
   );
-};
-
-export default CategoryDetailsPage;
+}
