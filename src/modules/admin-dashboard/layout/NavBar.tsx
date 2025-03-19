@@ -15,7 +15,7 @@ const NavBar: React.FC = () => {
       emoji: "📦",
     },
     {
-      name: "Cateogrias",
+      name: "Categorias",
       href: "/admin/categorias",
       emoji: "📝",
     },
