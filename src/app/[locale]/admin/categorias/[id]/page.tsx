@@ -22,24 +22,35 @@ export default async function CategoryDetailsPage({ params }: Props) {
     ? await new RegionRepository().getById(category.regionId)
     : null;
 
-  const products = await new ProductRepository().getProductsForCategory(categoryId);
-
+  const products = await new ProductRepository().getProductsForCategory(
+    categoryId
+  );
+  const actions = (
+    <div className="flex justify-end items-center gap-4">
+      <UpdateCategory
+        category={category}
+        regions={await new RegionRepository().getAll()}
+      />
+      {category.isDeleted ? (
+        <ActivateCategory category={category} />
+      ) : (
+        <DeleteCategory category={category} />
+      )}
+    </div>
+  );
   return (
     <>
-      <HeaderContent title={`Detalle de ${category.name}`} href="./" />
+      <HeaderContent
+        title={`Detalle de ${category.name}`}
+        href="./"
+        action={actions}
+      />
       <div className="flex flex-col gap-6 ">
-        <div className="flex justify-end items-center gap-4">
-          <UpdateCategory
-            category={category}
-            regions={await new RegionRepository().getAll()}
-          />
-          {category.isDeleted ? (
-            <ActivateCategory category={category} />
-          ) : (
-            <DeleteCategory category={category} />
-          )}
-        </div>
-        <CategoryDetail category={category} region={region} products={products}/>
+        <CategoryDetail
+          category={category}
+          region={region}
+          products={products}
+        />
       </div>
     </>
   );

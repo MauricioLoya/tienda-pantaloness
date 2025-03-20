@@ -34,7 +34,7 @@ const Toast: React.FC<ToastProps> = ({
   return (
     <div className="toast toast-top toast-end">
       <div className={`alert ${alertClass}`}>
-        <span>M{message}</span>
+        <span>{message}</span>
       </div>
     </div>
   );
