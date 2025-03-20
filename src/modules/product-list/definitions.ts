@@ -3,6 +3,7 @@ import { Product, ProductVariant, Prisma } from '@prisma/client'
 
 export type ItemProduct = {
   id: number
+  slug: string
   name: string
   description: string
   price: number
@@ -29,7 +30,7 @@ export type SearchParams = {
 
 interface IProductListRepository {
   getListItem(regionCode: string): Promise<ItemProduct[]>
-  productDetail(id: number): Promise<ProductDetail | null>
+  productDetail(slug: string): Promise<ProductDetail | null>
   searchProducts(params: SearchParams): Promise<ItemProduct[]>
   getVariantSizes(regionCode: string): Promise<string[]>
 }
@@ -52,6 +53,7 @@ export class ProductListRepository implements IProductListRepository {
 
       return products.map(product => ({
         id: product.id,
+        slug: product.slug ?? '',
         name: product.name,
         description: product.description,
         price: product.basePrice,
@@ -64,10 +66,10 @@ export class ProductListRepository implements IProductListRepository {
     }
   }
 
-  async productDetail(id: number): Promise<ProductDetail | null> {
+  async productDetail(slug: string): Promise<ProductDetail | null> {
     try {
       const product = await prisma.product.findFirst({
-        where: { id },
+        where: { slug },
         include: {
           ProductVariant: true,
           ProductImage: {
@@ -227,6 +229,7 @@ export class ProductListRepository implements IProductListRepository {
 
         return {
           id: product.id,
+          slug: product.slug ?? '',
           name: product.name,
           description: product.description,
           price: product.basePrice,
@@ -255,15 +258,14 @@ export class ProductListRepository implements IProductListRepository {
           size: true
         },
         distinct: ['size']
-      });
+      })
 
       // Extract and sort sizes
-      const sizes = productVariants.map(variant => variant.size).sort();
-      
-      return sizes;
+      const sizes = productVariants.map(variant => variant.size).sort()
+      return sizes
     } catch (error) {
-      console.error('Error fetching product sizes:', error);
-      throw error;
+      console.error('Error fetching product sizes:', error)
+      throw error
     }
   }
 }
