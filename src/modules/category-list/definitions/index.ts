@@ -1,9 +1,9 @@
+import { prisma } from '@/lib/prima/client'
 import { ItemProduct } from '@/modules/product-list/definitions'
 
 export interface Category {
   id: string
   name: string
-  slug: string
   description?: string
   imageUrl?: string
   active: boolean
@@ -14,17 +14,9 @@ export interface CategoryWithProducts {
   products: ItemProduct[]
 }
 
-import { PrismaClient } from '@prisma/client'
-
 export class CategoryListRepository {
-  private prisma: PrismaClient
-
-  constructor() {
-    this.prisma = new PrismaClient()
-  }
-
-  async getCategories(locale: string = 'es'): Promise<Category[]> {
-    const categories = await this.prisma.category.findMany({
+  async getCategories(locale: string = 'mx'): Promise<Category[]> {
+    const categories = await prisma.category.findMany({
       where: {
         isDeleted: false,
         region: {
@@ -36,18 +28,19 @@ export class CategoryListRepository {
     return categories.map(category => ({
       id: category.id.toString(),
       name: category.name,
-      slug: this.slugify(category.name),
       description: category.description,
-      active: !category.isDeleted
+      active: !category.isDeleted,
+      imageUrl:
+        'https://img.daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.webp'
     }))
   }
 
   async getProductsByCategory(
     categoryId: string,
     limit: number = 4,
-    locale: string = 'es'
+    locale: string = 'mx'
   ): Promise<ItemProduct[]> {
-    const products = await this.prisma.product.findMany({
+    const products = await prisma.product.findMany({
       where: {
         ProductCategory: {
           some: {
@@ -72,7 +65,7 @@ export class CategoryListRepository {
       name: product.name,
       description: product.description || '',
       price: Number(product.basePrice) || 0,
-      thumbnail: product.ProductImage[0]?.url || '',
+      thumbnail: product.ProductImage[0]?.url || 'not-found',
       hasDiscount: Boolean(product.active),
       isAvailable: Boolean(product.active)
     }))
@@ -96,16 +89,5 @@ export class CategoryListRepository {
     )
 
     return categoriesWithProducts
-  }
-
-  private slugify(text: string): string {
-    return text
-      .toString()
-      .toLowerCase()
-      .replace(/\s+/g, '-')
-      .replace(/[^\w\-]+/g, '')
-      .replace(/\-\-+/g, '-')
-      .replace(/^-+/, '')
-      .replace(/-+$/, '')
   }
 }

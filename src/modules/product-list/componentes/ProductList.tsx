@@ -42,6 +42,7 @@ const ProductListContent: React.FC<ProductListContentProps> = async ({
     | 'asc'
     | 'desc'
     | undefined
+  const category = resolvedParams.category as string | undefined
 
   const locale = headersList.get('x-next-intl-locale') || ''
   const productRepository = new ProductListRepository()
@@ -52,7 +53,8 @@ const ProductListContent: React.FC<ProductListContentProps> = async ({
     minPrice: minPrice?.toString(),
     maxPrice: maxPrice?.toString(),
     sortBy,
-    sortDirection
+    sortDirection,
+    category
   })
 
   return (

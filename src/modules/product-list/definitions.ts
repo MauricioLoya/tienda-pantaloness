@@ -26,6 +26,7 @@ export type SearchParams = {
   sortBy?: string
   sortDirection?: 'asc' | 'desc'
   regionCode: string
+  category?: string
 }
 
 interface IProductListRepository {
@@ -33,6 +34,9 @@ interface IProductListRepository {
   productDetail(slug: string): Promise<ProductDetail | null>
   searchProducts(params: SearchParams): Promise<ItemProduct[]>
   getVariantSizes(regionCode: string): Promise<string[]>
+  getCategoriesList(
+    regionCode: string
+  ): Promise<{ label: string; value: number }[]>
 }
 
 export class ProductListRepository implements IProductListRepository {
@@ -102,16 +106,9 @@ export class ProductListRepository implements IProductListRepository {
     minPrice,
     maxPrice,
     sortBy,
-    sortDirection
-  }: {
-    regionCode: string
-    searchQuery?: string
-    size?: string
-    minPrice?: string
-    maxPrice?: string
-    sortBy?: string
-    sortDirection?: 'asc' | 'desc'
-  }): Promise<ItemProduct[]> {
+    sortDirection,
+    category
+  }: SearchParams): Promise<ItemProduct[]> {
     console.log('Search params:', {
       regionCode,
       searchQuery,
@@ -148,6 +145,20 @@ export class ProductListRepository implements IProductListRepository {
         where.ProductVariant = {
           some: {
             size: size.trim()
+          }
+        }
+      }
+
+      // Apply category filter - filter products that belong to the selected category
+      if (category && category.trim() !== '') {
+        const categoryId = parseInt(category, 10)
+        console.log('Category ID:', categoryId)
+
+        if (!isNaN(categoryId)) {
+          where.ProductCategory = {
+            some: {
+              categoryId: categoryId
+            }
           }
         }
       }
@@ -265,6 +276,30 @@ export class ProductListRepository implements IProductListRepository {
       return sizes
     } catch (error) {
       console.error('Error fetching product sizes:', error)
+      throw error
+    }
+  }
+
+  async getCategoriesList(
+    regionCode: string
+  ): Promise<{ label: string; value: number }[]> {
+    try {
+      const categories = await prisma.category.findMany({
+        where: {
+          regionId: regionCode,
+          isDeleted: false
+        },
+        select: {
+          name: true,
+          id: true
+        }
+      })
+      return categories.map(category => ({
+        label: category.name,
+        value: category.id
+      }))
+    } catch (error) {
+      console.error('Error fetching categories:', error)
       throw error
     }
   }

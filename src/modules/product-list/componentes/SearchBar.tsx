@@ -1,10 +1,12 @@
 'use client'
 import { useState, FormEvent, ChangeEvent, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 interface SearchBarProps {
   sizeList?: string[]
+  categoryList?: { label: string; value: number }[]
   searchQuery?: string | string[]
+  category?: string | string[]
   size?: string | string[]
   minPrice?: string | string[]
   maxPrice?: string | string[]
@@ -15,23 +17,38 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({
   searchQuery = '',
+  category = '',
   size = '',
   minPrice = '',
   maxPrice = '',
   sortBy = '',
   sortDirection = 'asc',
-  sizeList = []
+  sizeList = [],
+  categoryList = []
 }) => {
   const router = useRouter()
+  const searchParams = useSearchParams()
 
-  // State for form fields
+  // State for form fields - initialize from URL params if available
   const [formState, setFormState] = useState({
-    searchQuery: typeof searchQuery === 'string' ? searchQuery : '',
-    size: typeof size === 'string' ? size : '',
-    minPrice: typeof minPrice === 'string' ? minPrice : '',
-    maxPrice: typeof maxPrice === 'string' ? maxPrice : '',
-    sortBy: typeof sortBy === 'string' ? sortBy : '',
-    sortDirection: typeof sortDirection === 'string' ? sortDirection : 'asc'
+    searchQuery:
+      searchParams.get('searchQuery') ||
+      (typeof searchQuery === 'string' ? searchQuery : ''),
+    category:
+      searchParams.get('category') ||
+      (typeof category === 'string' ? category : ''),
+    size: searchParams.get('size') || (typeof size === 'string' ? size : ''),
+    minPrice:
+      searchParams.get('minPrice') ||
+      (typeof minPrice === 'string' ? minPrice : ''),
+    maxPrice:
+      searchParams.get('maxPrice') ||
+      (typeof maxPrice === 'string' ? maxPrice : ''),
+    sortBy:
+      searchParams.get('sortBy') || (typeof sortBy === 'string' ? sortBy : ''),
+    sortDirection:
+      searchParams.get('sortDirection') ||
+      (typeof sortDirection === 'string' ? sortDirection : 'asc')
   })
 
   // Loading state
@@ -61,17 +78,20 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const applyFilters = () => {
     setLoading(true)
 
-    // Create URL with query parameters
-    const params = new URLSearchParams()
+    // Start with existing URL parameters instead of creating a new empty object
+    const params = new URLSearchParams(window.location.search)
 
-    // Only add non-empty values to the URL
+    // Only add or update parameters from the form state
     Object.entries(formState).forEach(([key, value]) => {
       if (value) {
         params.set(key, value.toString())
+      } else {
+        // Remove the parameter if empty
+        params.delete(key)
       }
     })
 
-    // Redirect to the same page with the new query parameters
+    // Redirect to the same page with the merged query parameters
     router.push(`?${params.toString()}`)
 
     // Set loading to false after a short delay to show the loading indicator
@@ -98,6 +118,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         clearTimeout(searchTimeoutRef.current)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState]) // React to all form state changes
 
   // No need for initial load effect since the page will load with parameters if they exist
@@ -133,19 +154,41 @@ const SearchBar: React.FC<SearchBarProps> = ({
       <div className="collapse-content">
         <form onSubmit={handleSubmit}>
           <div className="p-4">
-            {/* Search field */}
-            <div className="form-control w-full mb-4">
-              <label className="label">
-                <span className="label-text">Buscar</span>
-              </label>
-              <input
-                type="text"
-                name="searchQuery"
-                value={formState.searchQuery}
-                onChange={handleInputChange}
-                placeholder="Buscar productos..."
-                className="input input-bordered w-full"
-              />
+            {/* Search field and Category in a flex container */}
+            <div className="flex flex-col md:flex-row gap-4 mb-4">
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text">Buscar</span>
+                </label>
+                <input
+                  type="text"
+                  name="searchQuery"
+                  value={formState.searchQuery}
+                  onChange={handleInputChange}
+                  placeholder="Buscar productos..."
+                  className="input input-bordered w-full"
+                />
+              </div>
+
+              {/* Category Filter */}
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text">Categoría</span>
+                </label>
+                <select
+                  name="category"
+                  value={formState.category}
+                  onChange={handleInputChange}
+                  className="select select-bordered w-full"
+                >
+                  <option value="">Todas las categorías</option>
+                  {categoryList.map(cat => (
+                    <option key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">

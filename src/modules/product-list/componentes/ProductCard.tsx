@@ -29,8 +29,8 @@ const ProductCard: React.FC<Props> = ({
         <figure className="h-80 overflow-hidden">
           <img
             className="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
-            src={thumbnail}
-            alt={name}
+            alt={name ?? 'not-found'}
+            src={thumbnail ?? 'not-found'}
           />
         </figure>
         <div className="card-body flex flex-col flex-1">
