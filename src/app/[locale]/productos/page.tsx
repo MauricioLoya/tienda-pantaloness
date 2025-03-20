@@ -13,11 +13,21 @@ const ProductosPage: React.FC<Props> = async ({ searchParams }) => {
   const { searchQuery, size, minPrice, maxPrice, sortBy, sortDirection } =
     await searchParams
   const productListRepository = new ProductListRepository()
-  const sizeList = await productListRepository.getVariantSizes(locale)
+
+  const sizeListPromise = productListRepository.getVariantSizes(locale)
+  const categoryListPromise = await productListRepository.getCategoriesList(
+    locale
+  )
+
+  const [sizeList, categoryList] = await Promise.all([
+    sizeListPromise,
+    categoryListPromise
+  ])
 
   return (
     <>
       <SearchBar
+        categoryList={categoryList}
         sizeList={sizeList}
         regionCode={locale}
         searchQuery={searchQuery}

@@ -1,14 +1,15 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import HeroSection from '@/modules/category-list/components/HeroSection'
 import CategoryList from '@/modules/category-list/components/CategoryList'
-
-export const revalidate = 3600 // Revalidate at most every hour
+import CategoryListSkeleton from '@/modules/category-list/components/CategoryListSkeleton'
 
 async function CategoriasPage() {
   return (
     <div className="min-h-screen">
       <HeroSection />
-      <CategoryList />
+      <Suspense fallback={<CategoryListSkeleton />}>
+        <CategoryList />
+      </Suspense>
     </div>
   )
 }

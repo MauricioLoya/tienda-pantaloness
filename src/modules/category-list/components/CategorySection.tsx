@@ -1,20 +1,18 @@
 import React from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
+
 import { Category } from '../definitions'
 import ProductCard from '@/modules/product-list/componentes/ProductCard'
 import { ItemProduct } from '@/modules/product-list/definitions'
+import { Link } from '@/i18n/navigation'
 
 interface CategorySectionProps {
   category: Category
   products: ItemProduct[]
-  locale: string
 }
 
 const CategorySection: React.FC<CategorySectionProps> = ({
   category,
-  products,
-  locale
+  products
 }) => {
   return (
     <div className="category-section">
@@ -26,7 +24,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
           )}
         </div>
         <Link
-          href={`/${locale}/categorias/${category.slug}`}
+          href={`/productos?category=${category.id}`}
           className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition"
         >
           Ver todos <span className="ml-2">→</span>
@@ -35,10 +33,9 @@ const CategorySection: React.FC<CategorySectionProps> = ({
 
       {category.imageUrl && (
         <div className="mb-10 relative h-64 md:h-96 rounded-xl overflow-hidden">
-          <Image
-            src={category.imageUrl}
-            alt={category.name}
-            fill
+          <img
+            src={category?.imageUrl ?? 'not-found'}
+            alt={category?.name ?? 'not-found'}
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
           />

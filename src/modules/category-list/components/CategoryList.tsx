@@ -13,16 +13,18 @@ const CategoryList: React.FC = async () => {
     4,
     locale
   )
+  const filteredCategories = categoriesWithProducts.filter(
+    item => item.products.length > 0
+  )
 
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="grid gap-16">
-        {categoriesWithProducts.map(item => (
+        {filteredCategories.map(item => (
           <CategorySection
             key={item.category.id}
             category={item.category}
             products={item.products}
-            locale={locale}
           />
         ))}
       </div>
