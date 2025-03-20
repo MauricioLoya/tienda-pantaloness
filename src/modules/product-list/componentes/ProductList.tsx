@@ -61,7 +61,7 @@ const ProductListContent: React.FC<ProductListContentProps> = async ({
         {products.map(product => (
           <ProductCard
             key={product.id}
-            id={product.id.toString()}
+            slug={product.slug}
             name={product.name}
             description={product.description}
             basePrice={product.price}

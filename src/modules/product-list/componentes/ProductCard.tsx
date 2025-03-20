@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
 
 type Props = {
-  id: string
+  slug: string
   name: string
   description: string
   basePrice: number
@@ -14,17 +14,17 @@ type Props = {
 }
 
 const ProductCard: React.FC<Props> = ({
-  id,
   thumbnail,
   name,
   description,
   basePrice,
   discountedPrice,
   discountPercentage,
-  isAvailable
+  isAvailable,
+  slug
 }) => {
   return (
-    <Link href={`/productos/${id}`} className="block">
+    <Link href={`/productos/${slug}`} className="block">
       <div className="card card-compact bg-base-100 lg:w-72 shadow-xl h-[600px] flex flex-col group hover:shadow-2xl transition-shadow duration-300">
         <figure className="h-80 overflow-hidden">
           <img
