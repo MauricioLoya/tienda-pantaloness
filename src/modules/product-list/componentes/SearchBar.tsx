@@ -3,6 +3,7 @@ import { useState, FormEvent, ChangeEvent, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface SearchBarProps {
+  sizeList?: string[]
   searchQuery?: string | string[]
   size?: string | string[]
   minPrice?: string | string[]
@@ -18,7 +19,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
   minPrice = '',
   maxPrice = '',
   sortBy = '',
-  sortDirection = 'asc'
+  sortDirection = 'asc',
+  sizeList = []
 }) => {
   const router = useRouter()
 
@@ -159,10 +161,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   className="select select-bordered w-full"
                 >
                   <option value="">Todas las tallas</option>
-                  <option value="S">S</option>
-                  <option value="M">M</option>
-                  <option value="L">L</option>
-                  <option value="XL">XL</option>
+                  {sizeList.map(size => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
                 </select>
               </div>
 

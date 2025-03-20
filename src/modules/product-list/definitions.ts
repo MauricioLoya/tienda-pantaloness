@@ -31,6 +31,7 @@ interface IProductListRepository {
   getListItem(regionCode: string): Promise<ItemProduct[]>
   productDetail(id: number): Promise<ProductDetail | null>
   searchProducts(params: SearchParams): Promise<ItemProduct[]>
+  getVariantSizes(regionCode: string): Promise<string[]>
 }
 
 export class ProductListRepository implements IProductListRepository {
@@ -131,18 +132,6 @@ export class ProductListRepository implements IProductListRepository {
         // Using Prisma's native capabilities for case-insensitive search
         where.OR = [
           {
-            name: {
-              mode: 'insensitive',
-              contains: searchQuery.trim()
-            }
-          },
-          {
-            description: {
-              mode: 'insensitive',
-              contains: searchQuery.trim()
-            }
-          },
-          {
             // Search in comma-separated searchWords field
             searchWords: {
               contains: searchQuery.trim(),
@@ -196,7 +185,7 @@ export class ProductListRepository implements IProductListRepository {
       }
 
       // Build the orderBy condition
-      const orderBy: any = {}
+      const orderBy: Record<string, 'asc' | 'desc' | undefined> = {}
       if (sortBy && sortBy.trim() !== '') {
         if (sortBy === 'name') {
           orderBy.name = sortDirection
@@ -228,38 +217,9 @@ export class ProductListRepository implements IProductListRepository {
         }
       })
 
-      // For databases that don't properly handle accents in searches,
-      // we can add an additional filtering step in JavaScript but only for searchWords
-      let filteredProducts = products
+      console.log(`Found ${products.length} products`)
 
-      if (searchQuery && searchQuery.trim() !== '') {
-        const normalizedQuery = searchQuery
-          .toLowerCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-
-        filteredProducts = products.filter(product => {
-          // Check if product passes the initial filter
-          if (!product.searchWords) return true // Keep products that passed database filter
-
-          // Only normalize searchWords for accent-insensitive comparison
-          const normalizedSearchWords = product.searchWords
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-
-          // Check if comma-separated words contain the query
-          const searchWordsList = normalizedSearchWords
-            .split(',')
-            .map(word => word.trim())
-
-          return searchWordsList.some(word => word.includes(normalizedQuery))
-        })
-      }
-
-      console.log(`Found ${filteredProducts.length} products`)
-
-      return filteredProducts.map(product => {
+      return products.map(product => {
         // Check for products with discount
         const hasDiscount = product.ProductVariant.some(
           variant => variant.discount > 0 && variant.discountPrice !== null
@@ -278,6 +238,32 @@ export class ProductListRepository implements IProductListRepository {
     } catch (error) {
       console.error('Error searching products:', error)
       throw error
+    }
+  }
+
+  async getVariantSizes(regionCode: string): Promise<string[]> {
+    try {
+      // Get all product variants for products in the specific region
+      const productVariants = await prisma.productVariant.findMany({
+        where: {
+          product: {
+            regionId: regionCode,
+            active: true
+          }
+        },
+        select: {
+          size: true
+        },
+        distinct: ['size']
+      });
+
+      // Extract and sort sizes
+      const sizes = productVariants.map(variant => variant.size).sort();
+      
+      return sizes;
+    } catch (error) {
+      console.error('Error fetching product sizes:', error);
+      throw error;
     }
   }
 }
