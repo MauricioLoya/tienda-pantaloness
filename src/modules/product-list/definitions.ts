@@ -7,6 +7,8 @@ export type ItemProduct = {
   name: string
   description: string
   price: number
+  discountedPrice: number | null
+  discountPercentage: number | null
   thumbnail: string
   hasDiscount: boolean
   isAvailable: boolean
@@ -30,7 +32,6 @@ export type SearchParams = {
 }
 
 interface IProductListRepository {
-  getListItem(regionCode: string): Promise<ItemProduct[]>
   productDetail(slug: string): Promise<ProductDetail | null>
   searchProducts(params: SearchParams): Promise<ItemProduct[]>
   getVariantSizes(regionCode: string): Promise<string[]>
@@ -40,36 +41,6 @@ interface IProductListRepository {
 }
 
 export class ProductListRepository implements IProductListRepository {
-  async getListItem(regionCode: string): Promise<ItemProduct[]> {
-    try {
-      const products = await prisma.product.findMany({
-        include: {
-          ProductImage: {
-            select: {
-              url: true
-            }
-          }
-        },
-        where: {
-          regionId: regionCode
-        }
-      })
-
-      return products.map(product => ({
-        id: product.id,
-        slug: product.slug ?? '',
-        name: product.name,
-        description: product.description,
-        price: product.basePrice,
-        thumbnail: product.ProductImage[0]?.url ?? 'not-found',
-        hasDiscount: false,
-        isAvailable: product.active
-      }))
-    } catch (error) {
-      throw error
-    }
-  }
-
   async productDetail(slug: string): Promise<ProductDetail | null> {
     try {
       const product = await prisma.product.findFirst({
@@ -123,7 +94,11 @@ export class ProductListRepository implements IProductListRepository {
       // Build the where condition for search filters
       const where: Prisma.ProductWhereInput = {
         regionId: regionCode,
-        active: true
+        active: true,
+        // Ensure products have at least one variant
+        ProductVariant: {
+          some: {}
+        }
       }
 
       // Add text search if provided
@@ -144,6 +119,7 @@ export class ProductListRepository implements IProductListRepository {
       if (size && size.trim() !== '') {
         where.ProductVariant = {
           some: {
+            ...where.ProductVariant?.some,
             size: size.trim()
           }
         }
@@ -152,7 +128,6 @@ export class ProductListRepository implements IProductListRepository {
       // Apply category filter - filter products that belong to the selected category
       if (category && category.trim() !== '') {
         const categoryId = parseInt(category, 10)
-        console.log('Category ID:', categoryId)
 
         if (!isNaN(categoryId)) {
           where.ProductCategory = {
@@ -180,20 +155,12 @@ export class ProductListRepository implements IProductListRepository {
           priceFilter.lte = parseFloat(maxPrice)
         }
 
-        // Apply price filter to base price or variants
-        if (size && size.trim() !== '') {
-          // If size specified, filter on variant price
-          if (!where.ProductVariant) {
-            where.ProductVariant = { some: { size: size.trim() } }
-          }
-
-          where.ProductVariant.some = {
-            ...where.ProductVariant.some,
+        // Apply price filter to variants
+        where.ProductVariant = {
+          some: {
+            ...where.ProductVariant?.some,
             price: priceFilter
           }
-        } else {
-          // Filter on base price
-          where.basePrice = priceFilter
         }
       }
 
@@ -206,9 +173,6 @@ export class ProductListRepository implements IProductListRepository {
           orderBy.basePrice = sortDirection
         }
       }
-
-      console.log('Where condition:', JSON.stringify(where, null, 2))
-      console.log('Order by:', orderBy)
 
       // Execute the Prisma query
       const products = await prisma.product.findMany({
@@ -223,6 +187,7 @@ export class ProductListRepository implements IProductListRepository {
           },
           ProductVariant: {
             select: {
+              price: true,
               discount: true,
               discountPrice: true
             }
@@ -230,12 +195,19 @@ export class ProductListRepository implements IProductListRepository {
         }
       })
 
-      console.log(`Found ${products.length} products`)
-
       return products.map(product => {
         // Check for products with discount
-        const hasDiscount = product.ProductVariant.some(
-          variant => variant.discount > 0 && variant.discountPrice !== null
+        let hasDiscount = false
+        const variantWithLowestDiscount = product.ProductVariant.reduce(
+          (prev, current) => {
+            if (current.discount && current.discount > 0) {
+              hasDiscount = true
+            }
+            return current.discount && current.discount < prev.discount
+              ? current
+              : prev
+          },
+          product.ProductVariant[0]
         )
 
         return {
@@ -243,7 +215,9 @@ export class ProductListRepository implements IProductListRepository {
           slug: product.slug ?? '',
           name: product.name,
           description: product.description,
-          price: product.basePrice,
+          price: variantWithLowestDiscount.price,
+          discountedPrice: variantWithLowestDiscount.discountPrice,
+          discountPercentage: variantWithLowestDiscount.discount,
           thumbnail: product.ProductImage[0]?.url ?? 'not-found',
           hasDiscount,
           isAvailable: product.active

@@ -67,8 +67,8 @@ const ProductListContent: React.FC<ProductListContentProps> = async ({
             name={product.name}
             description={product.description}
             basePrice={product.price}
-            discountedPrice={12}
-            discountPercentage={10}
+            discountedPrice={product.discountedPrice ?? undefined}
+            discountPercentage={product.discountPercentage ?? undefined}
             thumbnail={product.thumbnail}
             isAvailable={product.isAvailable}
           />

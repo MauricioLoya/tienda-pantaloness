@@ -59,16 +59,33 @@ export class CategoryListRepository {
       take: limit
     })
 
-    return products.map(product => ({
-      id: parseInt(product.id.toString()),
-      slug: product.slug || '',
-      name: product.name,
-      description: product.description || '',
-      price: Number(product.basePrice) || 0,
-      thumbnail: product.ProductImage[0]?.url || 'not-found',
-      hasDiscount: Boolean(product.active),
-      isAvailable: Boolean(product.active)
-    }))
+    return products.map(product => {
+      let hasDiscount = false
+      const variantWithLowestDiscount = product.ProductVariant.reduce(
+        (prev, current) => {
+          if (current.discount && current.discount > 0) {
+            hasDiscount = true
+          }
+          return current.discount && current.discount < prev.discount
+            ? current
+            : prev
+        },
+        product.ProductVariant[0]
+      )
+
+      return {
+        id: parseInt(product.id.toString()),
+        slug: product.slug || '',
+        name: product.name,
+        description: product.description || '',
+        price: variantWithLowestDiscount.price,
+        discountedPrice: variantWithLowestDiscount.discountPrice,
+        discountPercentage: variantWithLowestDiscount.discount,
+        thumbnail: product.ProductImage[0]?.url || 'not-found',
+        hasDiscount: hasDiscount,
+        isAvailable: Boolean(product.active)
+      }
+    })
   }
 
   async getCategoriesWithProducts(

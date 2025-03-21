@@ -14,9 +14,9 @@ const ProductDetails = async ({ slug, selectedSize }: Props) => {
   const productRepository = new ProductListRepository()
 
   try {
-    const product = await productRepository.productDetail(slug)
+    const productDetail = await productRepository.productDetail(slug)
 
-    if (!product) {
+    if (!productDetail) {
       notFound()
     }
 
@@ -35,21 +35,24 @@ const ProductDetails = async ({ slug, selectedSize }: Props) => {
           {/* Left side - Image Gallery */}
           <ProductImageGallery
             images={productImages}
-            productName={product.product.name}
+            productName={productDetail.product.name}
             bestSeller={true}
           />
 
           {/* Right side - Product Details */}
           <div className="space-y-6">
             <div>
-              <h1 className="text-3xl font-bold">{product.product.name}</h1>
+              <h1 className="text-3xl font-bold">
+                {productDetail.product.name}
+              </h1>
               <p className="text-gray-600">Temporada de otoño</p>
             </div>
 
             <ProductVariantSelector
+              productSlug={productDetail.product.slug ?? ''}
               productImage={productImages[0]}
-              productName={product.product.name}
-              variants={product.variants}
+              productName={productDetail.product.name}
+              variants={productDetail.variants}
               selectedSize={selectedSize}
               productId={Number(slug)}
             />

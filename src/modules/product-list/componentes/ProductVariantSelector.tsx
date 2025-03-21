@@ -18,6 +18,7 @@ interface ProductVariantSelectorProps {
   variants: Variant[]
   selectedSize?: string
   productId: number
+  productSlug: string
   productName: string
   productImage: string
 }
@@ -26,6 +27,7 @@ const ProductVariantSelector = ({
   variants,
   selectedSize,
   productId,
+  productSlug,
   productName,
   productImage
 }: ProductVariantSelectorProps) => {
@@ -52,7 +54,7 @@ const ProductVariantSelector = ({
     params.set('size', size)
 
     // Update URL with the selected size
-    router.push(`/productos/${productId}?${params.toString()}`, {
+    router.push(`/productos/${productSlug}?${params.toString()}`, {
       scroll: false
     })
   }
