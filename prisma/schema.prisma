@@ -44,6 +44,7 @@ model Category {
   description     String
   ProductCategory ProductCategory[]
   isDeleted       Boolean           @default(false)
+  backgroundUrl   String?
   regionId        String?
   region          Region?           @relation(fields: [regionId], references: [code])
 }
