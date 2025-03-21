@@ -6,6 +6,7 @@ import { CategoryItem } from "../definitions";
 import { useRouter } from "next/navigation";
 import { deleteCategoryAction } from "../action/deleteCategoryAction";
 import { FaTrash } from "react-icons/fa";
+import { useToast } from '@/lib/components/ToastContext';
 
 interface DeleteCategoryProps {
   category: CategoryItem;
@@ -14,10 +15,11 @@ interface DeleteCategoryProps {
 
 const DeleteCategory: React.FC<DeleteCategoryProps> = ({ category, btnColor="btn-danger" }) => {
   const router = useRouter();
+  const { showToast } = useToast();
 
   const handleConfirmDelete = async () => {
-    console.log("Deleting category", category);
     await deleteCategoryAction(category.id);
+    showToast("Categoría eliminada correctamente", "success");
     router.refresh();
   };
 

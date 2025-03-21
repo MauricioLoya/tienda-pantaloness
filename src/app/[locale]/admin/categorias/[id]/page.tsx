@@ -26,7 +26,7 @@ export default async function CategoryDetailsPage({ params }: Props) {
     categoryId
   );
   const actions = (
-    <div className="flex justify-end items-center gap-4">
+    <>
       <UpdateCategory
         category={category}
         regions={await new RegionRepository().getAll()}
@@ -36,7 +36,7 @@ export default async function CategoryDetailsPage({ params }: Props) {
       ) : (
         <DeleteCategory category={category} />
       )}
-    </div>
+    </>
   );
   return (
     <>

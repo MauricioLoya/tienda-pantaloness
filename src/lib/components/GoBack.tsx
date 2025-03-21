@@ -8,7 +8,7 @@ type Props = {
 const GoBack: React.FC<Props> = ({ href }) => {
   return (
     <Link
-      className="flex items-center text-xs text-blue-500 hover:underline mb-4"
+      className="flex items-center text-xs text-blue-500 hover:underline mb-4 mt-4"
       href={href}
     >
       <FaArrowLeft className="mr-1" /> Atras

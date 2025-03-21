@@ -1,14 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import ModalGeneric from "@/lib/components/ModalGeneric";
 import CategoryForm from "./CategoryForm";
-import { CategoryItem } from "../definitions";
+import { CategoryItem, CategoryInput } from "../definitions";
 import { RegionItem } from "@/modules/region/definitions";
 import { useRouter } from "next/navigation";
 import { updateCategoryAction } from "../action/updateCategoryAction";
 import { FaEdit } from "react-icons/fa";
-
+import { useToast } from '@/lib/components/ToastContext';
 
 interface UpdateCategoryProps {
   category: CategoryItem;
@@ -20,21 +20,31 @@ const UpdateCategory: React.FC<UpdateCategoryProps> = ({
   regions,
 }) => {
   const router = useRouter();
-  const updatedCategory = category;
+  const [updatedCategory, setUpdatedCategory] = useState<CategoryItem>({
+    id: category.id,
+    name: category.name || "",
+    description: category.description || "",
+    regionId: category.regionId || "",
+    backgroundUrl: category.backgroundUrl || "",
+  });
+  const { showToast } = useToast();
 
   const handleValuesChange = (values: any) => {
     updatedCategory.name = values.name;
     updatedCategory.description = values.description;
     updatedCategory.regionId = values.regionId;
+    updatedCategory.backgroundUrl = values.backgroundUrl;
   };
 
   const handleSubmit = async (close: () => void) => {
     try {
       await updateCategoryAction(updatedCategory);
       router.refresh();
+      showToast("Categoría actualizada correctamente", "success");
       close();
     } catch (error: any) {
-      alert(error.message || "Error al crear la categoría");
+      showToast ("Error al crear la categoría", "error");
+      console.error(error);
     }
   };
 
@@ -51,7 +61,7 @@ const UpdateCategory: React.FC<UpdateCategoryProps> = ({
     >
       <CategoryForm
         onValuesChange={handleValuesChange}
-        initialData={category}
+        initialData={updatedCategory}
         regions={regions}
       />
     </ModalGeneric>

@@ -1,18 +1,20 @@
-import { prisma } from '@/lib/prima/client';
-import { Category } from '@prisma/client';
+import { prisma } from "@/lib/prima/client";
+import { Category } from "@prisma/client";
 
 export interface CategoryItem {
   id: number;
   name: string;
   description: string;
   isDeleted?: boolean;
-  regionId?: string | undefined; 
+  regionId?: string | undefined;
+  backgroundUrl?: string;
 }
 
 export interface CategoryInput {
   name: string;
   description: string;
   regionId: string;
+  backgroundUrl?: string;
 }
 
 export const fromDatabase = (cat: Category): CategoryItem => ({
@@ -21,6 +23,7 @@ export const fromDatabase = (cat: Category): CategoryItem => ({
   description: cat.description,
   regionId: cat.regionId ?? undefined,
   isDeleted: cat.isDeleted,
+  backgroundUrl: cat.backgroundUrl ?? "",
 });
 
 export interface ICategoryRepository {
@@ -47,12 +50,14 @@ export class CategoryRepository implements ICategoryRepository {
 
   async update(id: number, data: CategoryItem): Promise<CategoryItem> {
     try {
+      console.log(data);
       const updatedCategory = await prisma.category.update({
         where: { id },
         data: {
           name: data.name,
           description: data.description,
           regionId: data.regionId,
+          backgroundUrl: data.backgroundUrl,
         },
       });
       console.log(updatedCategory);
@@ -85,7 +90,7 @@ export class CategoryRepository implements ICategoryRepository {
       throw error;
     }
   }
-  async updateIsDeleted(id: number, isDeleted:boolean): Promise<void> {
+  async updateIsDeleted(id: number, isDeleted: boolean): Promise<void> {
     try {
       await prisma.category.update({
         where: { id },

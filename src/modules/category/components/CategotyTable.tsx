@@ -23,12 +23,8 @@ const CategoryTable: React.FC<Props> = ({ values, regions }) => {
       const matchesRegion = filters.region
         ? category.regionId === filters.region
         : true;
-      const matchesStatus =
-        filters.isDeleted !== undefined
-          ? filters.isDeleted
-            ? category.isDeleted
+      const matchesStatus =filters.isDeleted ? category.isDeleted
             : !category.isDeleted
-          : true;
       return matchesSearch && matchesRegion && matchesStatus;
     });
   }, [values, filters]);

@@ -32,6 +32,11 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ category, region, produ
 
   return (
     <div className="card shadow p-6">
+      { category.backgroundUrl && (
+        <div className="mb-4">
+          <img src={category.backgroundUrl} alt={category.name} className="w-full h-40 object-cover" />
+        </div>
+      )}
       <h2 className="text-2xl font-bold mb-4">{category.name}</h2>
       <p className="mb-2"><strong>Descripción:</strong> {category.description}</p>
       {region && (
@@ -69,7 +74,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ category, region, produ
                     onClick={() => handleRemoveProduct(product.id)}
                     className="btn btn-sm btn-error"
                   >
-                    Eliminar
+                    Remover
                   </button>
                 </div>
               </div>

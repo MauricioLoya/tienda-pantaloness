@@ -21,7 +21,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
       </div>
       <div className="flex items-center justify-between border-b pb-2 mb-4">
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-semibold text-gray-900">{title}</h1>
+          <h1 className="text-2xl self-end font-semibold text-gray-900">{title}</h1>
         </div>
 
         {action && <div className="flex items-center gap-2">{action}</div>}

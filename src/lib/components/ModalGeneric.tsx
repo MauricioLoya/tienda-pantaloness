@@ -43,7 +43,7 @@ const ModalGeneric: React.FC<ModalCreateProps> = (props) => {
     : "modal-box w-12/12 max-w-5xl";
 
   return (
-    <div className="flex justify-end items-center mb-4">
+    <>
       <button
         className={`btn btn-active ${btnColor}`}
         data-backdrop="static"
@@ -71,7 +71,7 @@ const ModalGeneric: React.FC<ModalCreateProps> = (props) => {
           </div>
         </div>
       </dialog>
-    </div>
+    </>
   );
 };
 
