@@ -53,7 +53,6 @@ model Product {
   name             String
   description      String
   slug             String?            @unique @db.VarChar(255)
-  basePrice        Float
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   active           Boolean            @default(false)
