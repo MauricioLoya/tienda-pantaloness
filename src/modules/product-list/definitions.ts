@@ -3,6 +3,7 @@ import { Product, ProductVariant, Prisma } from '@prisma/client'
 
 export type ItemProduct = {
   id: number
+  slug: string
   name: string
   description: string
   price: number
@@ -25,12 +26,17 @@ export type SearchParams = {
   sortBy?: string
   sortDirection?: 'asc' | 'desc'
   regionCode: string
+  category?: string
 }
 
 interface IProductListRepository {
   getListItem(regionCode: string): Promise<ItemProduct[]>
-  productDetail(id: number): Promise<ProductDetail | null>
+  productDetail(slug: string): Promise<ProductDetail | null>
   searchProducts(params: SearchParams): Promise<ItemProduct[]>
+  getVariantSizes(regionCode: string): Promise<string[]>
+  getCategoriesList(
+    regionCode: string
+  ): Promise<{ label: string; value: number }[]>
 }
 
 export class ProductListRepository implements IProductListRepository {
@@ -51,6 +57,7 @@ export class ProductListRepository implements IProductListRepository {
 
       return products.map(product => ({
         id: product.id,
+        slug: product.slug ?? '',
         name: product.name,
         description: product.description,
         price: product.basePrice,
@@ -63,10 +70,10 @@ export class ProductListRepository implements IProductListRepository {
     }
   }
 
-  async productDetail(id: number): Promise<ProductDetail | null> {
+  async productDetail(slug: string): Promise<ProductDetail | null> {
     try {
       const product = await prisma.product.findFirst({
-        where: { id },
+        where: { slug },
         include: {
           ProductVariant: true,
           ProductImage: {
@@ -99,16 +106,9 @@ export class ProductListRepository implements IProductListRepository {
     minPrice,
     maxPrice,
     sortBy,
-    sortDirection
-  }: {
-    regionCode: string
-    searchQuery?: string
-    size?: string
-    minPrice?: string
-    maxPrice?: string
-    sortBy?: string
-    sortDirection?: 'asc' | 'desc'
-  }): Promise<ItemProduct[]> {
+    sortDirection,
+    category
+  }: SearchParams): Promise<ItemProduct[]> {
     console.log('Search params:', {
       regionCode,
       searchQuery,
@@ -131,18 +131,6 @@ export class ProductListRepository implements IProductListRepository {
         // Using Prisma's native capabilities for case-insensitive search
         where.OR = [
           {
-            name: {
-              mode: 'insensitive',
-              contains: searchQuery.trim()
-            }
-          },
-          {
-            description: {
-              mode: 'insensitive',
-              contains: searchQuery.trim()
-            }
-          },
-          {
             // Search in comma-separated searchWords field
             searchWords: {
               contains: searchQuery.trim(),
@@ -157,6 +145,20 @@ export class ProductListRepository implements IProductListRepository {
         where.ProductVariant = {
           some: {
             size: size.trim()
+          }
+        }
+      }
+
+      // Apply category filter - filter products that belong to the selected category
+      if (category && category.trim() !== '') {
+        const categoryId = parseInt(category, 10)
+        console.log('Category ID:', categoryId)
+
+        if (!isNaN(categoryId)) {
+          where.ProductCategory = {
+            some: {
+              categoryId: categoryId
+            }
           }
         }
       }
@@ -196,7 +198,7 @@ export class ProductListRepository implements IProductListRepository {
       }
 
       // Build the orderBy condition
-      const orderBy: any = {}
+      const orderBy: Record<string, 'asc' | 'desc' | undefined> = {}
       if (sortBy && sortBy.trim() !== '') {
         if (sortBy === 'name') {
           orderBy.name = sortDirection
@@ -228,38 +230,9 @@ export class ProductListRepository implements IProductListRepository {
         }
       })
 
-      // For databases that don't properly handle accents in searches,
-      // we can add an additional filtering step in JavaScript but only for searchWords
-      let filteredProducts = products
+      console.log(`Found ${products.length} products`)
 
-      if (searchQuery && searchQuery.trim() !== '') {
-        const normalizedQuery = searchQuery
-          .toLowerCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-
-        filteredProducts = products.filter(product => {
-          // Check if product passes the initial filter
-          if (!product.searchWords) return true // Keep products that passed database filter
-
-          // Only normalize searchWords for accent-insensitive comparison
-          const normalizedSearchWords = product.searchWords
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-
-          // Check if comma-separated words contain the query
-          const searchWordsList = normalizedSearchWords
-            .split(',')
-            .map(word => word.trim())
-
-          return searchWordsList.some(word => word.includes(normalizedQuery))
-        })
-      }
-
-      console.log(`Found ${filteredProducts.length} products`)
-
-      return filteredProducts.map(product => {
+      return products.map(product => {
         // Check for products with discount
         const hasDiscount = product.ProductVariant.some(
           variant => variant.discount > 0 && variant.discountPrice !== null
@@ -267,6 +240,7 @@ export class ProductListRepository implements IProductListRepository {
 
         return {
           id: product.id,
+          slug: product.slug ?? '',
           name: product.name,
           description: product.description,
           price: product.basePrice,
@@ -277,6 +251,55 @@ export class ProductListRepository implements IProductListRepository {
       })
     } catch (error) {
       console.error('Error searching products:', error)
+      throw error
+    }
+  }
+
+  async getVariantSizes(regionCode: string): Promise<string[]> {
+    try {
+      // Get all product variants for products in the specific region
+      const productVariants = await prisma.productVariant.findMany({
+        where: {
+          product: {
+            regionId: regionCode,
+            active: true
+          }
+        },
+        select: {
+          size: true
+        },
+        distinct: ['size']
+      })
+
+      // Extract and sort sizes
+      const sizes = productVariants.map(variant => variant.size).sort()
+      return sizes
+    } catch (error) {
+      console.error('Error fetching product sizes:', error)
+      throw error
+    }
+  }
+
+  async getCategoriesList(
+    regionCode: string
+  ): Promise<{ label: string; value: number }[]> {
+    try {
+      const categories = await prisma.category.findMany({
+        where: {
+          regionId: regionCode,
+          isDeleted: false
+        },
+        select: {
+          name: true,
+          id: true
+        }
+      })
+      return categories.map(category => ({
+        label: category.name,
+        value: category.id
+      }))
+    } catch (error) {
+      console.error('Error fetching categories:', error)
       throw error
     }
   }

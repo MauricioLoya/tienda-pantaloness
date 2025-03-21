@@ -14,7 +14,7 @@ const ProductDetails = async ({ slug, selectedSize }: Props) => {
   const productRepository = new ProductListRepository()
 
   try {
-    const product = await productRepository.productDetail(Number(slug))
+    const product = await productRepository.productDetail(slug)
 
     if (!product) {
       notFound()

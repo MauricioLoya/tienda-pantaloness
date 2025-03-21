@@ -1,7 +1,6 @@
 import React from 'react'
 import { ProductRepository } from '../definitions'
 import ProductTable from './ProductTable'
-import Link from 'next/link'
 
 const ProductList: React.FC = async () => {
   const promotionRepo = new ProductRepository()

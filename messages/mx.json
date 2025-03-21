@@ -50,5 +50,9 @@
     "products": "Productos",
     "categories": "Categorías",
     "contact": "Contacto"
+  },
+  "Categories": {
+    "title": "Categorías",
+    "description": "Explora nuestras categorías de productos"
   }
 }

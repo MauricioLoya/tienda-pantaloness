@@ -19,7 +19,9 @@ const NavBar: React.FC = () => {
         </div>
 
         {/* Mobile menu button */}
+
         <div className="flex-none lg:hidden">
+          <CartButton />
           <button
             className="btn btn-square btn-ghost"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -74,7 +76,6 @@ const NavBar: React.FC = () => {
           </ul>
           <div className="flex justify-center mt-4">
             <LanguageSwitcher />
-            <CartButton />
           </div>
         </div>
       )}
