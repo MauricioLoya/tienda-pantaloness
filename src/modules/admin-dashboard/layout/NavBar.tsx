@@ -34,6 +34,11 @@ const NavBar: React.FC = () => {
       name: 'Usuarios',
       href: '/admin/users',
       emoji: '👥'
+    },
+    {
+      name: 'Secciones',
+      href: '/admin/sections',
+      emoji: '🌟'
     }
   ]
   return (
