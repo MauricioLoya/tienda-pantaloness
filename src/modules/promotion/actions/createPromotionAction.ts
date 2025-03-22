@@ -1,8 +1,12 @@
-'use server'
-import { PromotionRepository } from '../definitions'
-import { Promotion } from '@prisma/client'
+"use server";
+import {
+  PromotionInput,
+  PromotionItem,
+  PromotionRepository,
+} from "../definitions";
 
-export async function createPromotionAction(data: Omit<Promotion, 'id' | 'createdAt' | 'isDeleted'>): Promise<Promotion> {
-  const promotionRepo = new PromotionRepository()
-  return await promotionRepo.create(data)
+export async function CreatePromotionAction(
+  data: PromotionInput
+): Promise<PromotionItem> {
+  return new PromotionRepository().create(data);
 }

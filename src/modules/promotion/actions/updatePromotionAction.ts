@@ -1,8 +1,17 @@
-'use server'
-import { PromotionRepository } from '../definitions'
-import { Promotion } from '@prisma/client'
+'use server';
 
-export async function updatePromotionAction(id: number, data: Partial<Promotion>): Promise<Promotion> {
-  const promotionRepo = new PromotionRepository()
-  return await promotionRepo.update(id, data)
+import { PromotionRepository } from "../definitions";
+import { FormPromotionsValues } from "../components/PromotionForm";
+
+export async function UpdatePromotionAction(id: number, data: Partial<FormPromotionsValues>) {
+  return new PromotionRepository().update(id, {
+    code: data.code!,
+    name: data.name!,
+    description: data.description!,
+    discount: data.discount!,
+    startDate: new Date(data.startDate as string),
+    endDate: new Date(data.endDate as string),
+    active: data.active!,
+    regionId: data.regionId!
+  });
 }

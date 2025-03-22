@@ -5,12 +5,14 @@ import { FaCopy } from "react-icons/fa";
 import DisplayInfo from "@/lib/components/DisplayInfo";
 import Link from "next/link";
 import HeaderContent from "@/lib/components/HeaderContent";
+import { RegionItem } from "@/modules/region/definitions";
 
 type Props = {
   promotion: Promotion;
+  region?: RegionItem;
 };
 
-const PromotionDetails: React.FC<Props> = ({ promotion }) => {
+const PromotionDetails: React.FC<Props> = ({ promotion, region }) => {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = (text: string) => {
@@ -20,8 +22,7 @@ const PromotionDetails: React.FC<Props> = ({ promotion }) => {
     });
   };
   return (
-    <div className="p-2">
-      <HeaderContent title={`Detalles de la Promoción ${promotion.name}`} href="./"   />
+    <div className="p-4">
       <div className="grid gap-6">
         <DisplayInfo
           info={[
@@ -41,18 +42,9 @@ const PromotionDetails: React.FC<Props> = ({ promotion }) => {
                 </div>
               ),
             },
-            {
-              label: "Nombre",
-              value: promotion.name,
-            },
-            {
-              label: "Descripción",
-              value: promotion.description,
-            },
-            {
-              label: "Descuento",
-              value: `${promotion.discount}%`,
-            },
+            { label: "Nombre", value: promotion.name },
+            { label: "Descripción", value: promotion.description },
+            { label: "Descuento", value: `${promotion.discount}%` },
             {
               label: "Fecha de inicio",
               value: new Date(promotion.startDate).toLocaleDateString(),
@@ -61,12 +53,24 @@ const PromotionDetails: React.FC<Props> = ({ promotion }) => {
               label: "Fecha de fin",
               value: new Date(promotion.endDate).toLocaleDateString(),
             },
+            { label: "Activo", value: promotion.active ? "Sí" : "No" },
             {
-              label: "Activo",
-              value: promotion.active ? "Sí" : "No",
+              label: "Región",
+              value: region ? `${region.flag} ${region.name}` : "No asignada",
             },
           ]}
         />
+        <div className="mt-6">
+          {promotion.isDeleted ? (
+            <span className="px-4 py-2 bg-green-500 text-white rounded">
+              Promoción Activa
+            </span>
+          ) : (
+            <span className="px-4 py-2 bg-red-500 text-white rounded">
+              Promoción Inactiva
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

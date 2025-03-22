@@ -1,15 +1,8 @@
 "use client";
-
 import React, { useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
 import * as Yup from "yup";
-import { useRouter } from "next/navigation";
-import { deletePromotionAction } from "../actions/deletePromotionAction";
-
-export interface PromotionFormProps {
-  initialValues: FormPromotionsValues;
-  onValuesChange: (values: FormPromotionsValues) => void;
-}
+import { RegionItem } from "@/modules/region/definitions";
 
 export interface FormPromotionsValues {
   code: string;
@@ -19,7 +12,36 @@ export interface FormPromotionsValues {
   startDate: Date | string;
   endDate: Date | string;
   active: boolean;
+  regionId: string;
 }
+
+export interface PromotionFormProps {
+  initialValues: FormPromotionsValues;
+  onValuesChange: (values: FormPromotionsValues) => void;
+  regions: RegionItem[];
+}
+
+export const PromotionSchema = Yup.object().shape({
+  code: Yup.string()
+    .required("El código es requerido")
+    .matches(/^[a-zA-Z0-9]+$/, "Solo se permiten letras y números")
+    .min(4, "Mínimo 4 caracteres")
+    .max(10, "Máximo 10 caracteres"),
+  name: Yup.string().required("El nombre es requerido"),
+  description: Yup.string().required("La descripción es requerida"),
+  discount: Yup.number()
+    .min(0, "El descuento debe ser mayor o igual a 0")
+    .required("El descuento es requerido"),
+  startDate: Yup.date().required("La fecha de inicio es requerida"),
+  endDate: Yup.date()
+    .required("La fecha de fin es requerida")
+    .min(
+      Yup.ref("startDate"),
+      "La fecha de fin debe ser posterior a la fecha de inicio"
+    ),
+  active: Yup.boolean(),
+  regionId: Yup.string().required("La región es requerida"),
+});
 
 const FormObserver: React.FC<{
   onChange: (values: FormPromotionsValues) => void;
@@ -34,43 +56,8 @@ const FormObserver: React.FC<{
 const PromotionForm: React.FC<PromotionFormProps> = ({
   initialValues,
   onValuesChange,
+  regions,
 }) => {
-  const [_, startTransition] = React.useTransition();
-  const PromotionSchema = Yup.object().shape({
-    code: Yup.string()
-      .required("El código es requerido")
-      .matches(/^[a-zA-Z0-9]+$/, "Solo se permiten letras y números")
-      .min(4, "Mínimo 4 caracteres")
-      .max(10, "Máximo 10 caracteres"),
-    name: Yup.string().required("El nombre es requerido"),
-    description: Yup.string().required("La descripción es requerida"),
-    discount: Yup.number()
-      .min(0, "El descuento debe ser mayor o igual a 0")
-      .required("El descuento es requerido"),
-    startDate: Yup.date().required("La fecha de inicio es requerida"),
-    endDate: Yup.date()
-      .required("La fecha de fin es requerida")
-      .min(
-        Yup.ref("startDate"),
-        "La fecha de fin debe ser posterior a la fecha de inicio"
-      ),
-    active: Yup.boolean(),
-  });
-
-  // const handleDelete = async () => {
-  //   if (confirm("¿Estás seguro de eliminar esta promoción?")) {
-  //     try {
-  //       if (!id) throw new Error("ID no proporcionado");
-  //       startTransition(async () => {
-  //         await deletePromotionAction(Number(id));
-  //         router.push("/admin/promociones");
-  //       });
-  //     } catch (error: any) {
-  //       alert(error.message || "Error al eliminar la promoción");
-  //     }
-  //   }
-  // };
-
   return (
     <div className="">
       <Formik
@@ -85,7 +72,6 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
               <Field
                 name="code"
                 type="text"
-                // disabled={mode === "detail"}
                 className="mt-1 block w-full border border-gray-300 rounded p-2"
               />
               <ErrorMessage
@@ -99,7 +85,6 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
               <Field
                 name="name"
                 type="text"
-                // disabled={mode === "detail"}
                 className="mt-1 block w-full border border-gray-300 rounded p-2"
               />
               <ErrorMessage
@@ -113,7 +98,6 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
               <Field
                 name="description"
                 as="textarea"
-                // disabled={mode === "detail"}
                 className="mt-1 block w-full border border-gray-300 rounded p-2"
               />
               <ErrorMessage
@@ -128,7 +112,6 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
                 name="discount"
                 type="number"
                 step="0.01"
-                // disabled={mode === "detail"}
                 className="mt-1 block w-full border border-gray-300 rounded p-2"
               />
               <ErrorMessage
@@ -142,7 +125,6 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
               <Field
                 name="startDate"
                 type="date"
-                // disabled={mode === "detail"}
                 className="mt-1 block w-full border border-gray-300 rounded p-2"
               />
               <ErrorMessage
@@ -156,7 +138,6 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
               <Field
                 name="endDate"
                 type="date"
-                // disabled={mode === "detail"}
                 className="mt-1 block w-full border border-gray-300 rounded p-2"
               />
               <ErrorMessage
@@ -166,13 +147,28 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
               />
             </div>
             <div className="mb-4 flex items-center">
-              <Field
-                name="active"
-                type="checkbox"
-                // disabled={mode === "detail"}
-                className="mr-2"
-              />
+              <Field name="active" type="checkbox" className="mr-2" />
               <label className="text-gray-700">Activo</label>
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Región:</label>
+              <Field
+                as="select"
+                name="regionId"
+                className="mt-1 block w-full border border-gray-300 rounded p-2"
+              >
+                <option value="">Selecciona una región</option>
+                {regions.map((r) => (
+                  <option key={r.code} value={r.code}>
+                    {r.flag} {r.name}
+                  </option>
+                ))}
+              </Field>
+              <ErrorMessage
+                name="regionId"
+                component="div"
+                className="text-red-500 text-sm"
+              />
             </div>
             <FormObserver onChange={onValuesChange} />
           </Form>

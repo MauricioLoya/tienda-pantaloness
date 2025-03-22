@@ -5,8 +5,8 @@ import VariantsForm from "./VariantsForm";
 import CategoriesForm from "./CategoriesForm";
 import ImagesForm from "./ImagesForm";
 import BasicForm from "./BasicForm";
-import { CategoryItem } from "../definitions";
 import { RegionItem } from '@/modules/region/definitions'
+import { CategoryItem } from "@/modules/category/definitions";
 
 const CreateCatalogue = ({allCategories, regions} : {allCategories: CategoryItem[], regions: RegionItem[]}) => {  
   return (

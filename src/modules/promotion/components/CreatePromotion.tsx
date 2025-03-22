@@ -1,11 +1,17 @@
 "use client";
 import ModalGeneric from "@/lib/components/ModalGeneric";
-import PromotionForm, { FormPromotionsValues } from "./PromotionForm";
+import PromotionForm, {
+  FormPromotionsValues,
+  PromotionSchema,
+} from "./PromotionForm";
 import { useState } from "react";
-import { createPromotionAction } from "../actions/createPromotionAction";
-import { updatePromotionAction } from "../actions/updatePromotionAction";
+import { useRouter } from "next/navigation";
+import { RegionItem } from "@/modules/region/definitions";
+import { CreatePromotionAction } from "../actions/createPromotionAction";
 
-const CreatePromotion = () => {
+const CreatePromotion = ({ regions }: { regions: RegionItem[] }) => {
+  const router = useRouter();
+
   const initialValues: FormPromotionsValues = {
     code: "",
     name: "",
@@ -14,17 +20,11 @@ const CreatePromotion = () => {
     startDate: "",
     endDate: "",
     active: false,
+    regionId: "",
   };
 
-  const [formState, setFormState] = useState<FormPromotionsValues>({
-    code: "",
-    name: "",
-    description: "",
-    discount: 0,
-    startDate: "",
-    endDate: "",
-    active: false,
-  });
+  const [formState, setFormState] =
+    useState<FormPromotionsValues>(initialValues);
 
   const handleValuesChange = (values: FormPromotionsValues) => {
     setFormState(values);
@@ -32,32 +32,37 @@ const CreatePromotion = () => {
 
   const handleSubmit = async (close: () => void) => {
     try {
+      await PromotionSchema.validate(formState);
       const submissionData = {
         ...formState,
-        code: formState.code ? formState.code : '',
-        startDate: formState.startDate ? new Date(formState.startDate) : new Date(),
+        startDate: formState.startDate
+          ? new Date(formState.startDate)
+          : new Date(),
         endDate: formState.endDate ? new Date(formState.endDate) : new Date(),
-        regionId: null,
       };
-      await createPromotionAction(submissionData);
+      await CreatePromotionAction(submissionData);
       close();
+      router.refresh();
     } catch (error: any) {
-      console.error("Error al procesar la solicitud");
-      
+      alert(error.message || "Error al crear la promoción");
     }
   };
 
   return (
     <>
       <ModalGeneric
-        title="Agregar producto"
+        title="Agregar promoción"
         triggerBtnTitle="Agregar"
         actionBtnText="Guardar"
         actionBtnFunction={handleSubmit}
         cancelBtnText="Cancelar"
         cancelBtnFunction={() => console.log("click action cancel")}
       >
-        <PromotionForm initialValues={initialValues} onValuesChange={handleValuesChange} />
+        <PromotionForm
+          initialValues={initialValues}
+          onValuesChange={handleValuesChange}
+          regions={regions}
+        />
       </ModalGeneric>
     </>
   );
