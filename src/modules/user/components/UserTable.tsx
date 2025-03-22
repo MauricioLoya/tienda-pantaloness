@@ -1,14 +1,29 @@
 "use client";
-import React from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { User } from "@prisma/client";
 import DisplayTableInfo from "@/lib/components/DisplayTableInfo";
+import FilterBar, { FilterCriteria } from "@/lib/components/FilterBar";
 
 type Props = {
   values: User[];
 };
 
 const UserTable: React.FC<Props> = ({ values }) => {
+  const [filters, setFilters] = useState<FilterCriteria>({});
+
+  const filteredData = useMemo(() => {
+    return values.filter((user) => {
+      const matchesSearch = filters.search
+        ? user.email.toLowerCase().includes(filters.search.toLowerCase()) ||
+          user.name.toLowerCase().includes(filters.search.toLowerCase())
+        : true;
+      const matchesStatus = filters.isDeleted
+        ? user.isDeleted
+        : !user.isDeleted;
+      return matchesSearch && matchesStatus;
+    });
+  }, [values, filters]);
   const headers = [
     "ID",
     "Email",
@@ -17,7 +32,7 @@ const UserTable: React.FC<Props> = ({ values }) => {
     "Super Admin",
     "Opciones",
   ];
-  const data = values.map((user) => ({
+  const data = filteredData.map((user) => ({
     ID: user.id,
     Email: user.email,
     Nombre: user.name,
@@ -32,7 +47,13 @@ const UserTable: React.FC<Props> = ({ values }) => {
       </Link>
     ),
   }));
-  return <DisplayTableInfo headers={headers} data={data} />;
+
+  return (
+    <div>
+      <FilterBar onFilterChange={setFilters} />
+      <DisplayTableInfo headers={headers} data={data} keyField="ID" />
+    </div>
+  );
 };
 
 export default UserTable;

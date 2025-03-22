@@ -1,7 +1,5 @@
-'use server'
-import { UserRepository } from '../definitions'
-
-export async function deleteUserAction(id: number): Promise<void> {
-  const userRepo = new UserRepository()
-  await userRepo.delete(id)
+'use server';
+import { UserRepository } from "../definitions";
+export async function deleteUserAction(id: number) {
+  return new UserRepository().delete(id);
 }

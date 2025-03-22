@@ -81,7 +81,7 @@ export class SectionRepository {
         type: data.type,
         title: data.title,
         description: data.description,
-        regionCode: data.regionCode ? data.regionCode : undefined,
+        regionId: data.regionId ? data.regionId : undefined,
         actionUrl: data.actionUrl,
         order: data.order,
         backgroundUrl: data.backgroundUrl,
@@ -148,7 +148,7 @@ export class SectionRepository {
       type: section.type,
       title: section.title,
       description: section.description,
-      regionCode: section.regionCode ? section.regionCode : undefined,
+      regionId: section.regionId,
       actionUrl: section.actionUrl,
       order: section.order,
       backgroundUrl: section.backgroundUrl,
@@ -158,7 +158,7 @@ export class SectionRepository {
           id: hp.product.id,
           name: hp.product.name,
           slug: hp.product.slug ?? "",
-          imageUrl: "/placeholder.jpg", // Puedes mapear la imagen real si está disponible
+          imageUrl: "/placeholder.jpg",
         })) || [],
     };
   }
