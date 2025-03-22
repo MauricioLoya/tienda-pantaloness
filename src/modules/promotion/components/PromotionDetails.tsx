@@ -54,7 +54,6 @@ const PromotionDetails: React.FC<Props> = ({ promotion, region }) => {
               value: new Date(promotion.endDate).toLocaleDateString(),
             },
             { label: "Activo", value: promotion.active ? "Sí" : "No" },
-            { label: "Eliminado", value: promotion.isDeleted ? "Sí" : "No" },
             {
               label: "Región",
               value: region ? `${region.flag} ${region.name}` : "No asignada",
@@ -63,12 +62,12 @@ const PromotionDetails: React.FC<Props> = ({ promotion, region }) => {
         />
         <div className="mt-6">
           {promotion.isDeleted ? (
-            <span className="px-4 py-2 bg-green-500 text-white rounded">
-              Promoción Activa
-            </span>
-          ) : (
             <span className="px-4 py-2 bg-red-500 text-white rounded">
               Promoción Inactiva
+            </span>
+          ) : (
+            <span className="px-4 py-2 bg-green-500 text-white rounded">
+              Promoción Activa
             </span>
           )}
         </div>
