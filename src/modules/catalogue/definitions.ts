@@ -6,7 +6,6 @@ import { CategoryItem } from "../category/definitions";
 export interface ProductInput {
   name: string;
   description: string;
-  basePrice: number;
   active: boolean;
   regionId: string;
   slug: string
@@ -36,7 +35,6 @@ export type ProductDetail = {
 export type ProductAdminTableRow = {
   id: number;
   name: string;
-  basePrice: number;
   active: boolean;
   slug: string;
   regionId: string;
@@ -60,7 +58,6 @@ export class ProductRepository {
       return {
         id: prod.id,
         name: prod.name,
-        basePrice: prod.basePrice,
         active: prod.active,
         slug: prod.slug ?? "",
         regionId: prod.regionId ?? "",
@@ -110,7 +107,6 @@ export class ProductRepository {
         name: data.name,
         slug,
         description: data.description,
-        basePrice: data.basePrice,
         active: data.active,
         regionId: data.regionId,
       },
@@ -125,7 +121,6 @@ export class ProductRepository {
         name: data.name,
         slug,
         description: data.description,
-        basePrice: data.basePrice,
         active: data.active,
         regionId: data.regionId,
       },
@@ -204,7 +199,6 @@ export class ProductRepository {
       return {
         id: prod.id,
         name: prod.name,
-        basePrice: prod.basePrice,
         active: prod.active,
         slug: prod.slug ?? "",
         regionId: prod.regionId ?? "",
