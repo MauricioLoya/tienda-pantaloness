@@ -176,6 +176,8 @@ model Section {
   order            Int
   backgroundUrl    String
   backgroundColor  String
+  buttonText       String?
+  buttonColor      String?
   Region           Region?            @relation(fields: [regionCode], references: [code])
   regionCode       String?
   HighlightProduct HighlightProduct[]
