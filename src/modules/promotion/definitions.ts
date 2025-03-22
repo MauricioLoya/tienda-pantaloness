@@ -52,9 +52,7 @@ interface IPromotionRepository {
 export class PromotionRepository implements IPromotionRepository {
   async getAll(): Promise<PromotionItem[]> {
     try {
-      const promotions = await prisma.promotion.findMany({
-        where: { isDeleted: false },
-      });
+      const promotions = await prisma.promotion.findMany();
       return promotions.map(fromDatabase);
     } catch (error) {
       throw error;
@@ -83,20 +81,28 @@ export class PromotionRepository implements IPromotionRepository {
     }
   }
 
-  async update(id: number, data: Partial<PromotionInput>): Promise<PromotionItem> {
+  async update(
+    id: number,
+    data: Partial<PromotionInput>
+  ): Promise<PromotionItem> {
+    console.log(data);
+    console.log('ID',id);
     try {
       const promotion = await prisma.promotion.update({
         where: { id },
         data,
       });
-      return fromDatabase(promotion);
+
+      console.log("promotion",promotion);
+      const a = fromDatabase(promotion);
+      console.log("aaa",a);
+      return a
     } catch (error) {
       throw error;
     }
   }
 
   async delete(id: number): Promise<void> {
-    console.log('Deleting...',id);
     try {
       await prisma.promotion.update({
         where: { id },
@@ -108,7 +114,7 @@ export class PromotionRepository implements IPromotionRepository {
   }
 
   async activate(id: number): Promise<void> {
-    console.log('activate...',id);
+    console.log("activate...", id);
     try {
       await prisma.promotion.update({
         where: { id },

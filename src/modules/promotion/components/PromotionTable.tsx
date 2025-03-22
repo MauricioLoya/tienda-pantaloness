@@ -23,13 +23,10 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
       const matchesRegion = filters.region
         ? promotion.regionId === filters.region
         : true;
-      const matchesActive =
-        filters.isDeleted !== undefined
-          ? filters.isDeleted
-            ? promotion.isDeleted
-            : !promotion.isDeleted
-          : true;
-      return matchesSearch && matchesRegion && matchesActive;
+      const matchesDeleted = filters.isDeleted
+        ? promotion.isDeleted
+        : !promotion.isDeleted;
+      return matchesSearch && matchesRegion && matchesDeleted;
     });
   }, [values, filters]);
 
@@ -39,6 +36,7 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
     "Región",
     "Descuento",
     "Activo",
+    "Eliminado",
     "Opciones",
   ];
   const data = filteredData.map((promotion) => ({
@@ -50,6 +48,7 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
     })(),
     Descuento: `${promotion.discount}%`,
     Activo: promotion.active ? "Sí" : "No",
+    Eliminado: promotion.isDeleted ? "Sí" : "No",
     Opciones: (
       <Link
         className="text-indigo-600 hover:text-indigo-900 transition"

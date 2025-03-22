@@ -4,7 +4,8 @@ import { PromotionRepository } from "../definitions";
 import { FormPromotionsValues } from "../components/PromotionForm";
 
 export async function UpdatePromotionAction(id: number, data: Partial<FormPromotionsValues>) {
-  return new PromotionRepository().update(id, {
+  
+  return await new PromotionRepository().update(id, {
     code: data.code!,
     name: data.name!,
     description: data.description!,

@@ -2,15 +2,16 @@
 import ModalGeneric from "@/lib/components/ModalGeneric";
 import PromotionForm, {
   FormPromotionsValues,
-  PromotionSchema,
 } from "./PromotionForm";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { RegionItem } from "@/modules/region/definitions";
 import { CreatePromotionAction } from "../actions/createPromotionAction";
+import { PromotionFormHandle } from "./PromotionForm";
 
 const CreatePromotion = ({ regions }: { regions: RegionItem[] }) => {
   const router = useRouter();
+  const formRef = useRef<PromotionFormHandle>(null);
 
   const initialValues: FormPromotionsValues = {
     code: "",
@@ -31,20 +32,24 @@ const CreatePromotion = ({ regions }: { regions: RegionItem[] }) => {
   };
 
   const handleSubmit = async (close: () => void) => {
-    try {
-      await PromotionSchema.validate(formState);
-      const submissionData = {
-        ...formState,
-        startDate: formState.startDate
-          ? new Date(formState.startDate)
-          : new Date(),
-        endDate: formState.endDate ? new Date(formState.endDate) : new Date(),
-      };
-      await CreatePromotionAction(submissionData);
-      close();
-      router.refresh();
-    } catch (error: any) {
-      alert(error.message || "Error al crear la promoción");
+    if (formRef.current) {
+      try {
+        const validValues = await formRef.current.submit();
+        const submissionData = {
+          ...validValues,
+          startDate: validValues.startDate
+            ? new Date(validValues.startDate)
+            : new Date(),
+          endDate: validValues.endDate
+            ? new Date(validValues.endDate)
+            : new Date(),
+        };
+        await CreatePromotionAction(submissionData);
+        close();
+        router.refresh();
+      } catch (errors) {
+        alert("Por favor, corrige los errores en el formulario.");
+      }
     }
   };
 
@@ -59,6 +64,7 @@ const CreatePromotion = ({ regions }: { regions: RegionItem[] }) => {
         cancelBtnFunction={() => console.log("click action cancel")}
       >
         <PromotionForm
+          ref={formRef}
           initialValues={initialValues}
           onValuesChange={handleValuesChange}
           regions={regions}

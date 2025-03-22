@@ -1,5 +1,4 @@
-"use client";
-import React, { useEffect } from "react";
+import React, { useEffect, forwardRef, useImperativeHandle } from "react";
 import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
 import * as Yup from "yup";
 import { RegionItem } from "@/modules/region/definitions";
@@ -43,9 +42,9 @@ export const PromotionSchema = Yup.object().shape({
   regionId: Yup.string().required("La región es requerida"),
 });
 
-const FormObserver: React.FC<{
-  onChange: (values: FormPromotionsValues) => void;
-}> = ({ onChange }) => {
+const FormObserver: React.FC<{ onChange: (values: FormPromotionsValues) => void }> = ({
+  onChange,
+}) => {
   const { values } = useFormikContext<FormPromotionsValues>();
   useEffect(() => {
     onChange(values);
@@ -53,129 +52,127 @@ const FormObserver: React.FC<{
   return null;
 };
 
-const PromotionForm: React.FC<PromotionFormProps> = ({
-  initialValues,
-  onValuesChange,
-  regions,
-}) => {
-  return (
-    <div className="">
-      <Formik
-        initialValues={initialValues}
-        validationSchema={PromotionSchema}
-        onSubmit={(values) => {}}
-      >
-        {({ handleSubmit }) => (
-          <Form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-700">Código:</label>
-              <Field
-                name="code"
-                type="text"
-                className="mt-1 block w-full border border-gray-300 rounded p-2"
-              />
-              <ErrorMessage
-                name="code"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Nombre:</label>
-              <Field
-                name="name"
-                type="text"
-                className="mt-1 block w-full border border-gray-300 rounded p-2"
-              />
-              <ErrorMessage
-                name="name"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Descripción:</label>
-              <Field
-                name="description"
-                as="textarea"
-                className="mt-1 block w-full border border-gray-300 rounded p-2"
-              />
-              <ErrorMessage
-                name="description"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Descuento (%):</label>
-              <Field
-                name="discount"
-                type="number"
-                step="0.01"
-                className="mt-1 block w-full border border-gray-300 rounded p-2"
-              />
-              <ErrorMessage
-                name="discount"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Fecha de inicio:</label>
-              <Field
-                name="startDate"
-                type="date"
-                className="mt-1 block w-full border border-gray-300 rounded p-2"
-              />
-              <ErrorMessage
-                name="startDate"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Fecha de fin:</label>
-              <Field
-                name="endDate"
-                type="date"
-                className="mt-1 block w-full border border-gray-300 rounded p-2"
-              />
-              <ErrorMessage
-                name="endDate"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-            <div className="mb-4 flex items-center">
-              <Field name="active" type="checkbox" className="mr-2" />
-              <label className="text-gray-700">Activo</label>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Región:</label>
-              <Field
-                as="select"
-                name="regionId"
-                className="mt-1 block w-full border border-gray-300 rounded p-2"
-              >
-                <option value="">Selecciona una región</option>
-                {regions.map((r) => (
-                  <option key={r.code} value={r.code}>
-                    {r.flag} {r.name}
-                  </option>
-                ))}
-              </Field>
-              <ErrorMessage
-                name="regionId"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-            <FormObserver onChange={onValuesChange} />
-          </Form>
-        )}
-      </Formik>
-    </div>
-  );
-};
+export interface PromotionFormHandle {
+  submit: () => Promise<FormPromotionsValues>;
+}
+
+const PromotionForm = forwardRef<PromotionFormHandle, PromotionFormProps>(
+  ({ initialValues, onValuesChange, regions }, ref) => {
+    return (
+      <div className="">
+        <Formik
+          initialValues={initialValues}
+          validationSchema={PromotionSchema}
+          onSubmit={(values) => {
+            console.log("Form submitted with values:", values);
+          }}
+        >
+          {({ submitForm, values, validateForm, setTouched }) => {
+            useImperativeHandle(ref, () => ({
+              submit: async () => {
+                setTouched({
+                  code: true,
+                  name: true,
+                  description: true,
+                  discount: true,
+                  startDate: true,
+                  endDate: true,
+                  regionId: true,
+                  active: true,
+                });
+                const errors = await validateForm();
+                if (Object.keys(errors).length > 0) {
+                  return Promise.reject(errors);
+                }
+                await submitForm();
+                return values;
+              },
+            }));
+            return (
+              <Form>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Código:</label>
+                  <Field
+                    name="code"
+                    type="text"
+                    className="mt-1 block w-full border border-gray-300 rounded p-2"
+                  />
+                  <ErrorMessage name="code" component="div" className="text-red-500 text-sm" />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Nombre:</label>
+                  <Field
+                    name="name"
+                    type="text"
+                    className="mt-1 block w-full border border-gray-300 rounded p-2"
+                  />
+                  <ErrorMessage name="name" component="div" className="text-red-500 text-sm" />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Descripción:</label>
+                  <Field
+                    name="description"
+                    as="textarea"
+                    className="mt-1 block w-full border border-gray-300 rounded p-2"
+                  />
+                  <ErrorMessage name="description" component="div" className="text-red-500 text-sm" />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Descuento (%):</label>
+                  <Field
+                    name="discount"
+                    type="number"
+                    step="0.01"
+                    className="mt-1 block w-full border border-gray-300 rounded p-2"
+                  />
+                  <ErrorMessage name="discount" component="div" className="text-red-500 text-sm" />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Fecha de inicio:</label>
+                  <Field
+                    name="startDate"
+                    type="date"
+                    className="mt-1 block w-full border border-gray-300 rounded p-2"
+                  />
+                  <ErrorMessage name="startDate" component="div" className="text-red-500 text-sm" />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Fecha de fin:</label>
+                  <Field
+                    name="endDate"
+                    type="date"
+                    className="mt-1 block w-full border border-gray-300 rounded p-2"
+                  />
+                  <ErrorMessage name="endDate" component="div" className="text-red-500 text-sm" />
+                </div>
+                <div className="mb-4 flex items-center">
+                  <Field name="active" type="checkbox" className="mr-2" />
+                  <label className="text-gray-700">Activo</label>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Región:</label>
+                  <Field
+                    as="select"
+                    name="regionId"
+                    className="mt-1 block w-full border border-gray-300 rounded p-2"
+                  >
+                    <option value="">Selecciona una región</option>
+                    {regions.map((r) => (
+                      <option key={r.code} value={r.code}>
+                        {r.flag} {r.name}
+                      </option>
+                    ))}
+                  </Field>
+                  <ErrorMessage name="regionId" component="div" className="text-red-500 text-sm" />
+                </div>
+                <FormObserver onChange={onValuesChange} />
+              </Form>
+            );
+          }}
+        </Formik>
+      </div>
+    );
+  }
+);
 
 export default PromotionForm;
