@@ -1,21 +1,50 @@
-import React from 'react'
-import Link from 'next/link'
-import { ProductAdminTableRow } from '../definitions'
-import DisplayTableInfo from '@/lib/components/DisplayTableInfo'
+"use client";
+import React, { useState, useMemo } from "react";
+import Link from "next/link";
+import { ProductAdminTableRow } from "../definitions";
+import DisplayTableInfo from "@/lib/components/DisplayTableInfo";
+import FilterBar, { FilterCriteria } from "@/lib/components/FilterBar";
 
 type Props = {
-  values: ProductAdminTableRow[]
-}
+  values: ProductAdminTableRow[];
+};
 
 const ProductTable: React.FC<Props> = ({ values }) => {
-  const headers = ['ID', 'Nombre', 'Precio Base', 'Activo', 'Categorias', 'Fecha de Creación', 'Opciones']
-  const data = values.map((product) => ({
+  const [filters, setFilters] = useState<FilterCriteria>({});
+
+  const filteredProducts = useMemo(() => {
+    return values.filter((product) => {
+      const matchesSearch = filters.search
+        ? product.name.toLowerCase().includes(filters.search.toLowerCase())
+        : true;
+      const matchesActive =
+        filters.isDeleted !== undefined
+          ? filters.isDeleted
+            ? product.active
+            : !product.active
+          : true;
+      return matchesSearch && matchesActive;
+    });
+  }, [values, filters]);
+
+  const headers = [
+    "ID",
+    "Nombre",
+    "Activo",
+    "Categorías",
+    "Fecha de Creación",
+    "Opciones",
+  ];
+
+  const data = filteredProducts.map((product) => ({
     ID: product.id,
     Nombre: product.name,
-    'Precio Base': product.basePrice,
-    Activo: product.active ? 'Sí' : 'No',
-    Categorias: product.categories.length > 0 ? product.categories : 'Ninguna',  
-    'Fecha de Creación': new Date(product.createdAt).toLocaleDateString(),
+    Activo: product.active ? "Sí" : "No",
+    Categorías:
+      product.categories && product.categories.length > 0
+        ? Array.isArray(product.categories) ? product.categories.join(", ") : "Ninguna"
+        : "Ninguna",
+    "Fecha de Creación": new Date(product.createdAt).toLocaleDateString(),
     Opciones: (
       <Link
         className="text-indigo-600 hover:text-indigo-900 transition"
@@ -23,10 +52,15 @@ const ProductTable: React.FC<Props> = ({ values }) => {
       >
         Detalles
       </Link>
-    )
-  }))
-  
-  return <DisplayTableInfo headers={headers} data={data} />
-}
+    ),
+  }));
 
-export default ProductTable
+  return (
+    <div>
+      <FilterBar onFilterChange={setFilters} />
+      <DisplayTableInfo headers={headers} data={data} keyField="ID" />
+    </div>
+  );
+};
+
+export default ProductTable;

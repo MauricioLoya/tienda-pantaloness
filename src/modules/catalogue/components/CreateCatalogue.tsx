@@ -23,7 +23,6 @@ const CreateCatalogue = ({allCategories, regions} : {allCategories: CategoryItem
         }}
         cancelBtnText="Cancelar"
         cancelBtnFunction={() => console.log("click action cancel")}
-        fullScreen={true}
       >
         <>
           <div className="flex justify-center mx-auto p-6">

@@ -11,7 +11,9 @@ const CatalogoPage: React.FC = async () => {
   return (
     <>
       <Suspense fallback={<Loader />}>
-        <CreateCatalogue allCategories={allCategories} regions={regions} />
+        <div className="flex items-center justify-end border-b pb-2 mb-4">
+          <CreateCatalogue allCategories={allCategories} regions={regions} />
+        </div>
         <ProductList />
       </Suspense>
     </>

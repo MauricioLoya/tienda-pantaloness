@@ -43,10 +43,6 @@ const ProductDetail: React.FC<Props> = ({ productProp }) => {
         <DisplayInfo
           info={[
             {
-              label: 'Precio Base',
-              value: `$${product.basePrice}`
-            },
-            {
               label: 'Activo',
               value: `${product.active ? 'Sí' : 'No'}`
             }
