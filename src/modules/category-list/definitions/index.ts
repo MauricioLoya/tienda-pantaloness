@@ -30,8 +30,7 @@ export class CategoryListRepository {
       name: category.name,
       description: category.description,
       active: !category.isDeleted,
-      imageUrl:
-        'https://img.daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.webp'
+      imageUrl: category.backgroundUrl ?? ''
     }))
   }
 
