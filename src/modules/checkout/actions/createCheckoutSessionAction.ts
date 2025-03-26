@@ -12,15 +12,24 @@ import {
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
+// Define supported regions type
+export type SupportedRegion = 'mx' | 'us'
+
+// Define locales object with proper typing
+const StripeLocales: Record<SupportedRegion, string> = {
+  mx: 'es-419',
+  us: 'en'
+}
+
 /**
  * Creates a checkout session for the provided cart items
  * @param input - Cart items and customer information
  * @returns Checkout session details or error information
  */
 export async function createCheckoutSessionAction(
+  region: SupportedRegion,
   input: CheckoutInput
 ): Promise<ServerActionResult<CheckoutSessionData | null>> {
-  console.log('createCheckoutSessionAction input:', input)
   try {
     if (!input.items || input.items.length === 0) {
       return {
@@ -32,28 +41,12 @@ export async function createCheckoutSessionAction(
       }
     }
 
-    // Validate and process cart items
-    const { isValid, lineItems, subtotal, errors } =
-      await validateAndProcessCartItems(input.items)
-
-    if (!isValid) {
-      console.log('errors:', errors)
-      return {
-        success: false,
-        message: 'Error al procesar los items del carrito.',
-        data: null,
-        error: errors.join(' '),
-        errorCode: CheckoutErrorCode.INVALID_CART
-      }
-    }
-
     // Process promotion code if provided
     const {
       isValidPromo,
       errors: promoErrors,
-      discountAmount,
       promotionId
-    } = await processPromoCode(input.couponCode, subtotal)
+    } = await processPromoCode(input.couponCode, region)
 
     if (!isValidPromo) {
       return {
@@ -67,25 +60,43 @@ export async function createCheckoutSessionAction(
 
     console.log('promotionId:', promotionId)
 
-    const total = subtotal - discountAmount
-    if (total < 0) {
+    // Validate and process cart items
+    const { isValid, lineItems, errors } = await validateAndProcessCartItems(
+      region,
+      input.items,
+      promotionId
+    )
+
+    if (!isValid) {
+      console.log('errors:', errors)
       return {
         success: false,
-        message: 'El descuento supera el subtotal.',
+        message: 'Error al procesar los items del carrito.',
         data: null,
-        error: 'Descuento mayor al subtotal',
-        errorCode: CheckoutErrorCode.DISCOUNT_EXCEEDS_TOTAL
+        error: errors.join(' '),
+        errorCode: CheckoutErrorCode.INVALID_CART
       }
     }
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
+      locale: StripeLocales[
+        region
+      ] as Stripe.Checkout.SessionCreateParams.Locale,
+      shipping_address_collection: {
+        allowed_countries: [
+          region.toUpperCase()
+        ] as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[]
+      },
+      phone_number_collection: {
+        enabled: true
+      },
       payment_method_types: ['card'],
       line_items: lineItems as Stripe.Checkout.SessionCreateParams.LineItem[],
       mode: 'payment',
       customer_email: input.customerInfo?.email || undefined,
-      success_url: `${process.env.APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.APP_URL}cart`
+      success_url: `${process.env.APP_URL}${region}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.APP_URL}${region}/cart`
     })
 
     return {
