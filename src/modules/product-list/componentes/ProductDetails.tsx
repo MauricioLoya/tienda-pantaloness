@@ -21,13 +21,7 @@ const ProductDetails = async ({ slug, selectedSize }: Props) => {
     }
 
     // Sample product images - replace with actual images from your API
-    const productImages = [
-      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=500',
-      'https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=500',
-      'https://images.unsplash.com/photo-1565084888279-aca607ecce0c?q=80&w=500',
-      'https://images.unsplash.com/photo-1560243563-062bfc001d68?q=80&w=500',
-      'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=500'
-    ]
+    const productImages = productDetail.images
 
     return (
       <div className="container mx-auto px-4 py-8">
@@ -54,7 +48,7 @@ const ProductDetails = async ({ slug, selectedSize }: Props) => {
               productName={productDetail.product.name}
               variants={productDetail.variants}
               selectedSize={selectedSize}
-              productId={Number(slug)}
+              productId={productDetail.product.id}
             />
           </div>
         </div>
