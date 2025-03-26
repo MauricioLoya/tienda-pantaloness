@@ -22,7 +22,9 @@
     "processing": "Procesando...",
     "proceed_to_payment": "Proceder al pago",
     "continue_shopping": "Seguir comprando",
-    "add_to_cart": "Añadir al carrito"
+    "add_to_cart": "Añadir al carrito",
+    "apply": "Aplicar",
+    "coupon_code": "Código de cupón"
   },
   "CheckoutSuccessPage": {
     "thank_you": "¡Gracias por tu compra!",

@@ -6,16 +6,22 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { formatPrice } from '@/lib/utils'
 import SectionBox from '@/modules/landing/SectionBox'
-import { createCheckoutSessionAction } from '@/modules/checkout/actions/createCheckoutSessionAction'
+import {
+  createCheckoutSessionAction,
+  SupportedRegion
+} from '@/modules/checkout/actions/createCheckoutSessionAction'
 import { CheckoutInput } from '@/modules/checkout/validations'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 export default function CartPage() {
+  // const headersList = await headers()
+  const locale = useLocale()
   const t = useTranslations('CartPage')
   const { items, removeItem, updateQuantity, total } = useCart()
   const router = useRouter()
   const [isCheckingOut, setIsCheckingOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [promotionCode, setPromotionCode] = useState<string | null>(null)
 
   const handleCheckout = async () => {
     if (items.length === 0) return
@@ -40,19 +46,32 @@ export default function CartPage() {
           country: 'Test Country',
           postalCode: '12345'
         },
-        couponCode: ''
+        couponCode: promotionCode ?? undefined
       }
       console.log(cartForCheckout)
-      const session = await createCheckoutSessionAction(cartForCheckout)
-      if (session.success && session.data) {
-        router.push(session.data.checkoutUrl)
+      const result = await createCheckoutSessionAction(
+        locale as SupportedRegion,
+        cartForCheckout
+      )
+      if (result.success && result.data) {
+        router.push(result.data.checkoutUrl)
         return
+      }
+      if (result.error) {
+        setError(result.error)
       }
     } catch (err) {
       console.error('Error during checkout:', err)
     } finally {
       setIsCheckingOut(false)
     }
+  }
+
+  const handleApplyPromotion = () => {
+    // Here you can implement promotion code validation and application logic
+    console.log('Applying promotion code:', promotionCode)
+    // For now, we're just logging the code
+    // Later you can add validation and discount application
   }
 
   if (items.length === 0) {
@@ -144,6 +163,21 @@ export default function CartPage() {
             </div>
           </div>
           {error && <p className="text-red-500 mt-4">{error}</p>}
+          <div className="flex items-center justify-start gap-4">
+            <input
+              type="text"
+              placeholder={t('coupon_code')}
+              className="bg-white border-2 border-white rounded py-2 px-3 mt-4 w-2/3"
+              value={promotionCode || ''}
+              onChange={e => setPromotionCode(e.target.value)}
+            />
+            <button
+              className="btn btn-white mt-4 py-3 w-1/3"
+              onClick={handleApplyPromotion}
+            >
+              {t('apply')}
+            </button>
+          </div>
           <button
             onClick={handleCheckout}
             disabled={isCheckingOut}
