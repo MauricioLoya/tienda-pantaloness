@@ -36,7 +36,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
           <img
             src={category?.imageUrl ?? 'not-found'}
             alt={category?.name ?? 'not-found'}
-            className="object-cover"
+            className="object-cover bg-center w-full h-full"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
