@@ -1,4 +1,3 @@
-// src/modules/landing/definitions.ts
 import { prisma } from "@/lib/prima/client";
 import { Section, SectionType } from "@prisma/client";
 

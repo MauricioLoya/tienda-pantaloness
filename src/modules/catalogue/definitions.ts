@@ -2,7 +2,14 @@ import { prisma } from "@/lib/prima/client";
 import { generateSlug } from "@/lib/utils";
 import { Product } from "@prisma/client";
 import { CategoryItem } from "../category/definitions";
-
+export interface ProductItem {
+  id: number;
+  name: string;
+  description: string;
+  active: boolean;
+  regionId: string;
+  slug: string
+}
 export interface ProductInput {
   name: string;
   description: string;
@@ -26,7 +33,7 @@ export type VariantItem = {
 };
 
 export type ProductDetail = {
-  product: Product;
+  product: ProductItem;
   images: ImageItem[];
   categories: CategoryItem[];
   variants: VariantItem[];
