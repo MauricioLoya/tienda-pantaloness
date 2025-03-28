@@ -8,10 +8,11 @@ import { useTranslations } from 'next-intl'
 interface Variant {
   id: number
   size: string
-  stock: number
   price: number
+  stock: number
+  discount: number
+  discountPrice: number
 }
-
 interface AddToCartButtonProps {
   variant?: Variant
   productId: number
@@ -35,11 +36,6 @@ const AddToCartButton = ({
   const handleAddToCart = () => {
     if (!variant) return
 
-    // Here you would implement your cart logic
-    console.log(
-      `Added product ${productId} with variant ${variant.id} (size: ${variant.size}) to cart`
-    )
-
     addItem({
       id: uuidv4(),
       productId: productId,
@@ -49,7 +45,8 @@ const AddToCartButton = ({
       quantity: quantity,
       image: productImage,
       variantId: variant.id,
-      maxQuantity: variant.stock
+      maxQuantity: variant.stock,
+      discountPrice: variant.discountPrice
     })
   }
 

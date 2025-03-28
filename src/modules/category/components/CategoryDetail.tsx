@@ -26,7 +26,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ category, region, produ
       );
       showToast("Producto eliminado correctamente", "success");
     } catch (error) {
-      showToast("Error al eliminar el producto de la categoría", "success");
+      showToast("Error al eliminar el producto de la categoría", "error");
     }
   };
 
@@ -34,7 +34,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ category, region, produ
     <div className="card shadow p-6">
       { category.backgroundUrl && (
         <div className="mb-4">
-          <img src={category.backgroundUrl} alt={category.name} className="w-full h-40 object-cover" />
+          <img src={category.backgroundUrl} alt={category.name} className="w-full rounded-lg h-40 object-cover" />
         </div>
       )}
       <h2 className="text-2xl font-bold mb-4">{category.name}</h2>
