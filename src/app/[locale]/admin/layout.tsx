@@ -1,20 +1,18 @@
 import React from 'react'
 import { auth } from '../../auth'
-import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import NavBar from '@/modules/admin-dashboard/layout/NavBar'
+
 type Props = {
   children: React.ReactNode
 }
+
 const AdminLayout: React.FC<Props> = async ({ children }) => {
   const session = await auth()
 
-  if (!session?.user)
-    return (
-      <main>
-        404
-        <Link href="/">Back</Link>
-      </main>
-    )
+  if (!session?.user) {
+    redirect('/api/auth/signin')
+  }
 
   return (
     <main>
