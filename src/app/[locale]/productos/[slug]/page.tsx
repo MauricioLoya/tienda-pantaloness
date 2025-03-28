@@ -13,7 +13,7 @@ export const generateMetadata = async ({
 }: Props): Promise<Metadata> => {
   const { slug } = await params
   return {
-    title: `Product ${slug} - Tienda Pantalones`
+    title: `${slug.toLocaleUpperCase()} - Tienda Pantalones`
   }
 }
 
