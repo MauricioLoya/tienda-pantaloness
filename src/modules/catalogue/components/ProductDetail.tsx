@@ -1,9 +1,12 @@
+"use client";
+
 import React from "react";
 import DisplayInfo from "@/lib/components/DisplayInfo";
 import DisplayTableInfo from "@/lib/components/DisplayTableInfo";
 import GoBack from "@/lib/components/GoBack";
 import Link from "next/link";
 import { ProductDetail } from "../definitions";
+import ImagePreview from "@/lib/components/ImagePreview";
 
 type Props = {
   productProp: ProductDetail;
@@ -16,10 +19,11 @@ const ProductDetails: React.FC<Props> = ({ productProp }) => {
     <div className="container mx-auto p-4">
       {images.length > 0 && (
         <div className="mb-6">
-          <img
+          <ImagePreview
             src={images[0].url}
             alt={product.name}
-            className="w-full h-80 object-cover rounded-lg shadow-lg"
+            containerClassName="w-full h-80 overflow-hidden rounded-lg shadow-lg"
+            imageClassName="w-full h-full object-cover transition hover:scale-105"
           />
         </div>
       )}
@@ -36,6 +40,7 @@ const ProductDetails: React.FC<Props> = ({ productProp }) => {
           />
         </div>
 
+        {/* Detalles y Fechas */}
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-xl font-semibold mb-4">Detalles y Fechas</h2>
           <DisplayInfo
@@ -59,13 +64,15 @@ const ProductDetails: React.FC<Props> = ({ productProp }) => {
         {images.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {images.map((img) => (
-              <div key={img.id} className="border rounded-lg overflow-hidden">
-                <img
-                  src={img.url}
-                  alt={`Imagen de ${product.name}`}
-                  className="w-full h-40 object-cover transition hover:scale-105"
-                />
-              </div>
+              <ImagePreview
+                key={img.id}
+                src={img.url}
+                alt={`Imagen de ${product.name}`}
+                onPreview={() => window.open(img.url, "_blank")}
+                // No se muestra el botón de eliminar en la vista de detalles
+                containerClassName="relative w-32 h-32"
+                imageClassName="w-full h-full object-cover rounded-lg border border-gray-200"
+              />
             ))}
           </div>
         ) : (
@@ -73,6 +80,7 @@ const ProductDetails: React.FC<Props> = ({ productProp }) => {
         )}
       </div>
 
+      {/* Categorías */}
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-4">Categorías</h2>
         {categories.length > 0 ? (
@@ -93,6 +101,7 @@ const ProductDetails: React.FC<Props> = ({ productProp }) => {
         )}
       </div>
 
+      {/* Variantes */}
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-4">Variantes</h2>
         {variants.length > 0 ? (
@@ -109,6 +118,15 @@ const ProductDetails: React.FC<Props> = ({ productProp }) => {
         ) : (
           <p className="text-gray-600">No hay variantes disponibles.</p>
         )}
+      </div>
+
+      <div className="mt-8">
+        <Link
+          href={`/admin/catalogo/${product.id}/editar`}
+          className="btn btn-outline btn-info"
+        >
+          Editar Producto
+        </Link>
       </div>
     </div>
   );

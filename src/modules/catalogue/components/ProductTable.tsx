@@ -4,12 +4,14 @@ import Link from "next/link";
 import { ProductAdminTableRow } from "../definitions";
 import DisplayTableInfo from "@/lib/components/DisplayTableInfo";
 import FilterBar, { FilterCriteria } from "@/lib/components/FilterBar";
+import { RegionItem } from "@/modules/region/definitions";
 
 type Props = {
   values: ProductAdminTableRow[];
+  regions: RegionItem[];
 };
 
-const ProductTable: React.FC<Props> = ({ values }) => {
+const ProductTable: React.FC<Props> = ({ values, regions }) => {
   const [filters, setFilters] = useState<FilterCriteria>({});
 
   const filteredProducts = useMemo(() => {
@@ -17,13 +19,16 @@ const ProductTable: React.FC<Props> = ({ values }) => {
       const matchesSearch = filters.search
         ? product.name.toLowerCase().includes(filters.search.toLowerCase())
         : true;
+      const matchesRegion = filters.region
+        ? product.regionId === filters.region
+        : true;
       const matchesActive =
         filters.isDeleted !== undefined
           ? filters.isDeleted
-            ? product.active
-            : !product.active
+            ? !product.active
+            : product.active
           : true;
-      return matchesSearch && matchesActive;
+      return matchesSearch && matchesRegion && matchesActive;
     });
   }, [values, filters]);
 
@@ -31,6 +36,7 @@ const ProductTable: React.FC<Props> = ({ values }) => {
     "ID",
     "Nombre",
     "Activo",
+    "Region",
     "Categorías",
     "Fecha de Creación",
     "Opciones",
@@ -40,9 +46,16 @@ const ProductTable: React.FC<Props> = ({ values }) => {
     ID: product.id,
     Nombre: product.name,
     Activo: product.active ? "Sí" : "No",
+    Region:
+      (() => {
+        const r = regions.find((r) => r.code === product.regionId);
+        return r ? `${r.flag} ${r.name}` : "No asignada";
+      })(),
     Categorías:
       product.categories && product.categories.length > 0
-        ? Array.isArray(product.categories) ? product.categories.join(", ") : "Ninguna"
+        ? Array.isArray(product.categories)
+          ? product.categories.join(", ")
+          : "Ninguna"
         : "Ninguna",
     "Fecha de Creación": new Date(product.createdAt).toLocaleDateString(),
     Opciones: (
@@ -57,7 +70,7 @@ const ProductTable: React.FC<Props> = ({ values }) => {
 
   return (
     <div>
-      <FilterBar onFilterChange={setFilters} />
+      <FilterBar onFilterChange={setFilters} regions={regions}  />
       <DisplayTableInfo headers={headers} data={data} keyField="ID" />
     </div>
   );

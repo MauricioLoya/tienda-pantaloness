@@ -8,14 +8,17 @@ export interface ProductItem {
   description: string;
   active: boolean;
   regionId: string;
-  slug: string
+  slug: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
+
 export interface ProductInput {
   name: string;
   description: string;
   active: boolean;
   regionId: string;
-  slug: string
+  slug: string;
 }
 
 export type ImageItem = {
@@ -52,7 +55,6 @@ export type ProductAdminTableRow = {
 export class ProductRepository {
   async getProducts(): Promise<ProductAdminTableRow[]> {
     const products = await prisma.product.findMany({
-      where: { active: true },
       include: {
         ProductCategory: { include: { category: true } },
       },
@@ -104,7 +106,16 @@ export class ProductRepository {
       discount: v.discount,
       discountPrice: v.discountPrice,
     }));
-    return { product, images, categories, variants };
+    return {
+      product: {
+        ...product,
+        slug: product.slug ?? "",
+        regionId: product.regionId ?? "",
+      },
+      images,
+      categories,
+      variants,
+    };
   }
 
   async createBasic(data: ProductInput): Promise<Product> {
@@ -186,7 +197,9 @@ export class ProductRepository {
     return prisma.productVariant.delete({ where: { id: variantId } });
   }
 
-  async getProductsForCategory(categoryId: number): Promise<ProductAdminTableRow[]> {
+  async getProductsForCategory(
+    categoryId: number
+  ): Promise<ProductAdminTableRow[]> {
     const products = await prisma.product.findMany({
       where: {
         ProductCategory: {
@@ -202,7 +215,9 @@ export class ProductRepository {
       orderBy: { createdAt: "desc" },
     });
     return products.map((prod) => {
-      const categoryNames = prod.ProductCategory.map((pc) => pc.category.name).join(", ");
+      const categoryNames = prod.ProductCategory.map(
+        (pc) => pc.category.name
+      ).join(", ");
       return {
         id: prod.id,
         name: prod.name,

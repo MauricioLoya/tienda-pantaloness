@@ -1,78 +1,106 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { addImageAction } from "../actions/addImageAction";
 import { removeImageAction } from "../actions/removeImageAction";
 import { useRouter } from "next/navigation";
 import { ImageItem } from "../definitions";
 import { FaEye } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
+import { useToast } from "@/lib/components/ToastContext";
+import ImagePreview from "@/lib/components/ImagePreview";
 
 interface ImagesFormProps {
   productId?: number;
   images?: ImageItem[];
 }
 
-const ImagesForm: React.FC<ImagesFormProps> = ({ productId, images = [] }) => {
-  const [url, setUrl] = useState("");
-  const router = useRouter();
+interface ImageFormValues {
+  url: string;
+}
 
-  async function handleAdd() {
-    if (!url.trim() || !productId) return;
-    await addImageAction(productId, url.trim());
-    setUrl("");
-    router.refresh();
+const ImageSchema = Yup.object().shape({
+  url: Yup.string().url("URL inválida").required("La URL es requerida"),
+});
+
+const ImagesForm: React.FC<ImagesFormProps> = ({ productId, images = [] }) => {
+  const router = useRouter();
+  const { showToast } = useToast();
+
+  async function handleSubmit(
+    values: ImageFormValues,
+    { resetForm }: { resetForm: () => void }
+  ) {
+    if (!productId) return;
+    try {
+      await addImageAction(productId, values.url.trim());
+      resetForm();
+      router.refresh();
+      showToast("Imagen agregada correctamente", "success");
+    } catch (error: any) {
+      showToast(error.message || "Error al agregar la imagen", "error");
+    }
   }
 
   async function handleRemove(imageId: number) {
-    await removeImageAction(imageId);
-    router.refresh();
+    try {
+      await removeImageAction(imageId);
+      router.refresh();
+      showToast("Imagen eliminada correctamente", "success");
+    } catch (error: any) {
+      showToast(error.message || "Error al eliminar la imagen", "error");
+    }
   }
 
   return (
     <div className="card shadow p-4">
       <div className="grid gap-5">
         <h2 className="text-xl font-bold mb-2">Imágenes</h2>
-        <div className="flex gap-2 mb-2">
-          <input
-            type="text"
-            className="input input-bordered flex-1"
-            placeholder="https://..."
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-          />
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={handleAdd}
-            disabled={!productId}
-          >
-            Agregar
-          </button>
-        </div>
-        <div className="flex flex-wrap gap-2">
+        <Formik
+          initialValues={{ url: "" }}
+          validationSchema={ImageSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form className="flex flex-col gap-2 mb-4">
+              <div className="flex flex-col md:flex-row gap-2 items-start">
+                <div className="flex-1">
+                  <Field
+                    type="text"
+                    name="url"
+                    placeholder="https://..."
+                    className="input input-bordered w-full"
+                  />
+                  <ErrorMessage
+                    name="url"
+                    component="div"
+                    className="text-error text-sm mt-1"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="btn btn-secondary"
+                  disabled={isSubmitting || !productId}
+                >
+                  Agregar
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+        <div className="flex flex-wrap gap-4">
           {images.map((img) => (
-            <div key={img.id} className="relative">
-              <img
-                src={img.url}
-                alt="imagen"
-                className="w-auto h-48 object-cover rounded-lg border-2 border-gray-200"
-              />
-              <button
-                type="button"
-                onClick={() => handleRemove(img.id)}
-                className="btn btn-xs btn-circle btn-error absolute top-0 left-0 m-1"
-              >
-                <IoClose />
-              </button>
-              <button
-                type="button"
-                onClick={() => window.open(img.url, "_blank")}
-                className="btn btn-xs btn-circle btn-info absolute top-0 right-0 m-1"
-              >
-                <FaEye />
-              </button>
-            </div>
+            <ImagePreview
+              key={img.id}
+              src={img.url}
+              alt="Imagen"
+              onRemove={() => handleRemove(img.id)}
+              onPreview={() => window.open(img.url, "_blank")}
+              containerClassName="relative w-32 h-32"
+              imageClassName="w-full h-full object-cover rounded-lg border border-gray-200"
+            />
           ))}
         </div>
       </div>

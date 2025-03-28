@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { createProductAction } from "../actions/createProductAction";
@@ -8,6 +8,8 @@ import { updateProductAction } from "../actions/updateProductAction";
 import { ProductInput } from "../definitions";
 import { RegionItem } from "@/modules/region/definitions";
 import { generateSlug } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/lib/components/ToastContext";
 
 interface BasicFormProps {
   productId?: number;
@@ -20,32 +22,41 @@ const BasicForm: React.FC<BasicFormProps> = ({
   initialData = {
     name: "",
     description: "",
-    basePrice: 0,
     active: true,
     slug: "",
     regionId: "",
   },
   regions,
 }) => {
+  const router = useRouter();
+  const { showToast } = useToast();
+
   const schema = Yup.object().shape({
     name: Yup.string().required("Nombre requerido"),
     description: Yup.string().required("Descripción requerida"),
-    basePrice: Yup.number().min(0).required("Precio requerido"),
     active: Yup.boolean(),
     regionId: Yup.string().required("Región es requerida"),
     slug: Yup.string(),
   });
 
   async function handleSubmit(values: ProductInput) {
-    if (!productId) {
-      await createProductAction(values);
-    } else {
-      await updateProductAction(productId, values);
+    try {
+      if (!productId) {
+        const product = await createProductAction(values);
+        showToast("Producto creado correctamente", "success");
+        router.push(`/admin/catalogo/${product.id}/edit`);
+      } else {
+        await updateProductAction(productId, values);
+        showToast("Producto actualizado correctamente", "success");
+        router.refresh();
+      }
+    } catch (error: any) {
+      showToast(error.message || "Error al guardar el producto", "error");
     }
   }
 
   return (
-    <div className="card shadow p-4">
+    <div className="card shadow p-4 max-w-3xl mx-auto">
       <h2 className="text-xl font-bold mb-2">Información base</h2>
       <Formik
         initialValues={initialData as ProductInput}
@@ -65,7 +76,11 @@ const BasicForm: React.FC<BasicFormProps> = ({
                   setFieldValue("slug", newSlug);
                 }}
               />
-              <ErrorMessage name="name" component="div" className="text-error" />
+              <ErrorMessage
+                name="name"
+                component="div"
+                className="text-error"
+              />
             </div>
             <div>
               <label className="block text-gray-700">Slug</label>
@@ -116,7 +131,7 @@ const BasicForm: React.FC<BasicFormProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="btn btn-primary mt-2"
+              className="btn btn-primary mt-2 self-end"
             >
               Guardar
             </button>

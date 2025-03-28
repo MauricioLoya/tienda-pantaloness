@@ -1,44 +1,92 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { addVariantAction } from "../actions/addVariantAction";
 import { removeVariantAction } from "../actions/removeVariantAction";
 import { useRouter } from "next/navigation";
 import { VariantItem } from "../definitions";
 import DisplayTableInfo from "@/lib/components/DisplayTableInfo";
 import ActionButton from "@/lib/components/ActionButton";
+import { useToast } from "@/lib/components/ToastContext";
 
 interface VariantsFormProps {
   productId?: number;
   variants?: VariantItem[];
 }
 
-const VariantsForm: React.FC<VariantsFormProps> = ({ productId, variants = [] }) => {
-  const [size, setSize] = useState("");
-  const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
-  const [discount, setDiscount] = useState("");
-  const [discountError, setDiscountError] = useState("");
-  const [discountedPrice, setDiscountedPrice] = useState<number | null>(null);
-  const router = useRouter();
+interface VariantFormValues {
+  size: string;
+  price: string;
+  stock: string;
+  discount: string;
+}
 
-  useEffect(() => {
-    const p = parseFloat(price);
-    const d = parseFloat(discount);
-    if (!isNaN(p) && !isNaN(d)) {
-      if (d < 0 || d > 100) {
-        setDiscountError("El descuento debe estar entre 0 y 100");
-        setDiscountedPrice(null);
-      } else {
-        setDiscountError("");
-        const dp = p * (1 - d / 100);
-        setDiscountedPrice(Math.round(dp * 100) / 100);
-      }
-    } else {
-      setDiscountedPrice(null);
-      setDiscountError("");
+const VariantSchema = Yup.object().shape({
+  size: Yup.string().required("El tamaño es requerido"),
+  price: Yup.number()
+    .typeError("El precio debe ser un número")
+    .positive("El precio debe ser mayor a 0")
+    .required("El precio es requerido"),
+  stock: Yup.number()
+    .typeError("El stock debe ser un número")
+    .integer("El stock debe ser un número entero")
+    .min(0, "El stock no puede ser negativo")
+    .required("El stock es requerido"),
+  discount: Yup.number()
+    .transform((value, originalValue) => (originalValue === "" ? 0 : value))
+    .min(0, "El descuento no puede ser negativo")
+    .max(100, "El descuento no puede ser mayor a 100")
+    .notRequired(),
+});
+
+const VariantsForm: React.FC<VariantsFormProps> = ({
+  productId,
+  variants = [],
+}) => {
+  const router = useRouter();
+  const { showToast } = useToast();
+
+  const calculateDiscountedPrice = (price: number, discount: number) => {
+    const dp = price * (1 - discount / 100);
+    return Math.round(dp * 100) / 100;
+  };
+
+  async function handleSubmit(values: VariantFormValues, { resetForm }: any) {
+    const discountValue =
+      values.discount === "" ? 0 : parseFloat(values.discount);
+    const priceValue = parseFloat(values.price);
+    const stockValue = parseInt(values.stock, 10);
+    const discountedPrice = calculateDiscountedPrice(priceValue, discountValue);
+
+    try {
+      if (!productId) return;
+      await addVariantAction(
+        productId,
+        values.size.trim(),
+        priceValue,
+        stockValue,
+        discountValue
+      );
+      resetForm();
+      router.refresh();
+      showToast("Variante agregada correctamente", "success");
+    } catch (error: any) {
+      // Muestra el error devuelto en un toast
+      showToast(error.message || "Error al agregar la variante", "error");
     }
-  }, [price, discount]);
+  }
+
+  async function handleRemove(variantId: number) {
+    try {
+      await removeVariantAction(variantId);
+      router.refresh();
+      showToast("Variante eliminada correctamente", "success");
+    } catch (error: any) {
+      showToast(error.message || "Error al eliminar la variante", "error");
+    }
+  }
 
   const variantsData = variants.map((variant) => ({
     id: variant.id,
@@ -47,38 +95,8 @@ const VariantsForm: React.FC<VariantsFormProps> = ({ productId, variants = [] })
     Stock: variant.stock,
     Descuento: variant.discount || 0,
     "Precio con Descuento": variant.discountPrice || 0,
-    Eliminar: (
-      <ActionButton onClick={() => handleRemove(variant.id)} />
-    ),
+    Eliminar: <ActionButton onClick={() => handleRemove(variant.id)} />,
   }));
-
-  async function handleAdd() {
-    if (!size.trim() || !price || !stock) return;
-    const discountValue = discount.trim() ? parseFloat(discount) : 0;
-    if (discountValue < 0 || discountValue > 100) {
-      setDiscountError("El descuento debe estar entre 0 y 100");
-      return;
-    }
-    console.log(discountValue)
-    await addVariantAction(
-      productId!,
-      size.trim(),
-      parseFloat(price),
-      parseInt(stock, 10),
-      discountValue
-    );
-    setSize("");
-    setPrice("");
-    setStock("");
-    setDiscount("");
-    setDiscountedPrice(null);
-    router.refresh();
-  }
-
-  async function handleRemove(variantId: number) {
-    await removeVariantAction(variantId);
-    router.refresh();
-  }
 
   const renderCustomCell = (header: string, row: any) => {
     if (header === "Eliminar") {
@@ -90,54 +108,105 @@ const VariantsForm: React.FC<VariantsFormProps> = ({ productId, variants = [] })
   return (
     <div className="card shadow p-4">
       <h2 className="text-xl font-bold mb-2">Variantes</h2>
-      <div className="grid grid-cols-5 gap-2 mb-2">
-        <input
-          type="text"
-          placeholder="Tamaño"
-          value={size}
-          onChange={(e) => setSize(e.target.value)}
-          className="input input-bordered col-span-1"
-        />
-        <input
-          type="number"
-          placeholder="Precio"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          className="input input-bordered col-span-1"
-        />
-        <input
-          type="number"
-          placeholder="Stock"
-          value={stock}
-          onChange={(e) => setStock(e.target.value)}
-          className="input input-bordered col-span-1"
-        />
-        <input
-          type="number"
-          placeholder="Descuento (%)"
-          value={discount}
-          onChange={(e) => setDiscount(e.target.value)}
-          className="input input-bordered col-span-1"
-        />
-        <button
-          type="button"
-          className="btn btn-secondary col-span-1"
-          onClick={handleAdd}
-          disabled={!productId}
-        >
-          Agregar
-        </button>
-      </div>
-      {discountError && <p className="text-error mb-2">{discountError}</p>}
-      {discountedPrice !== null && parseFloat(discount) > 0 && (
-        <p className="mb-2">
-          Precio con descuento: ${discountedPrice.toFixed(2)} (Ahorras $
-          {(parseFloat(price) - discountedPrice).toFixed(2)})
-        </p>
-      )}
+      <Formik
+        initialValues={{ size: "", price: "", stock: "", discount: "" }}
+        validationSchema={VariantSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ values }) => {
+          const priceVal = parseFloat(values.price);
+          const discountVal =
+            values.discount === "" ? 0 : parseFloat(values.discount);
+          const computedDiscountedPrice =
+            !isNaN(priceVal) && !isNaN(discountVal)
+              ? calculateDiscountedPrice(priceVal, discountVal)
+              : null;
+          return (
+            <Form className="mb-4">
+              <div className="grid grid-cols-5 gap-2 mb-2">
+                <div className="col-span-1">
+                  <Field
+                    type="text"
+                    name="size"
+                    placeholder="Tamaño"
+                    className="input input-bordered w-full"
+                  />
+                  <ErrorMessage
+                    name="size"
+                    component="div"
+                    className="text-error text-sm"
+                  />
+                </div>
+                <div className="col-span-1">
+                  <Field
+                    type="number"
+                    name="price"
+                    placeholder="Precio"
+                    className="input input-bordered w-full"
+                  />
+                  <ErrorMessage
+                    name="price"
+                    component="div"
+                    className="text-error text-sm"
+                  />
+                </div>
+                <div className="col-span-1">
+                  <Field
+                    type="number"
+                    name="stock"
+                    placeholder="Stock"
+                    className="input input-bordered w-full"
+                  />
+                  <ErrorMessage
+                    name="stock"
+                    component="div"
+                    className="text-error text-sm"
+                  />
+                </div>
+                <div className="col-span-1">
+                  <Field
+                    type="number"
+                    name="discount"
+                    placeholder="Descuento (%)"
+                    className="input input-bordered w-full"
+                  />
+                  <ErrorMessage
+                    name="discount"
+                    component="div"
+                    className="text-error text-sm"
+                  />
+                </div>
+                <div className="col-span-1">
+                  <button type="submit" className="btn btn-secondary w-full">
+                    Agregar
+                  </button>
+                </div>
+              </div>
+              {computedDiscountedPrice !== null && discountVal > 0 && (
+                <div className="mb-2">
+                  <p className="text-sm">
+                    Descuento: $
+                    {(priceVal - computedDiscountedPrice).toFixed(2)}
+                  </p>
+                  <p className="text-sm">
+                    Precio Final: ${computedDiscountedPrice.toFixed(2)}
+                  </p>
+                </div>
+              )}
+            </Form>
+          );
+        }}
+      </Formik>
       <div className="overflow-x-auto">
         <DisplayTableInfo
-          headers={["Tamaño", "Precio", "Stock", "Descuento", "Precio con Descuento", "Eliminar"]}
+          headers={[
+            "Tamaño",
+            "Precio",
+            "Stock",
+            "Descuento",
+            "Precio con Descuento",
+            "Eliminar",
+          ]}
           data={variantsData}
           keyField="id"
           renderCustomCell={renderCustomCell}
