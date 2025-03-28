@@ -1,4 +1,5 @@
 import React from 'react'
+import ContactForm from '@/components/ContactForm'
 
 const ContactPage: React.FC = () => {
   return (
@@ -86,66 +87,8 @@ const ContactPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Contact Form */}
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title text-2xl mb-6">Envíanos un Mensaje</h2>
-
-            <form>
-              <div className="form-control mb-4">
-                <label className="label">
-                  <span className="label-text">Nombre completo</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Tu nombre"
-                  className="input input-bordered w-full"
-                />
-              </div>
-
-              <div className="form-control mb-4">
-                <label className="label">
-                  <span className="label-text">Email</span>
-                </label>
-                <input
-                  type="email"
-                  placeholder="tucorreo@ejemplo.com"
-                  className="input input-bordered w-full"
-                />
-              </div>
-
-              <div className="form-control mb-4">
-                <label className="label">
-                  <span className="label-text">Asunto</span>
-                </label>
-                <select className="select select-bordered w-full">
-                  <option disabled selected>
-                    Selecciona un asunto
-                  </option>
-                  <option>Información de productos</option>
-                  <option>Pedidos y entregas</option>
-                  <option>Devoluciones</option>
-                  <option>Atención al cliente</option>
-                  <option>Otros</option>
-                </select>
-              </div>
-
-              <div className="form-control mb-6">
-                <label className="label">
-                  <span className="label-text">Mensaje</span>
-                </label>
-                <textarea
-                  className="textarea textarea-bordered h-32"
-                  placeholder="Escribe tu mensaje aquí..."
-                ></textarea>
-              </div>
-
-              <button type="submit" className="btn btn-primary btn-block">
-                Enviar Mensaje
-              </button>
-            </form>
-          </div>
-        </div>
+        {/* Contact Form (now using the component) */}
+        <ContactForm />
       </div>
 
       {/* Map */}
