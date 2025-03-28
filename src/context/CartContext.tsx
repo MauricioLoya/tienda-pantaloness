@@ -15,6 +15,7 @@ export interface CartItem {
   productId: number
   name: string
   price: number
+  discountPrice?: number
   size: string
   quantity: number
   image: string
@@ -40,7 +41,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // Calculate derived values
   const itemCount = items.reduce((count, item) => count + item.quantity, 0)
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const total = items.reduce((sum, item) => {
+    if (item.discountPrice) {
+      return sum + item.discountPrice * item.quantity
+    } else {
+      return sum + item.price * item.quantity
+    }
+  }, 0)
 
   // Load cart from localStorage on initial render
   useEffect(() => {

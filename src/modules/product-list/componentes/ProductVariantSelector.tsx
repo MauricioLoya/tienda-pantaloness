@@ -9,9 +9,10 @@ import { useTranslations } from 'next-intl'
 interface Variant {
   id: number
   size: string
-  stock: number
   price: number
-  originalPrice?: number
+  stock: number
+  discount: number
+  discountPrice: number
 }
 
 interface ProductVariantSelectorProps {
@@ -59,29 +60,36 @@ const ProductVariantSelector = ({
     })
   }
 
-  // Initialize size from URL if not provided directly
+  // Initialize size based on priority: URL params > selectedSize prop > first available variant
   useEffect(() => {
-    if (!selectedSize) {
-      const sizeFromUrl = searchParams.get('size')
-      if (sizeFromUrl) {
-        setCurrentSize(sizeFromUrl)
-        const variant = variants.find(v => v.size === sizeFromUrl)
-        setSelectedVariant(variant)
-      }
-    } else {
-      const variant = variants.find(v => v.size === selectedSize)
-      setSelectedVariant(variant)
-    }
-  }, [selectedSize, searchParams, variants])
+    if (variants.length === 0) return
 
-  // If no variant is selected yet, use the first available one
-  useEffect(() => {
-    if (!selectedVariant && variants.length > 0) {
-      const availableVariant = variants.find(v => v.stock > 0) || variants[0]
-      setCurrentSize(availableVariant.size)
-      setSelectedVariant(availableVariant)
+    // First check URL parameters
+    const sizeFromUrl = searchParams.get('size')
+    if (sizeFromUrl) {
+      const variant = variants.find(v => v.size === sizeFromUrl)
+      if (variant) {
+        setCurrentSize(sizeFromUrl)
+        setSelectedVariant(variant)
+        return
+      }
     }
-  }, [selectedVariant, variants])
+
+    // Then check selectedSize prop
+    if (selectedSize) {
+      const variant = variants.find(v => v.size === selectedSize)
+      if (variant) {
+        setCurrentSize(selectedSize)
+        setSelectedVariant(variant)
+        return
+      }
+    }
+
+    // Default to first available variant with stock or just the first variant
+    const defaultVariant = variants.find(v => v.stock > 0) || variants[0]
+    setCurrentSize(defaultVariant.size)
+    setSelectedVariant(defaultVariant)
+  }, [variants, selectedSize, searchParams])
 
   // Reset quantity if it exceeds the available stock when variant changes
   useEffect(() => {
@@ -94,17 +102,8 @@ const ProductVariantSelector = ({
     }
   }, [selectedVariant, quantity])
 
-  const hasDiscount =
-    selectedVariant &&
-    selectedVariant.originalPrice &&
-    selectedVariant.originalPrice > selectedVariant.price
-  const discountPercentage = hasDiscount
-    ? Math.round(
-        ((selectedVariant.originalPrice! - selectedVariant.price) /
-          selectedVariant.originalPrice!) *
-          100
-      )
-    : 0
+  const hasDiscount = selectedVariant && selectedVariant.discount > 0
+  const discountPercentage = hasDiscount ? selectedVariant.discount : 0
 
   return (
     <div className="space-y-4">
@@ -192,11 +191,15 @@ const ProductVariantSelector = ({
           <div className="flex items-center gap-4">
             {hasDiscount && (
               <span className="text-gray-400 line-through">
-                {formatPrice(selectedVariant.originalPrice!)}
+                {formatPrice(selectedVariant.price)}
               </span>
             )}
             <span className="text-3xl font-bold text-primary">
-              {formatPrice(selectedVariant.price)}
+              {formatPrice(
+                hasDiscount
+                  ? selectedVariant.discountPrice
+                  : selectedVariant.price
+              )}
             </span>
             {hasDiscount && (
               <span className="bg-red-100 text-red-600 px-2 py-1 rounded">
