@@ -108,7 +108,22 @@ export default function CartPage() {
                 <p className="text-sm text-gray-600">
                   {t('size')}: {item.size}
                 </p>
-                <p className="font-medium">{formatPrice(item.price)}</p>
+                <div>
+                  <p
+                    className={`${
+                      item.discountPrice
+                        ? 'line-through text-sm text-gray-500'
+                        : ''
+                    } font-medium`}
+                  >
+                    {formatPrice(item.price)}
+                  </p>
+                  {item.discountPrice && (
+                    <p className="font-medium">
+                      {formatPrice(item.discountPrice)}
+                    </p>
+                  )}
+                </div>
                 <div className="flex items-center mt-2">
                   <button
                     className={`btn btn-square ${
@@ -135,7 +150,9 @@ export default function CartPage() {
               </div>
               <div className="flex items-center">
                 <p className="font-medium">
-                  {formatPrice(item.price * item.quantity)}
+                  {formatPrice(
+                    (item.discountPrice ?? item.price) * item.quantity
+                  )}
                 </p>
               </div>
             </div>
@@ -152,7 +169,11 @@ export default function CartPage() {
                 <span>
                   {item.quantity} x {item.name} ({item.size})
                 </span>
-                <span>{formatPrice(item.price * item.quantity)}</span>
+                <span>
+                  {formatPrice(
+                    (item.discountPrice ?? item.price) * item.quantity
+                  )}
+                </span>
               </div>
             ))}
           </div>
