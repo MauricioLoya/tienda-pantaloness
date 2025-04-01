@@ -156,8 +156,7 @@ export async function validateAndProcessCartItems(
     }
 
     let unitPrice = roundToTwoDecimals(variant.discountPrice ?? variant.price)
-    let subtotal = roundToTwoDecimals(unitPrice * item.quantity)
-    console.log('promotionID:', promotionId)
+    let subtotal = roundToTwoDecimals(unitPrice)
 
     if (promotionId) {
       console.log('Applying promotion:', promotionId)
@@ -186,7 +185,7 @@ export async function validateAndProcessCartItems(
             Math.max(0, unitPrice - promotion.discount)
           )
         }
-        subtotal = roundToTwoDecimals(unitPrice * item.quantity)
+        subtotal = roundToTwoDecimals(unitPrice)
       }
     }
 

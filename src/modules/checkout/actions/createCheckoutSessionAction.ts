@@ -58,8 +58,6 @@ export async function createCheckoutSessionAction(
       }
     }
 
-    console.log('promotionId:', promotionId)
-
     // Validate and process cart items
     const { isValid, lineItems, errors } = await validateAndProcessCartItems(
       region,
