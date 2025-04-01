@@ -5,6 +5,7 @@ import SectionDetails from "@/modules/section/components/SectionDetails";
 import { SectionRepository } from "@/modules/section/definitions";
 import UpdateSection from "@/modules/section/components/UpdateSection";
 import { ProductRepository } from "@/modules/catalogue/definitions";
+import DeleteSection from "@/modules/section/components/DeleteSection";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -13,8 +14,9 @@ type Props = {
 const SectionDetailsPage: React.FC<Props> = async ({ params }) => {
   const { id } = await params;
   const section = await new SectionRepository().getById(Number(id));
-  const availableProducts = await new ProductRepository().getAvailableProducts();
-  const usedOrders = await new SectionRepository().getUsedOrders()
+  const availableProducts =
+    await new ProductRepository().getAvailableProducts();
+  const usedOrders = await new SectionRepository().getUsedOrders();
   if (!section) {
     return <div>Sección no encontrada</div>;
   }
@@ -29,6 +31,7 @@ const SectionDetailsPage: React.FC<Props> = async ({ params }) => {
         regions={regions}
         usedOrders={usedOrders}
       />
+      <DeleteSection section={section} />
     </>
   );
 
