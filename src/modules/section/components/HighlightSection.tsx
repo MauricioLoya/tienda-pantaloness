@@ -10,6 +10,7 @@ interface HighlightSectionProps {
 export const HighlightSection: React.FC<HighlightSectionProps> = ({
   section,
 }) => {
+  console.log("HighlightSection:",section )
   return (
     <div
       className={`p-6 rounded-lg`}

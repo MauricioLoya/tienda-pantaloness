@@ -37,7 +37,6 @@ export interface SectionItem {
   highlightProducts: HighlightProductItem[];
 }
 
-
 export class SectionRepository {
   async createSection(data: SectionInput): Promise<SectionItem> {
     console.log(data);
@@ -68,6 +67,42 @@ export class SectionRepository {
     }
 
     return this.toSectionItem(section.id);
+  }
+
+  async getById(id: number): Promise<SectionItem | null> {
+    const section = await prisma.section.findUnique({
+      where: { id },
+      include: {
+        HighlightProduct: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+    if (!section) {
+      return null;
+    }
+    return {
+      id: section.id,
+      type: section.type,
+      title: section.title,
+      description: section.description,
+      regionId: section.regionId,
+      actionUrl: section.actionUrl,
+      order: section.order,
+      backgroundUrl: section.backgroundUrl,
+      backgroundColor: section.backgroundColor,
+      buttonText: section.buttonText ?? "",
+      buttonColor: section.buttonColor ?? "",
+      highlightProducts:
+        section.HighlightProduct.map((hp) => ({
+          id: hp.product.id,
+          name: hp.product.name,
+          slug: hp.product.slug ?? "",
+          imageUrl: "imageUrl" in hp.product ? hp.product.imageUrl || "/placeholder.jpg" : "/placeholder.jpg",
+        })) || [],
+    };
   }
 
   async updateSection(
@@ -152,6 +187,8 @@ export class SectionRepository {
       order: section.order,
       backgroundUrl: section.backgroundUrl,
       backgroundColor: section.backgroundColor,
+      buttonText: section.buttonText ?? "",
+      buttonColor: section.buttonColor ?? "",
       highlightProducts:
         section.HighlightProduct.map((hp) => ({
           id: hp.product.id,

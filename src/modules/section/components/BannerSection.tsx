@@ -8,6 +8,8 @@ interface BannerSectionProps {
 }
 
 export const BannerSection: React.FC<BannerSectionProps> = ({ section }) => {
+  console.log("BannerSection:",section )
+
   return (
     <div
       className="hero h-[45rem] bg-cover bg-center rounded-lg"

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prima/client";
 import { generateSlug } from "@/lib/utils";
 import { Product } from "@prisma/client";
 import { CategoryItem } from "../category/definitions";
+import { HighlightProductItem } from "../section/definitions";
 export interface ProductItem {
   id: number;
   name: string;
@@ -74,6 +75,22 @@ export class ProductRepository {
         createdAt: prod.createdAt,
       };
     });
+  }
+  async getAvailableProducts(): Promise<HighlightProductItem[]> {
+    const products = await prisma.product.findMany({
+      where: { active: true },
+      orderBy: { createdAt: "desc" },
+    });
+    return products.map((prod) => ({
+      id: prod.id,
+      name: prod.name,
+      description: prod.description,
+      slug: prod.slug ?? "",
+      active: prod.active,
+      createdAt: prod.createdAt,
+      updatedAt: prod.updatedAt,
+    }));
+     
   }
 
   async getProductById(id: number): Promise<ProductDetail> {

@@ -218,7 +218,6 @@ import { Suspense } from "react";
 
 const HomePage: React.FC = async () => {
   const sections = await new SectionRepository().getAll();
-
   return (
     <>
       <NavBar />

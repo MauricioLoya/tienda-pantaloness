@@ -16,11 +16,15 @@ export interface SectionInput {
   order: number;
   backgroundUrl: string;
   backgroundColor: string;
+  buttonText?: string;
+  buttonColor?: string;
+  highlightProductIds?: number[];
 }
 
 type SectionFormProps = {
   initialData?: Partial<SectionInput>;
   regions: RegionItem[];
+  availableProducts?: { id: number; name: string }[];
   onValuesChange: (values: SectionInput) => void;
 };
 
@@ -34,23 +38,40 @@ const SectionForm: React.FC<SectionFormProps> = ({
     order: 1,
     backgroundUrl: "",
     backgroundColor: "#063d79",
+    highlightProductIds: [],
   },
   regions,
+  availableProducts = [],
   onValuesChange,
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [previewError, setPreviewError] = useState(false);
 
+  // Validación con Yup: se utiliza un multi-select para highlightProductIds
   const validationSchema = Yup.object().shape({
     type: Yup.mixed<SectionType>().oneOf(Object.values(SectionType)).required(),
     title: Yup.string().required("El título es requerido"),
     description: Yup.string().required("La descripción es requerida"),
     regionId: Yup.string().required("La región es requerida"),
     actionUrl: Yup.string().url("Debe ser una URL válida").notRequired(),
-    order: Yup.number().min(1).required("El orden es requerido"),
+    order: Yup.number()
+      .min(1, "El orden debe ser al menos 1")
+      .required("El orden es requerido"),
     backgroundUrl: Yup.string().url("Debe ser una URL válida").notRequired(),
     backgroundColor: Yup.string().notRequired(),
+    buttonText: Yup.string().notRequired(),
+    buttonColor: Yup.string().notRequired(),
+    highlightProductIds: Yup.array()
+      .of(Yup.number())
+      .when("type", {
+        is: SectionType.highlight,
+        then: Yup.array().min(
+          1,
+          "Debes seleccionar al menos un producto destacado"
+        ),
+        otherwise: Yup.array().notRequired(),
+      }),
   });
 
   const FormObserver: React.FC<{
@@ -165,20 +186,41 @@ const SectionForm: React.FC<SectionFormProps> = ({
                 className="text-red-500 text-sm"
               />
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Texto del Botón
               </label>
-              <Field name="buttonText" type="text" className="input input-bordered w-full" placeholder="Ej: Ir a la sección" />
-              <ErrorMessage name="buttonText" component="div" className="text-red-500 text-sm" />
+              <Field
+                name="buttonText"
+                type="text"
+                className="input input-bordered w-full"
+                placeholder="Ej: Ir a la sección"
+              />
+              <ErrorMessage
+                name="buttonText"
+                component="div"
+                className="text-red-500 text-sm"
+              />
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Color del Botón
               </label>
-              <Field name="buttonColor" type="text" className="input input-bordered w-full" placeholder="Ej: btn-primary" />
-              <ErrorMessage name="buttonColor" component="div" className="text-red-500 text-sm" />
+              <Field
+                name="buttonColor"
+                type="text"
+                className="input input-bordered w-full"
+                placeholder="Ej: btn-primary"
+              />
+              <ErrorMessage
+                name="buttonColor"
+                component="div"
+                className="text-red-500 text-sm"
+              />
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 URL de Acción (link)
@@ -226,15 +268,32 @@ const SectionForm: React.FC<SectionFormProps> = ({
                 className="text-red-500 text-sm"
               />
             </div>
+
             {values.type === SectionType.highlight && (
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Productos Destacados (IDs separados por comas)
+                  Productos Destacados
                 </label>
-                <Field name="highlightProductIds" type="text" className="input input-bordered w-full" placeholder="Ej: 1,2,3" />
-                <ErrorMessage name="highlightProductIds" component="div" className="text-red-500 text-sm" />
+                <Field
+                  as="select"
+                  name="highlightProductIds"
+                  multiple
+                  className="select select-bordered w-full"
+                >
+                  {availableProducts.map((prod) => (
+                    <option key={prod.id} value={prod.id}>
+                      {prod.name}
+                    </option>
+                  ))}
+                </Field>
+                <ErrorMessage
+                  name="highlightProductIds"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
               </div>
             )}
+
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 URL de Fondo
@@ -273,6 +332,7 @@ const SectionForm: React.FC<SectionFormProps> = ({
                 </div>
               )}
             </div>
+
             <FormObserver onChange={onValuesChange} />
           </Form>
         )}
