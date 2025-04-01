@@ -1,33 +1,35 @@
-import { prisma } from '@/lib/prima/client'
-import { Customer, Order, OrderItem, Payment, Promotion } from '@prisma/client'
+import { prisma } from "@/lib/prima/client";
+import { Customer, Order, OrderItem, Payment, Promotion } from "@prisma/client";
 
 export type OrderAdminTableRow = {
-  id: number
-  client: string
-  totalAmount: number
-  status: string
-  createdAt: Date
-  itemsCount: number
-  paymentMethod: string
-}
+  id: number;
+  orderNumber: string;
+  client: string;
+  totalAmount: number;
+  status: string;
+  createdAt: Date;
+  itemsCount: number;
+  paymentMethod: string;
+  regionId?: string;
+};
 
 export type OrderDetail = {
-  order: Order
-  items: OrderItem[]
-  payment: Payment
-  customer: Customer
-  promotion: Promotion | null
-}
+  order: Order;
+  items: OrderItem[];
+  payment: Payment;
+  customer: Customer;
+  promotion: Promotion | null;
+};
 
 interface IOrderRepository {
-  createOrder(order: Order): Promise<Order>
-  getOrderById(id: number): Promise<OrderDetail>
-  getOrders(): Promise<OrderAdminTableRow[]>
+  createOrder(order: Order): Promise<Order>;
+  getOrderById(id: number): Promise<OrderDetail>;
+  getOrders(): Promise<OrderAdminTableRow[]>;
 }
 
 export class OrderRepository implements IOrderRepository {
   async createOrder(order: Order): Promise<Order> {
-    return order
+    return order;
   }
 
   async getOrderById(id: number): Promise<OrderDetail> {
@@ -38,12 +40,12 @@ export class OrderRepository implements IOrderRepository {
           customer: true,
           OrderItem: true,
           Payment: true,
-          promotion: true
-        }
-      })
+          promotion: true,
+        },
+      });
 
       if (!order) {
-        throw new Error('Orden no encontrada')
+        throw new Error("Orden no encontrada");
       }
 
       return {
@@ -51,11 +53,11 @@ export class OrderRepository implements IOrderRepository {
         items: order.OrderItem,
         payment: order.Payment[0],
         customer: order.customer,
-        promotion: order.promotion
-      }
+        promotion: order.promotion,
+      };
     } catch (error) {
-      console.error(error)
-      throw new Error('Error al obtener la orden')
+      console.error(error);
+      throw new Error("Error al obtener la orden");
     }
   }
 
@@ -64,29 +66,26 @@ export class OrderRepository implements IOrderRepository {
       const orders = await prisma.order.findMany({
         select: {
           id: true,
+          orderNumber: true,
           status: true,
           totalAmount: true,
           orderDate: true,
+          regionId: true,
           customer: {
-            select: {
-              name: true
-            }
+            select: { name: true },
           },
           OrderItem: {
-            select: {
-              id: true
-            }
+            select: { id: true },
           },
           Payment: {
-            select: {
-              paymentType: true
-            }
-          }
-        }
-      })
+            select: { paymentType: true },
+          },
+        },
+      });
 
-      return orders.map(order => ({
+      return orders.map((order) => ({
         id: order.id,
+        orderNumber: order.orderNumber,
         client: order.customer.name,
         totalAmount: order.totalAmount,
         status: order.status,
@@ -95,11 +94,12 @@ export class OrderRepository implements IOrderRepository {
         paymentMethod:
           order.Payment.length > 0
             ? order.Payment[0].paymentType
-            : 'No definido'
-      }))
+            : "No definido",
+        regionId: order.regionId || "",
+      }));
     } catch (error) {
-      console.error(error)
-      throw new Error('Error al obtener las órdenes')
+      console.error(error);
+      throw new Error("Error al obtener las órdenes");
     }
   }
 }

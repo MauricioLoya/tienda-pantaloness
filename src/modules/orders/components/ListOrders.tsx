@@ -1,14 +1,15 @@
 import React from 'react'
 import { OrderRepository } from '../definitions'
 import OrderTable from './OrderTable'
+import { RegionRepository } from '@/modules/region/definitions'
 
 const ListOrders: React.FC = async () => {
-  const orderRepo = new OrderRepository()
+  const orders = await new OrderRepository().getOrders()
+  const regions = await new RegionRepository().getAll()
 
-  const orders = await orderRepo.getOrders()
   return (
     <>
-      <OrderTable values={orders} />
+      <OrderTable values={orders} regions={regions} />
     </>
   )
 }

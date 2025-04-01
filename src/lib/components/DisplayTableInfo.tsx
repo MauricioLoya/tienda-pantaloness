@@ -31,7 +31,7 @@ const DisplayTableInfo: React.FC<Props> = ({
           </thead>
           <tbody className="text-black bg-white divide-y divide-gray-200">
             {data.map((row, rowIndex) => (
-              <tr key={keyField ? row[keyField] : rowIndex}>
+              <tr key={keyField && typeof row[keyField] === "string" ? row[keyField] : rowIndex}>
                 {headers.map((header, colIndex) => {
                   const propName = header.toLowerCase().replace(/\s(.)/g, (_, char) =>
                     char.toUpperCase()

@@ -7,6 +7,24 @@ export const formatPrice = (price: number): string => {
   }).format(price)
 }
 
+export function generateRandomCharacters(length: number): string {
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    const isLetter = Math.random() < 0.5;
+    if (isLetter) {
+      const isUpperCase = Math.random() < 0.5;
+      const charCode = isUpperCase
+        ? Math.floor(Math.random() * 26) + 65
+        : Math.floor(Math.random() * 26) + 97;
+      result += String.fromCharCode(charCode);
+    } else {
+      const digit = Math.floor(Math.random() * 10);
+      result += digit.toString();
+    }
+  }
+  return result;
+}
+
 export function generateSlug(name: string): string {
   const slug = name
     .normalize("NFD")
@@ -16,6 +34,12 @@ export function generateSlug(name: string): string {
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-");
 
-  const randomStr = Math.random().toString(36).substring(2, 8);
+  const randomStr = generateRandomCharacters(6);
   return `${slug}-${randomStr}`;
+}
+
+export function generateOrderNumber(): string {
+  const datePart = new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 12);
+  const randomPart = generateRandomCharacters(4);
+  return `${datePart}-${randomPart}`;
 }
