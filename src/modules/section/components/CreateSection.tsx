@@ -2,17 +2,21 @@
 
 import React, { useState } from "react";
 import ModalGeneric from "@/lib/components/ModalGeneric";
-import SectionForm, { SectionInput } from "./SectionForm";
+import SectionForm from "./SectionForm";
 import { RegionItem } from "@/modules/region/definitions";
 import { useRouter } from "next/navigation";
 import { createSectionAction } from "../actions/createSectionAction";
 import { SectionType } from "@prisma/client";
+import { HighlightProductItem, SectionInput } from "../definitions";
 
 interface CreateSectionProps {
   regions: RegionItem[];
+  availableProducts: HighlightProductItem[];
+  usedOrders?: number[];
+
 }
 
-const CreateSection: React.FC<CreateSectionProps> = ({ regions }) => {
+const CreateSection: React.FC<CreateSectionProps> = ({ regions, availableProducts, usedOrders }) => {
   const router = useRouter();
   const [formValues, setFormValues] = useState<SectionInput>({
     type: SectionType.banner,
@@ -48,6 +52,8 @@ const CreateSection: React.FC<CreateSectionProps> = ({ regions }) => {
       <SectionForm
         onValuesChange={(values) => setFormValues(values)}
         regions={regions}
+        availableProducts={availableProducts}
+        usedOrders={usedOrders}
       />
     </ModalGeneric>
   );

@@ -2,6 +2,9 @@ import React from "react";
 import DisplayInfo from "@/lib/components/DisplayInfo";
 import { SectionItem } from "../definitions";
 import { RegionItem } from "@/modules/region/definitions";
+import { FaEye } from "react-icons/fa";
+import { HighlightSection } from "./HighlightSection";
+import { BannerSection } from "./BannerSection";
 
 type Props = {
   section: SectionItem;
@@ -11,44 +14,6 @@ type Props = {
 const SectionDetails: React.FC<Props> = ({ section, region }) => {
   return (
     <div className="container mx-auto p-4">
-
-      {section.type === "banner" && section.backgroundUrl && (
-        <div
-          className="hero h-96 bg-cover bg-center rounded-lg mb-6 relative overflow-hidden"
-          style={{
-            backgroundImage: `url(${section.backgroundUrl})`,
-            backgroundColor: section.backgroundColor,
-          }}
-        >
-          <div className="hero-overlay bg-opacity-50"></div>
-          <div className="hero-content text-neutral-content">
-            <div className="max-w-md">
-              <h2 className="text-4xl font-bold">{section.title}</h2>
-              <p className="mt-4">{section.description}</p>
-              {section.actionUrl && (
-                <a href={section.actionUrl} className="btn btn-primary mt-4">
-                  {section.buttonText || "Ir a la sección"}
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Vista tipo Highlight */}
-      {section.type === "highlight" && (
-        <div className="bg-gray-800 p-6 rounded-lg mb-6">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            {section.title}
-          </h2>
-          <p className="text-white mb-4">{section.description}</p>
-          {section.actionUrl && (
-            <a href={section.actionUrl} className="btn btn-secondary">
-              {section.buttonText || "Ver más"}
-            </a>
-          )}
-        </div>
-      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* Información General */}
@@ -112,39 +77,12 @@ const SectionDetails: React.FC<Props> = ({ section, region }) => {
           />
         </div>
       </div>
-
-      {section.type === "highlight" &&
-        section.highlightProducts &&
-        section.highlightProducts.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-2xl font-semibold mb-4">
-              Productos Destacados
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {section.highlightProducts.map((prod) => (
-                <div
-                  key={prod.slug}
-                  className="card bg-base-100 shadow-xl rounded-lg overflow-hidden"
-                >
-                  <figure>
-                    <img
-                      src={prod.imageUrl || "/placeholder.jpg"}
-                      alt={prod.name}
-                      className="w-full h-40 object-cover"
-                    />
-                  </figure>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-lg">{prod.name}</h3>
-                    <p className="text-sm text-gray-600">{prod.slug}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
       <div className="mt-8">
-        <h2 className="text-2xl font-semibold mb-4">Información Adicional</h2>
+        <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+          <FaEye className="text-gray-700" /> Apariencia
+        </h2>
+        {section.type === "highlight" && <HighlightSection section={section} />}
+        {section.type === "banner" && <BannerSection section={section} />}
       </div>
     </div>
   );

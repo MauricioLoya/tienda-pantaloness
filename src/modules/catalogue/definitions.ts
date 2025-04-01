@@ -90,7 +90,6 @@ export class ProductRepository {
       createdAt: prod.createdAt,
       updatedAt: prod.updatedAt,
     }));
-     
   }
 
   async getProductById(id: number): Promise<ProductDetail> {

@@ -1,47 +1,47 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-
-interface Product {
-  id: number;
-  name: string;
-}
+import { HighlightProductItem } from "../definitions";
 
 interface HighlightProductSelectorProps {
-  availableProducts: Product[];
-  selected: number[];
-  onChange: (selected: number[]) => void;
+  availableProducts: HighlightProductItem[];
+  selected: HighlightProductItem[];
+  onChange: (selected: HighlightProductItem[]) => void;
 }
 
 const HighlightProductSelector: React.FC<HighlightProductSelectorProps> = ({
   availableProducts,
   selected,
-  
   onChange,
 }) => {
   const [filter, setFilter] = useState("");
 
+  const selectedIds = selected.map((p) => p.id);
+
   const filteredAvailable = useMemo(() => {
     return availableProducts.filter(
       (prod) =>
-        !selected.includes(prod.id) &&
+        !selectedIds.includes(prod.id) &&
         prod.name.toLowerCase().includes(filter.toLowerCase())
     );
-  }, [availableProducts, selected, filter]);
+  }, [availableProducts, selectedIds, filter]);
 
-  const handleAdd = (id: number) => {
+  const handleAdd = (product: HighlightProductItem) => {
     if (selected.length < 4) {
-      onChange([...selected, id]);
+      onChange([...selected, product]);
     }
   };
 
   const handleRemove = (id: number) => {
-    onChange(selected.filter((pid) => pid !== id));
+    const updatedSelected = selected.filter((p) => p.id !== id);
+    console.log("id:", id);
+    console.log("updatedSelected:", updatedSelected);
+
+    onChange(updatedSelected);
   };
 
   return (
     <div className="flex flex-col md:flex-row gap-4">
-      {/* Panel de productos disponibles */}
       <div className="flex-1 border p-4 rounded">
         <h3 className="font-semibold mb-2">Productos Disponibles</h3>
         <input
@@ -58,7 +58,7 @@ const HighlightProductSelector: React.FC<HighlightProductSelectorProps> = ({
               <button
                 type="button"
                 className="btn btn-xs btn-primary"
-                onClick={() => handleAdd(prod.id)}
+                onClick={() => handleAdd(prod)}
                 disabled={selected.length >= 4}
               >
                 Agregar
@@ -72,28 +72,33 @@ const HighlightProductSelector: React.FC<HighlightProductSelectorProps> = ({
           )}
         </ul>
       </div>
-      {/* Panel de productos seleccionados */}
+
       <div className="flex-1 border p-4 rounded">
         <h3 className="font-semibold mb-2">
           Productos Seleccionados ({selected.length}/4)
         </h3>
         <ul className="space-y-1 max-h-60 overflow-y-auto">
-          {selected.map((id) => {
-            const prod = availableProducts.find((p) => p.id === id);
-            if (!prod) return null;
-            return (
-              <li key={id} className="flex justify-between items-center">
+          {selected.map((prod) => (
+            <li key={prod.id} className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                {prod.imageUrl && (
+                  <img
+                    src={prod.imageUrl}
+                    alt={prod.name}
+                    className="w-8 h-8 object-cover rounded"
+                  />
+                )}
                 <span>{prod.name}</span>
-                <button
-                  type="button"
-                  className="btn btn-xs btn-error"
-                  onClick={() => handleRemove(id)}
-                >
-                  Eliminar
-                </button>
-              </li>
-            );
-          })}
+              </div>
+              <button
+                type="button"
+                className="btn btn-xs btn-error"
+                onClick={() => handleRemove(prod.id)}
+              >
+                Eliminar
+              </button>
+            </li>
+          ))}
           {selected.length === 0 && (
             <li className="text-gray-500 text-sm">
               Ningún producto seleccionado

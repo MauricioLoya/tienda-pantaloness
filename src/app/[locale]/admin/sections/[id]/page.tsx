@@ -14,7 +14,7 @@ const SectionDetailsPage: React.FC<Props> = async ({ params }) => {
   const { id } = await params;
   const section = await new SectionRepository().getById(Number(id));
   const availableProducts = await new ProductRepository().getAvailableProducts();
-
+  const usedOrders = await new SectionRepository().getUsedOrders()
   if (!section) {
     return <div>Sección no encontrada</div>;
   }
@@ -27,6 +27,7 @@ const SectionDetailsPage: React.FC<Props> = async ({ params }) => {
         availableProducts={availableProducts}
         section={section}
         regions={regions}
+        usedOrders={usedOrders}
       />
     </>
   );

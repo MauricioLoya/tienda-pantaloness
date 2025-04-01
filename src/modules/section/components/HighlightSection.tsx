@@ -10,16 +10,15 @@ interface HighlightSectionProps {
 export const HighlightSection: React.FC<HighlightSectionProps> = ({
   section,
 }) => {
-  console.log("HighlightSection:",section )
   return (
     <div
-      className={`p-6 rounded-lg`}
+      className={`p-6`}
       style={{ backgroundColor: section.backgroundColor }}
     >
       <h2 className="text-white font-semibold text-4xl mb-4">
         {section.title}
       </h2>
-      <p className="text-white mb-6">{section.description}</p>
+      <p className="text-white mb-6 mt-6">{section.description}</p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {section.highlightProducts.map((prod) => (
           <div
@@ -38,8 +37,8 @@ export const HighlightSection: React.FC<HighlightSectionProps> = ({
       </div>
       {section.actionUrl && (
         <div className="flex justify-center mt-4">
-          <a href={section.actionUrl} className="btn btn-secondary">
-            Ver más
+          <a href={section.actionUrl} className={`btn ${section.buttonColor}`}>
+            {section.buttonText}
           </a>
         </div>
       )}

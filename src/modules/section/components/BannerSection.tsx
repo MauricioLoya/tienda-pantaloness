@@ -12,7 +12,7 @@ export const BannerSection: React.FC<BannerSectionProps> = ({ section }) => {
 
   return (
     <div
-      className="hero h-[45rem] bg-cover bg-center rounded-lg"
+      className="hero h-[45rem] bg-cover bg-center"
       style={{
         backgroundImage: `url(${section.backgroundUrl})`,
         backgroundColor: section.backgroundColor,

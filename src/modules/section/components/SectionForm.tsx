@@ -6,26 +6,25 @@ import * as Yup from "yup";
 import { RegionItem } from "@/modules/region/definitions";
 import Loader from "@/lib/components/Loader";
 import { SectionType } from "@prisma/client";
+import HighlightProductSelector from "./HighlightProductSelector";
+import { HighlightProductItem, SectionInput } from "../definitions";
 
-export interface SectionInput {
-  type: SectionType;
-  title: string;
-  description: string;
-  regionId: string;
-  actionUrl: string;
-  order: number;
-  backgroundUrl: string;
-  backgroundColor: string;
-  buttonText?: string;
-  buttonColor?: string;
-  highlightProductIds?: number[];
-}
+const buttonColorOptions = [
+  "btn-primary",
+  "btn-secondary",
+  "btn-accent",
+  "btn-info",
+  "btn-success",
+  "btn-warning",
+  "btn-error",
+];
 
 type SectionFormProps = {
   initialData?: Partial<SectionInput>;
   regions: RegionItem[];
-  availableProducts?: { id: number; name: string }[];
+  availableProducts?: HighlightProductItem[];
   onValuesChange: (values: SectionInput) => void;
+  usedOrders?: number[];
 };
 
 const SectionForm: React.FC<SectionFormProps> = ({
@@ -38,17 +37,17 @@ const SectionForm: React.FC<SectionFormProps> = ({
     order: 1,
     backgroundUrl: "",
     backgroundColor: "#063d79",
-    highlightProductIds: [],
+    highlightProducts: [],
   },
   regions,
   availableProducts = [],
   onValuesChange,
+  usedOrders = [],
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [previewError, setPreviewError] = useState(false);
 
-  // Validación con Yup: se utiliza un multi-select para highlightProductIds
   const validationSchema = Yup.object().shape({
     type: Yup.mixed<SectionType>().oneOf(Object.values(SectionType)).required(),
     title: Yup.string().required("El título es requerido"),
@@ -57,20 +56,27 @@ const SectionForm: React.FC<SectionFormProps> = ({
     actionUrl: Yup.string().url("Debe ser una URL válida").notRequired(),
     order: Yup.number()
       .min(1, "El orden debe ser al menos 1")
-      .required("El orden es requerido"),
+      .notOneOf(
+        usedOrders,
+        ({ value }) =>
+          `El orden ${value} ya está ocupado. Órdenes usadas: ${usedOrders.join(
+            ", "
+          )}`
+      ),
     backgroundUrl: Yup.string().url("Debe ser una URL válida").notRequired(),
     backgroundColor: Yup.string().notRequired(),
     buttonText: Yup.string().notRequired(),
     buttonColor: Yup.string().notRequired(),
-    highlightProductIds: Yup.array()
+    highlightProducts: Yup.array()
       .of(Yup.number())
       .when("type", {
-        is: SectionType.highlight,
-        then: Yup.array().min(
-          1,
-          "Debes seleccionar al menos un producto destacado"
-        ),
-        otherwise: Yup.array().notRequired(),
+        is: (value) => value === SectionType.highlight,
+        then: () =>
+          Yup.array().min(
+            1,
+            "Debes seleccionar al menos un producto destacado"
+          ),
+        otherwise: () => Yup.array().notRequired(),
       }),
   });
 
@@ -78,9 +84,15 @@ const SectionForm: React.FC<SectionFormProps> = ({
     onChange: (values: SectionInput) => void;
   }> = ({ onChange }) => {
     const { values } = useFormikContext<SectionInput>();
+
     useEffect(() => {
       onChange(values);
     }, [values, onChange]);
+
+    useEffect(() => {
+      handlePreview(values.backgroundUrl);
+    }, [values.backgroundUrl]);
+
     return null;
   };
 
@@ -112,7 +124,7 @@ const SectionForm: React.FC<SectionFormProps> = ({
         validationSchema={validationSchema}
         onSubmit={() => {}}
       >
-        {({ values }) => (
+        {({ values, setFieldValue }) => (
           <Form className="flex flex-col gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -174,6 +186,7 @@ const SectionForm: React.FC<SectionFormProps> = ({
                 name="regionId"
                 className="select select-bordered w-full"
               >
+                <option value="">Selecciona una región</option>
                 {regions.map((r) => (
                   <option key={r.code} value={r.code}>
                     {r.flag} {r.name}
@@ -186,7 +199,6 @@ const SectionForm: React.FC<SectionFormProps> = ({
                 className="text-red-500 text-sm"
               />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Texto del Botón
@@ -208,16 +220,33 @@ const SectionForm: React.FC<SectionFormProps> = ({
               <label className="block text-sm font-medium text-gray-700">
                 Color del Botón
               </label>
-              <Field
-                name="buttonColor"
-                type="text"
-                className="input input-bordered w-full"
-                placeholder="Ej: btn-primary"
-              />
+              <div className="flex items-start justify-between gap-4">
+                <Field
+                  as="select"
+                  name="buttonColor"
+                  className="select select-bordered w-full md:w-1/2"
+                >
+                  <option value="">Selecciona un color</option>
+                  {buttonColorOptions.map((color) => (
+                    <option key={color} value={color}>
+                      {color}
+                    </option>
+                  ))}
+                </Field>
+
+                {values.buttonColor && (
+                  <div className="flex items-center justify-center w-full md:w-1/2">
+                    <span className={`btn ${values.buttonColor}`}>
+                      {values.buttonText}
+                    </span>
+                  </div>
+                )}
+              </div>
+
               <ErrorMessage
                 name="buttonColor"
                 component="div"
-                className="text-red-500 text-sm"
+                className="text-red-500 text-sm mt-2"
               />
             </div>
 
@@ -270,28 +299,14 @@ const SectionForm: React.FC<SectionFormProps> = ({
             </div>
 
             {values.type === SectionType.highlight && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Productos Destacados
-                </label>
-                <Field
-                  as="select"
-                  name="highlightProductIds"
-                  multiple
-                  className="select select-bordered w-full"
-                >
-                  {availableProducts.map((prod) => (
-                    <option key={prod.id} value={prod.id}>
-                      {prod.name}
-                    </option>
-                  ))}
-                </Field>
-                <ErrorMessage
-                  name="highlightProductIds"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
+              <HighlightProductSelector
+                selected={values.highlightProducts ?? []}
+                availableProducts={availableProducts}
+                onChange={(selected) => {
+                  console.log("CURRENT", selected);
+                  setFieldValue("highlightProducts", selected);
+                }}
+              />
             )}
 
             <div>

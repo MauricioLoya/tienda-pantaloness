@@ -107,8 +107,8 @@ const ProductDetails: React.FC<Props> = ({ productProp }) => {
         {variants.length > 0 ? (
           <DisplayTableInfo
             headers={["ID", "Tamaño", "Precio", "Stock"]}
-            data={variants.map((variant) => ({
-              ID: variant.id,
+            data={variants.map((variant, index) => ({
+              ID: `${variant.id}-${index}`,
               Tamaño: variant.size,
               Precio: variant.price,
               Stock: variant.stock,

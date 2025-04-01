@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prima/client";
 import { Section, SectionType } from "@prisma/client";
 
-export interface HighlightProductItem { 
+export interface HighlightProductItem {
   id: number;
   name: string;
   imageUrl?: string;
@@ -19,9 +19,9 @@ export interface SectionInput {
   backgroundColor: string;
   buttonText?: string;
   buttonColor?: string;
-  highlightProductIds?: number[];
+  highlightProducts?: HighlightProductItem[];
 }
-  
+
 export interface SectionItem {
   id: number;
   type: SectionType;
@@ -53,12 +53,12 @@ export class SectionRepository {
       },
     });
 
-    if (data.type === SectionType.highlight && data.highlightProductIds) {
+    if (data.type === SectionType.highlight && data.highlightProducts) {
       await Promise.all(
-        data.highlightProductIds.map((productId) =>
+        data.highlightProducts.map((product) =>
           prisma.highlightProduct.create({
             data: {
-              productId,
+              productId: product.id,
               sectionId: section.id,
             },
           })
@@ -75,7 +75,11 @@ export class SectionRepository {
       include: {
         HighlightProduct: {
           include: {
-            product: true,
+            product: {
+              include : {
+                ProductImage: true,
+              }
+            }
           },
         },
       },
@@ -100,7 +104,7 @@ export class SectionRepository {
           id: hp.product.id,
           name: hp.product.name,
           slug: hp.product.slug ?? "",
-          imageUrl: "imageUrl" in hp.product ? hp.product.imageUrl || "/placeholder.jpg" : "/placeholder.jpg",
+          imageUrl: hp.product.ProductImage[0]?.url ?? "/placeholder.jpg",
         })) || [],
     };
   }
@@ -120,17 +124,19 @@ export class SectionRepository {
         order: data.order,
         backgroundUrl: data.backgroundUrl,
         backgroundColor: data.backgroundColor,
+        buttonColor: data.buttonColor,
+        buttonText: data.buttonText
       },
     });
 
-    if (data.type === SectionType.highlight && data.highlightProductIds) {
+    if (data.type === SectionType.highlight && data.highlightProducts) {
       await prisma.highlightProduct.deleteMany({
         where: { sectionId: id },
       });
       await Promise.all(
-        data.highlightProductIds.map((productId) =>
+        data.highlightProducts.map((product) =>
           prisma.highlightProduct.create({
-            data: { productId, sectionId: id },
+            data: { productId: product.id, sectionId: id },
           })
         )
       );
@@ -171,7 +177,11 @@ export class SectionRepository {
       include: {
         HighlightProduct: {
           include: {
-            product: true,
+            product: {
+              include: {
+                ProductImage: true
+              }
+            }
           },
         },
       },
@@ -194,8 +204,19 @@ export class SectionRepository {
           id: hp.product.id,
           name: hp.product.name,
           slug: hp.product.slug ?? "",
-          imageUrl: "/placeholder.jpg",
+          imageUrl: hp.product.ProductImage[0]?.url ?? "/placeholder.jpg",
+
         })) || [],
     };
+    
   }
+  async getUsedOrders(): Promise<number[]> {
+    const sections = await prisma.section.findMany({
+      select: {
+        order: true,
+      },
+    });
+    return sections.map((section) => section.order);
+  }
+  
 }
