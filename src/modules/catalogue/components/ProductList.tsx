@@ -6,12 +6,13 @@ import { RegionRepository } from "@/modules/region/definitions";
 const ProductList: React.FC = async () => {
   const promotionRepo = new ProductRepository();
   const products = await promotionRepo.getProducts();
+  const regions = await new RegionRepository().getAll();
 
   return (
     <div className="p-4">
       <ProductTable
         values={products}
-        regions={await new RegionRepository().getAll()}
+        regions={regions}
       />
     </div>
   );

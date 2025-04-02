@@ -1,62 +1,62 @@
-"use client";
+'use client'
 
-import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { createProductAction } from "../actions/createProductAction";
-import { updateProductAction } from "../actions/updateProductAction";
-import { ProductInput } from "../definitions";
-import { RegionItem } from "@/modules/region/definitions";
-import { generateSlug } from "@/lib/utils";
-import { useRouter } from "next/navigation";
-import { useToast } from "@/lib/components/ToastContext";
+import React from 'react'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
+import * as Yup from 'yup'
+import { createProductAction } from '../actions/createProductAction'
+import { updateProductAction } from '../actions/updateProductAction'
+import { ProductInput } from '../definitions'
+import { RegionItem } from '@/modules/region/definitions'
+import { generateSlug } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
+import { useToast } from '@/lib/components/ToastContext'
 
 interface BasicFormProps {
-  productId?: number;
-  initialData?: Partial<ProductInput>;
-  regions: RegionItem[];
+  productId?: number
+  initialData?: Partial<ProductInput>
+  regions: RegionItem[]
 }
 
 const BasicForm: React.FC<BasicFormProps> = ({
   productId,
   initialData = {
-    name: "",
-    description: "",
+    name: '',
+    description: '',
     active: true,
-    slug: "",
-    regionId: "",
+    slug: '',
+    regionId: ''
   },
-  regions,
+  regions
 }) => {
-  const router = useRouter();
-  const { showToast } = useToast();
+  const router = useRouter()
+  const { showToast } = useToast()
 
   const schema = Yup.object().shape({
-    name: Yup.string().required("Nombre requerido"),
-    description: Yup.string().required("Descripción requerida"),
+    name: Yup.string().required('Nombre requerido'),
+    description: Yup.string().required('Descripción requerida'),
     active: Yup.boolean(),
-    regionId: Yup.string().required("Región es requerida"),
-    slug: Yup.string(),
-  });
+    regionId: Yup.string().required('Región es requerida'),
+    slug: Yup.string()
+  })
 
   async function handleSubmit(values: ProductInput) {
     try {
       if (!productId) {
-        const product = await createProductAction(values);
-        showToast("Producto creado correctamente", "success");
-        router.push(`/admin/catalogo/${product.id}/edit`);
+        const product = await createProductAction(values)
+        showToast('Producto creado correctamente', 'success')
+        router.push(`/admin/catalogo/${product.id}/edit`)
       } else {
-        await updateProductAction(productId, values);
-        showToast("Producto actualizado correctamente", "success");
-        router.refresh();
+        await updateProductAction(productId, values)
+        showToast('Producto actualizado correctamente', 'success')
+        router.refresh()
       }
     } catch (error: any) {
-      showToast(error.message || "Error al guardar el producto", "error");
+      showToast(error.message || 'Error al guardar el producto', 'error')
     }
   }
 
   return (
-    <div className="card shadow p-4 max-w-3xl mx-auto">
+    <div className="card shadow p-4 ">
       <h2 className="text-xl font-bold mb-2">Información base</h2>
       <Formik
         initialValues={initialData as ProductInput}
@@ -72,8 +72,8 @@ const BasicForm: React.FC<BasicFormProps> = ({
                 type="text"
                 className="input input-bordered w-full"
                 onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
-                  const newSlug = generateSlug(e.target.value);
-                  setFieldValue("slug", newSlug);
+                  const newSlug = generateSlug(e.target.value)
+                  setFieldValue('slug', newSlug)
                 }}
               />
               <ErrorMessage
@@ -112,7 +112,7 @@ const BasicForm: React.FC<BasicFormProps> = ({
                 className="select select-bordered w-full"
               >
                 <option value="">Selecciona una región</option>
-                {regions.map((r) => (
+                {regions.map(r => (
                   <option key={r.code} value={r.code}>
                     {r.flag} {r.name}
                   </option>
@@ -139,7 +139,7 @@ const BasicForm: React.FC<BasicFormProps> = ({
         )}
       </Formik>
     </div>
-  );
-};
+  )
+}
 
-export default BasicForm;
+export default BasicForm

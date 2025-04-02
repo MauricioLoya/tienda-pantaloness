@@ -1,8 +1,8 @@
-import Header from "@/modules/admin-dashboard/components/Header";
-import React from "react";
+import Header from '@/modules/admin-dashboard/components/Header'
+import React from 'react'
 type Props = {
-  children: React.ReactNode;
-};
+  children: React.ReactNode
+}
 const CatalogoLayout: React.FC<Props> = ({ children }) => {
   return (
     <>
@@ -12,7 +12,7 @@ const CatalogoLayout: React.FC<Props> = ({ children }) => {
       />
       {children}
     </>
-  );
-};
+  )
+}
 
-export default CatalogoLayout;
+export default CatalogoLayout
