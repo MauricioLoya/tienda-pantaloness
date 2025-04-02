@@ -34,6 +34,7 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
     "Código",
     "Nombre",
     "Región",
+    "Fecha",
     "Descuento",
     "Activo",
     "Eliminado",
@@ -46,6 +47,7 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
       const r = regions.find((r) => r.code === promotion.regionId);
       return r ? `${r.flag} ${r.name}` : "No asignada";
     })(),
+    Fecha: `${promotion.startDate.toISOString().split("T")[0]} a ${promotion.endDate.toISOString().split("T")[0]}`,
     Descuento: `${promotion.discount}%`,
     Activo: promotion.active ? "Sí" : "No",
     Eliminado: promotion.isDeleted ? "Sí" : "No",

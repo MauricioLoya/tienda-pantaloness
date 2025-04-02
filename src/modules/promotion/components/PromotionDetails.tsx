@@ -47,11 +47,11 @@ const PromotionDetails: React.FC<Props> = ({ promotion, region }) => {
             { label: "Descuento", value: `${promotion.discount}%` },
             {
               label: "Fecha de inicio",
-              value: new Date(promotion.startDate).toLocaleDateString(),
+              value: promotion.startDate.toISOString().split("T")[0],
             },
             {
-              label: "Fecha de fin",
-              value: new Date(promotion.endDate).toLocaleDateString(),
+              label: "Fecha de inicio",
+              value: promotion.endDate.toISOString().split("T")[0],
             },
             { label: "Activo", value: promotion.active ? "Sí" : "No" },
             {
