@@ -1,6 +1,5 @@
 import Loader from "@/lib/components/Loader";
 import React, { Suspense } from "react";
-import Link from "next/link";
 import { ProductRepository } from "@/modules/catalogue/definitions";
 import { RegionRepository } from "@/modules/region/definitions";
 import { CategoryRepository } from "@/modules/category/definitions";
@@ -9,6 +8,7 @@ import BasicForm from "@/modules/catalogue/components/BasicForm";
 import CategoriesForm from "@/modules/catalogue/components/CategoriesForm";
 import VariantsForm from "@/modules/catalogue/components/VariantsForm";
 import HeaderContent from "@/lib/components/HeaderContent";
+import TagsForm from "@/modules/catalogue/components/TagsForm";
 
 type Props = {
   params: { id: string };
@@ -48,6 +48,7 @@ const UpdateCatalogoPage = async ({ params }: Props) => {
               categories={productDetail.categories}
               allCategories={await new CategoryRepository().getAll()}
             />
+            <TagsForm productId={productId} initialTags={productDetail.product.searchWords} /> 
           </div>
         </div>
         <VariantsForm productId={productId} variants={productDetail.variants} />

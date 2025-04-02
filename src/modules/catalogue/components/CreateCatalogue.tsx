@@ -1,14 +1,21 @@
-'use client'
+"use client";
 import ModalGeneric from "@/lib/components/ModalGeneric";
 import React from "react";
 import VariantsForm from "./VariantsForm";
 import CategoriesForm from "./CategoriesForm";
 import ImagesForm from "./ImagesForm";
 import BasicForm from "./BasicForm";
-import { RegionItem } from '@/modules/region/definitions'
+import { RegionItem } from "@/modules/region/definitions";
 import { CategoryItem } from "@/modules/category/definitions";
+import TagsForm from "./TagsForm";
 
-const CreateCatalogue = ({allCategories, regions} : {allCategories: CategoryItem[], regions: RegionItem[]}) => {  
+const CreateCatalogue = ({
+  allCategories,
+  regions,
+}: {
+  allCategories: CategoryItem[];
+  regions: RegionItem[];
+}) => {
   return (
     <>
       <ModalGeneric
@@ -27,11 +34,16 @@ const CreateCatalogue = ({allCategories, regions} : {allCategories: CategoryItem
         <>
           <div className="flex justify-center mx-auto p-6">
             <div className="flex flex-initial">
-              <BasicForm regions={regions}/>
+              <BasicForm regions={regions} />
             </div>
             <div className="flex flex-col flex-2">
               <ImagesForm />
               <CategoriesForm allCategories={allCategories} />
+              <TagsForm
+                onChange={(tags) => {
+                  console.log("Palabras clave:", tags);
+                }}
+              />
             </div>
           </div>
           <VariantsForm />

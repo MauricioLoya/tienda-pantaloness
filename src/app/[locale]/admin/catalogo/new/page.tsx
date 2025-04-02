@@ -6,6 +6,7 @@ import VariantsForm from '@/modules/catalogue/components/VariantsForm'
 import HeaderContent from "@/lib/components/HeaderContent"
 import { CategoryRepository } from "@/modules/category/definitions"
 import { RegionItem, RegionRepository } from '@/modules/region/definitions'
+import TagsForm from '@/modules/catalogue/components/TagsForm'
 
 const CreateProductPage: React.FC = async () => {
   const regions: RegionItem[] = await new RegionRepository().getAll();
@@ -21,6 +22,8 @@ const CreateProductPage: React.FC = async () => {
           <CategoriesForm allCategories={ await new CategoryRepository().getAll()} />
         </div>
       </div>
+      <TagsForm /> 
+
       <VariantsForm />
     </>
   )

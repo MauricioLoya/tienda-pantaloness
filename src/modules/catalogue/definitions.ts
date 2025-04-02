@@ -10,6 +10,7 @@ export interface ProductItem {
   active: boolean;
   regionId: string;
   slug: string;
+  searchWords: string
   createdAt: Date;
   updatedAt: Date;
 }
@@ -125,6 +126,7 @@ export class ProductRepository {
     return {
       product: {
         ...product,
+        searchWords: product.searchWords ?? "",
         slug: product.slug ?? "",
         regionId: product.regionId ?? "",
       },
@@ -244,6 +246,12 @@ export class ProductRepository {
         createdAt: prod.createdAt,
         imageUrl: prod.ProductImage[0]?.url,
       };
+    });
+  }
+  async updateSearchWords(productId: number, words: string) {
+    return prisma.product.update({
+      where: { id: productId },
+      data: { searchWords: words },
     });
   }
 }

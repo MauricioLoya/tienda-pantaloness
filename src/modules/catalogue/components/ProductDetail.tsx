@@ -3,7 +3,6 @@
 import React from "react";
 import DisplayInfo from "@/lib/components/DisplayInfo";
 import DisplayTableInfo from "@/lib/components/DisplayTableInfo";
-import GoBack from "@/lib/components/GoBack";
 import Link from "next/link";
 import { ProductDetail } from "../definitions";
 import ImagePreview from "@/lib/components/ImagePreview";
@@ -58,7 +57,6 @@ const ProductDetails: React.FC<Props> = ({ productProp }) => {
         </div>
       </div>
 
-      {/* Galería de Imágenes */}
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-4">Imágenes</h2>
         {images.length > 0 ? (
@@ -69,7 +67,6 @@ const ProductDetails: React.FC<Props> = ({ productProp }) => {
                 src={img.url}
                 alt={`Imagen de ${product.name}`}
                 onPreview={() => window.open(img.url, "_blank")}
-                // No se muestra el botón de eliminar en la vista de detalles
                 containerClassName="relative w-32 h-32"
                 imageClassName="w-full h-full object-cover rounded-lg border border-gray-200"
               />
@@ -101,7 +98,6 @@ const ProductDetails: React.FC<Props> = ({ productProp }) => {
         )}
       </div>
 
-      {/* Variantes */}
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-4">Variantes</h2>
         {variants.length > 0 ? (
