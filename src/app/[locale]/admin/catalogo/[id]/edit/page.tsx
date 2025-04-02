@@ -11,21 +11,21 @@ import HeaderContent from "@/lib/components/HeaderContent";
 import TagsForm from "@/modules/catalogue/components/TagsForm";
 
 type Props = {
-  params: { id: string };
-};
+  params: { id: string }
+}
 
 const UpdateCatalogoPage = async ({ params }: Props) => {
-  const { id } = await params;
-  const productId = Number(id);
-  const productRepo = new ProductRepository();
-  const productDetail = await productRepo.getProductById(productId);
+  const { id } = await params
+  const productId = Number(id)
+  const productRepo = new ProductRepository()
+  const productDetail = await productRepo.getProductById(productId)
   const basicData = {
     name: productDetail.product.name,
     description: productDetail.product.description,
     active: productDetail.product.active,
     regionId: productDetail.product.regionId ?? undefined,
-    slug: productDetail.product.slug ?? undefined,
-  };
+    slug: productDetail.product.slug ?? undefined
+  }
   return (
     <>
       <Suspense fallback={<Loader />}>
@@ -51,10 +51,9 @@ const UpdateCatalogoPage = async ({ params }: Props) => {
             <TagsForm productId={productId} initialTags={productDetail.product.searchWords} /> 
           </div>
         </div>
-        <VariantsForm productId={productId} variants={productDetail.variants} />
       </Suspense>
     </>
-  );
-};
+  )
+}
 
-export default UpdateCatalogoPage;
+export default UpdateCatalogoPage
