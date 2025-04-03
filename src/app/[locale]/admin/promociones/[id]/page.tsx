@@ -7,7 +7,7 @@ import UpdatePromotion from '@/modules/promotion/components/UpdatePromotion';
 import ActivatePromotion from '@/modules/promotion/components/ActivatePromotion';
 import DeletePromotion from '@/modules/promotion/components/DeletePromotion';
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 const PromotionDetailsPage: React.FC<Props> = async ({ params }) => {

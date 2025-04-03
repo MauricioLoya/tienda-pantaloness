@@ -6,7 +6,6 @@ import * as Yup from "yup";
 import { RegionFreeShipping } from "../region/definitions";
 
 
-
 interface SettingsFormValues {
   storeName: string;
   logoUrl: string;
@@ -16,10 +15,7 @@ interface SettingsFormValues {
 const initialValues: SettingsFormValues = {
   storeName: "Emporium test store",
   logoUrl: "",
-  freeShippingByRegion: [
-    { region: "Mexico", amount: 1000 },
-    { region: "USA", amount: 300 },
-  ],
+  freeShippingByRegion: [],
 };
 
 const validationSchema = Yup.object({

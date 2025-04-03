@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prima/client';
-import { Product, ProductVariant, Prisma } from '@prisma/client';
+import { Product, Prisma } from '@prisma/client';
 
 export type ItemProduct = {
   id: number;
@@ -14,9 +14,18 @@ export type ItemProduct = {
   isAvailable: boolean;
 };
 
+export type VariantItem = {
+  id: number;
+  size: string;
+  price: number;
+  stock: number;
+  discount: number;
+  discountPrice: number | null;
+};
+
 export type ProductDetail = {
   product: Product;
-  variants: ProductVariant[];
+  variants: VariantItem[];
   images: string[];
 };
 

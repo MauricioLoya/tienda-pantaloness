@@ -21,7 +21,7 @@ const CreateCategory = ({ regions }: { regions: RegionItem[] }) => {
   };
   const handleSubmit = async (close: () => void) => {
     try {
-      await createCategoryAction(formState.name, formState.description, formState.regionId);
+      await createCategoryAction(formState);
       close();
       router.refresh();
     } catch (error: unknown) {

@@ -1,15 +1,7 @@
 'use server';
 
-import { CategoryItem, CategoryRepository } from '../definitions';
+import { CategoryInput, CategoryItem, CategoryRepository } from '../definitions';
 
-export async function createCategoryAction(
-  name: string,
-  description: string,
-  regionId: string
-): Promise<CategoryItem> {
-  return new CategoryRepository().create({
-    name: name,
-    description: description,
-    regionId: regionId,
-  });
+export async function createCategoryAction(data: CategoryInput): Promise<CategoryItem> {
+  return new CategoryRepository().create(data);
 }

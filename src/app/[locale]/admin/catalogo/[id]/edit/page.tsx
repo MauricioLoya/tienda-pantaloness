@@ -11,7 +11,7 @@ import TagsForm from '@/modules/catalogue/components/TagsForm';
 import VariantsForm from '@/modules/catalogue/components/VariantsForm';
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 const UpdateCatalogoPage = async ({ params }: Props) => {

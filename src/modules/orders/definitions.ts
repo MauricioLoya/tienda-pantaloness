@@ -85,7 +85,7 @@ export class OrderRepository implements IOrderRepository {
 
       return orders.map(order => ({
         id: order.id,
-        orderNumber: order.orderNumber,
+        orderNumber: order.orderNumber || 'N/A',
         client: order.customer.name,
         totalAmount: order.totalAmount,
         status: order.status,

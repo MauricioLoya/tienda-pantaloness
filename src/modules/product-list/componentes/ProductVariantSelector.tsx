@@ -5,18 +5,11 @@ import React, { useEffect, useState } from 'react';
 import AddToCartButton from '@/modules/landing/cart/AddToCartButton';
 import { formatPrice } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
+import { VariantItem } from '../definitions';
 
-interface Variant {
-  id: number;
-  size: string;
-  price: number;
-  stock: number;
-  discount: number;
-  discountPrice: number;
-}
 
 interface ProductVariantSelectorProps {
-  variants: Variant[];
+  variants: VariantItem[];
   selectedSize?: string;
   productId: number;
   productSlug: string;
@@ -38,7 +31,7 @@ const ProductVariantSelector = ({
   const t = useTranslations('ProductVariantSelector');
 
   const [currentSize, setCurrentSize] = useState<string | undefined>(selectedSize);
-  const [selectedVariant, setSelectedVariant] = useState<Variant | undefined>();
+  const [selectedVariant, setSelectedVariant] = useState<VariantItem | undefined>();
 
   // Update size selection
   const handleSizeSelect = (size: string) => {
@@ -114,10 +107,9 @@ const ProductVariantSelector = ({
             onClick={() => handleSizeSelect(variant.size)}
             className={`
               btn btn-primary btn-outline px-4 py-2 border-2 rounded-md transition-all
-              ${
-                currentSize === variant.size
-                  ? 'border-primary bg-primary/10 text-primary font-medium'
-                  : 'border-gray-300 hover:border-gray-400'
+              ${currentSize === variant.size
+                ? 'border-primary bg-primary/10 text-primary font-medium'
+                : 'border-gray-300 hover:border-gray-400'
               }
               ${variant.stock <= 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
             `}
@@ -185,7 +177,7 @@ const ProductVariantSelector = ({
               </span>
             )}
             <span className='text-3xl font-bold text-primary'>
-              {formatPrice(hasDiscount ? selectedVariant.discountPrice : selectedVariant.price)}
+              {formatPrice(hasDiscount ? (selectedVariant.discountPrice ?? 0) : (selectedVariant.price ?? 0))}
             </span>
             {hasDiscount && (
               <span className='bg-red-100 text-red-600 px-2 py-1 rounded'>

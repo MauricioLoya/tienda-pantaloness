@@ -30,7 +30,7 @@ export interface ICategoryRepository {
   getAll(): Promise<CategoryItem[]>;
   finsById(id: number): Promise<CategoryItem | null>;
   update(id: number, data: CategoryItem): Promise<CategoryItem>;
-  create(data: CategoryItem): Promise<CategoryItem>;
+  create(data: CategoryInput): Promise<CategoryItem>;
   delete(id: number): Promise<void>;
   activate(id: number): Promise<void>;
 }
@@ -67,7 +67,7 @@ export class CategoryRepository implements ICategoryRepository {
     }
   }
 
-  async create(data: CategoryItem): Promise<CategoryItem> {
+  async create(data: CategoryInput): Promise<CategoryItem> {
     try {
       const createdCategory = await prisma.category.create({ data });
       return fromDatabase(createdCategory);

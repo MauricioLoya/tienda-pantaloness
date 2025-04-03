@@ -4,17 +4,11 @@ import { useCart } from '@/context/CartContext';
 import { v4 as uuidv4 } from 'uuid';
 import React from 'react';
 import { useTranslations } from 'next-intl';
+import { VariantItem } from '@/modules/catalogue/definitions';
 
-interface Variant {
-  id: number;
-  size: string;
-  price: number;
-  stock: number;
-  discount: number;
-  discountPrice: number;
-}
+
 interface AddToCartButtonProps {
-  variant?: Variant;
+  variant?: VariantItem;
   productId: number;
   productName: string;
   productImage: string;
@@ -46,7 +40,7 @@ const AddToCartButton = ({
       image: productImage,
       variantId: variant.id,
       maxQuantity: variant.stock,
-      discountPrice: variant.discountPrice,
+      discountPrice: variant.discountPrice ?? undefined,
     });
   };
 

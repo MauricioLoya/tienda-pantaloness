@@ -115,7 +115,7 @@ const SectionForm: React.FC<SectionFormProps> = ({
       <Formik
         initialValues={initialData as SectionInput}
         validationSchema={validationSchema}
-        onSubmit={() => {}}
+        onSubmit={() => { }}
       >
         {({ values, setFieldValue }) => (
           <Form className='flex flex-col gap-4'>

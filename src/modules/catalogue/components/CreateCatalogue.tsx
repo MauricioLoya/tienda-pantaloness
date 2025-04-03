@@ -39,11 +39,7 @@ const CreateCatalogue = ({
             <div className='flex flex-col flex-2'>
               <ImagesForm />
               <CategoriesForm allCategories={allCategories} />
-              <TagsForm
-                onChange={tags => {
-                  console.log('Palabras clave:', tags);
-                }}
-              />
+              <TagsForm />
             </div>
           </div>
           <VariantsForm />

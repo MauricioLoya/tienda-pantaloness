@@ -19,7 +19,7 @@ const SectionTable: React.FC<Props> = ({ values, regions }) => {
       const matchesSearch = filters.search
         ? section.title.toLowerCase().includes(filters.search.toLowerCase())
         : true;
-      const matchesRegion = filters.region ? section.regionCode === filters.region : true;
+      const matchesRegion = filters.region ? section.regionId === filters.region : true;
       return matchesSearch && matchesRegion;
     });
   }, [values, filters]);
