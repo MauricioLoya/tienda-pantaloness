@@ -1,14 +1,13 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import ModalGeneric from '@/lib/components/ModalGeneric';
-import PromotionForm, { FormPromotionsValues } from './PromotionForm';
-import { PromotionItem } from '../definitions';
+import PromotionForm from './PromotionForm';
+import { PromotionInput, PromotionItem } from '../definitions';
 import { useRouter } from 'next/navigation';
 import { UpdatePromotionAction } from '../actions/updatePromotionAction';
 import { FaEdit } from 'react-icons/fa';
 import { useToast } from '@/lib/components/ToastContext';
 import { RegionItem } from '@/modules/region/definitions';
-import { PromotionFormHandle } from './PromotionForm';
 
 interface UpdatePromotionProps {
   promotion: PromotionItem;
@@ -18,36 +17,40 @@ interface UpdatePromotionProps {
 const UpdatePromotion: React.FC<UpdatePromotionProps> = ({ promotion, regions }) => {
   const router = useRouter();
   const { showToast } = useToast();
-  const formRef = useRef<PromotionFormHandle>(null);
-
-  const initialValues: FormPromotionsValues = {
+  const [updatedPromotion] = useState<PromotionItem>({
+    id: promotion.id,
     code: promotion.code,
     name: promotion.name,
     description: promotion.description,
     discount: promotion.discount,
-    startDate: promotion.startDate.toISOString().substring(0, 10),
-    endDate: promotion.endDate.toISOString().substring(0, 10),
-    active: promotion.active,
     regionId: promotion.regionId,
-  };
+    startDate: promotion.startDate,
+    endDate: promotion.endDate,
+    active: promotion.active,
+    isDeleted: promotion.isDeleted,
+    createdAt: promotion.createdAt,
+  })
 
-  const [formState, setFormState] = useState<FormPromotionsValues>(initialValues);
-
-  const handleValuesChange = (values: FormPromotionsValues) => {
-    setFormState(values);
+  const handleValuesChange = (values: PromotionInput) => {
+    updatedPromotion.code = values.code;
+    updatedPromotion.name = values.name;
+    updatedPromotion.description = values.description;
+    updatedPromotion.discount = values.discount;
+    updatedPromotion.regionId = values.regionId;
+    updatedPromotion.startDate = values.startDate;
+    updatedPromotion.endDate = values.endDate;
+    updatedPromotion.active = values.active;
   };
 
   const handleSubmit = async (close: () => void) => {
-    if (formRef.current) {
-      try {
-        const validValues = await formRef.current.submit();
-        await UpdatePromotionAction(promotion.id, validValues);
-        router.refresh();
-        showToast('Promoción actualizada correctamente', 'success');
-        close();
-      } catch (errors) {
-        showToast('Por favor, corrige los errores en el formulario.', 'error');
-      }
+    try {
+      await UpdatePromotionAction(updatedPromotion);
+      router.refresh();
+      showToast('Promoción actualizada correctamente', 'success');
+      close();
+    } catch (errors) {
+      showToast('Por favor, corrige los errores en el formulario.', 'error');
+      console.error(errors)
     }
   };
 
@@ -62,8 +65,7 @@ const UpdatePromotion: React.FC<UpdatePromotionProps> = ({ promotion, regions })
       cancelBtnFunction={() => console.log('Cancelar')}
     >
       <PromotionForm
-        ref={formRef}
-        initialValues={formState}
+        initialData={updatedPromotion}
         onValuesChange={handleValuesChange}
         regions={regions}
       />

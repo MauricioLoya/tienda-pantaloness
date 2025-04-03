@@ -30,18 +30,16 @@ const CreateCategory = ({ regions }: { regions: RegionItem[] }) => {
   };
 
   return (
-    <>
-      <ModalGeneric
-        title='Agregar categoria'
-        triggerBtnTitle='Agregar'
-        actionBtnText='Guardar'
-        actionBtnFunction={handleSubmit}
-        cancelBtnText='Cancelar'
-        cancelBtnFunction={() => console.log('click action cancel')}
-      >
-        <CategoryForm regions={regions} onValuesChange={handleValuesChange} />
-      </ModalGeneric>
-    </>
+    <ModalGeneric
+      title='Agregar categoria'
+      triggerBtnTitle='Agregar'
+      actionBtnText='Guardar'
+      actionBtnFunction={handleSubmit}
+      cancelBtnText='Cancelar'
+      cancelBtnFunction={() => console.log('click action cancel')}
+    >
+      <CategoryForm regions={regions} onValuesChange={handleValuesChange} />
+    </ModalGeneric>
   );
 };
 

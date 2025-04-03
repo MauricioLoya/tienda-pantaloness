@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import { Promotion } from '@prisma/client';
 import { FaCopy } from 'react-icons/fa';
 import DisplayInfo from '@/lib/components/DisplayInfo';
-import Link from 'next/link';
-import HeaderContent from '@/lib/components/HeaderContent';
 import { RegionItem } from '@/modules/region/definitions';
 
 type Props = {
@@ -33,9 +31,8 @@ const PromotionDetails: React.FC<Props> = ({ promotion, region }) => {
                   <span>{promotion.code}</span>
                   <button
                     onClick={() => copyToClipboard(promotion.code)}
-                    className={`ml-2 text-grey-500 hover:underline ${
-                      copied ? 'text-green-500' : ''
-                    }`}
+                    className={`ml-2 text-grey-500 hover:underline ${copied ? 'text-green-500' : ''
+                      }`}
                   >
                     {copied ? 'Copiado!' : <FaCopy />}
                   </button>
@@ -56,7 +53,7 @@ const PromotionDetails: React.FC<Props> = ({ promotion, region }) => {
             { label: 'Activo', value: promotion.active ? 'Sí' : 'No' },
             {
               label: 'Región',
-              value: region ? `${region.flag} ${region.name}` : 'No asignada',
+              value: promotion.regionId ? `${promotion.regionId}` : 'No asignada',
             },
           ]}
         />

@@ -4,10 +4,9 @@ type Props = {
   headers: string[];
   data: { [key: string]: string | number | React.ReactNode }[];
   keyField?: string;
-  renderCustomCell?: (header: string, row: React.ReactNode, index: number) => React.ReactNode;
 };
 
-const DisplayTableInfo: React.FC<Props> = ({ headers, data, keyField = '', renderCustomCell }) => {
+const DisplayTableInfo: React.FC<Props> = ({ headers, data, keyField = '' }) => {
   return (
     <div className='p-4'>
       <div className='overflow-x-auto'>

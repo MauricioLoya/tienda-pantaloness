@@ -1,37 +1,33 @@
 'use client';
-import React, { useState, useRef } from 'react';
 import ModalGeneric from '@/lib/components/ModalGeneric';
-import UserForm, { FormUserValues, UserSchema, UserFormHandle } from './UserForm';
+import React, { useState } from 'react';
+import UserForm from './UserForm';
 import { useRouter } from 'next/navigation';
 import { createUserAction } from '../actions/createUserAction';
+import { UserInput } from '../definitions';
 
-const CreateUser: React.FC = () => {
+const CreateUser = () => {
   const router = useRouter();
-  const formRef = useRef<UserFormHandle>(null);
 
-  const initialValues: FormUserValues = {
+  const [formState, setFormState] = useState<UserInput>({
     email: '',
     name: '',
     password: '',
     superAdmin: false,
-  };
+  });
 
-  const [formState, setFormState] = useState<FormUserValues>(initialValues);
-
-  const handleValuesChange = (values: FormUserValues) => {
+  const handleValuesChange = (values: UserInput) => {
     setFormState(values);
   };
 
   const handleSubmit = async (close: () => void) => {
-    if (formRef.current) {
-      try {
-        const validValues = await formRef.current.submit();
-        await createUserAction(validValues);
-        close();
-        router.refresh();
-      } catch (errors) {
-        alert('Por favor, corrige los errores en el formulario.');
-      }
+    try {
+      await createUserAction(formState);
+      close();
+      router.refresh();
+    } catch (error) {
+      alert('Por favor, corrige los errores en el formulario.');
+      console.log(error);
     }
   };
 
@@ -44,7 +40,7 @@ const CreateUser: React.FC = () => {
       cancelBtnText='Cancelar'
       cancelBtnFunction={() => console.log('Cancelar')}
     >
-      <UserForm ref={formRef} initialValues={initialValues} onValuesChange={handleValuesChange} />
+      <UserForm initialData={formState} onValuesChange={handleValuesChange} />
     </ModalGeneric>
   );
 };

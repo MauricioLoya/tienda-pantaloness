@@ -17,7 +17,7 @@ interface UpdateCategoryProps {
 
 const UpdateCategory: React.FC<UpdateCategoryProps> = ({ category, regions }) => {
   const router = useRouter();
-  const [updatedCategory, setUpdatedCategory] = useState<CategoryItem>({
+  const [updatedCategory] = useState<CategoryItem>({
     id: category.id,
     name: category.name || '',
     description: category.description || '',
@@ -27,14 +27,11 @@ const UpdateCategory: React.FC<UpdateCategoryProps> = ({ category, regions }) =>
   const { showToast } = useToast();
 
   const handleValuesChange = (values: CategoryInput) => {
-    setUpdatedCategory(prev => ({
-      ...prev,
-      name: values.name,
-      description: values.description,
-      regionId: values.regionId,
-      backgroundUrl: values.backgroundUrl,
-    }));
-  };
+    updatedCategory.name = values.name;
+    updatedCategory.description = values.description;
+    updatedCategory.regionId = values.regionId;
+    updatedCategory.backgroundUrl = values.backgroundUrl;
+  }
 
   const handleSubmit = async (close: () => void) => {
     try {

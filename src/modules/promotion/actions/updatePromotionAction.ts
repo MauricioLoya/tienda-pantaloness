@@ -1,17 +1,7 @@
 'use server';
 
-import { PromotionRepository } from '../definitions';
-import { FormPromotionsValues } from '../components/PromotionForm';
+import { PromotionItem, PromotionRepository } from '../definitions';
 
-export async function UpdatePromotionAction(id: number, data: Partial<FormPromotionsValues>) {
-  return await new PromotionRepository().update(id, {
-    code: data.code!,
-    name: data.name!,
-    description: data.description!,
-    discount: data.discount!,
-    startDate: new Date(data.startDate as string),
-    endDate: new Date(data.endDate as string),
-    active: data.active!,
-    regionId: data.regionId!,
-  });
+export async function UpdatePromotionAction(data: PromotionItem): Promise<PromotionItem> {
+  return await new PromotionRepository().update(data.id, data);
 }

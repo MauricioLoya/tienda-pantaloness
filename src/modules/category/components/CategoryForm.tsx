@@ -70,9 +70,9 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
       <Formik
         initialValues={initialData as CategoryInput}
         validationSchema={validationSchema}
-        onSubmit={values => {}}
+        onSubmit={() => {}}
       >
-        {({ values }) => (
+        {() => (
           <Form className='flex flex-col gap-4'>
             <div>
               <label className='block text-sm font-medium text-gray-700'>Nombre</label>

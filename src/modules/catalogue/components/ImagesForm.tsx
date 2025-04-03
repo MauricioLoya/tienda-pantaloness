@@ -7,8 +7,6 @@ import { addImageAction } from '../actions/addImageAction';
 import { removeImageAction } from '../actions/removeImageAction';
 import { useRouter } from 'next/navigation';
 import { ImageItem } from '../definitions';
-import { FaEye } from 'react-icons/fa';
-import { IoClose } from 'react-icons/io5';
 import { useToast } from '@/lib/components/ToastContext';
 import ImagePreview from '@/lib/components/ImagePreview';
 
@@ -36,8 +34,12 @@ const ImagesForm: React.FC<ImagesFormProps> = ({ productId, images = [] }) => {
       resetForm();
       router.refresh();
       showToast('Imagen agregada correctamente', 'success');
-    } catch (error: any) {
-      showToast(error.message || 'Error al agregar la imagen', 'error');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        showToast(error.message || 'Error al agregar la imagen', 'error');
+      } else {
+        showToast('Error desconocido al guardar la imagen', 'error');
+      }
     }
   }
 
@@ -46,8 +48,12 @@ const ImagesForm: React.FC<ImagesFormProps> = ({ productId, images = [] }) => {
       await removeImageAction(imageId);
       router.refresh();
       showToast('Imagen eliminada correctamente', 'success');
-    } catch (error: any) {
-      showToast(error.message || 'Error al eliminar la imagen', 'error');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        showToast(error.message || 'Error al eliminar la imagen', 'error');
+      } else {
+        showToast('Error desconocido al eliminar la imagen', 'error');
+      }
     }
   }
 

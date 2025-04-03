@@ -71,9 +71,14 @@ export class PromotionRepository implements IPromotionRepository {
   }
 
   async create(data: PromotionInput): Promise<PromotionItem> {
+    const formattedData = {
+      ...data,
+      startDate: new Date(data.startDate),
+      endDate: new Date(data.endDate),
+    };
     try {
       const promotion = await prisma.promotion.create({
-        data,
+        data: formattedData,
       });
       return fromDatabase(promotion);
     } catch (error) {
@@ -81,18 +86,14 @@ export class PromotionRepository implements IPromotionRepository {
     }
   }
 
-  async update(id: number, data: Partial<PromotionInput>): Promise<PromotionItem> {
-    console.log(data);
-    console.log('ID', id);
+  async update(id: number, data: PromotionInput): Promise<PromotionItem> {
     try {
       const promotion = await prisma.promotion.update({
         where: { id },
-        data,
+        data: data,
       });
 
-      console.log('promotion', promotion);
       const a = fromDatabase(promotion);
-      console.log('aaa', a);
       return a;
     } catch (error) {
       throw error;

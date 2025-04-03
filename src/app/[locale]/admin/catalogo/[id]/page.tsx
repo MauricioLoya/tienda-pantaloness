@@ -19,13 +19,6 @@ export default async function UpdateProductPage({ params }: Props) {
     return notFound();
   }
 
-  const basicData = {
-    name: productDetail.product.name,
-    description: productDetail.product.description,
-    active: productDetail.product.active,
-    regionId: productDetail.product.regionId ?? undefined,
-    slug: productDetail.product.slug ?? undefined,
-  };
   const actions = (
     <>
       <Link href={`./${productId}/edit`} className='btn btn-primary'>

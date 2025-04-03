@@ -50,8 +50,12 @@ const BasicForm: React.FC<BasicFormProps> = ({
         showToast('Producto actualizado correctamente', 'success');
         router.refresh();
       }
-    } catch (error: any) {
-      showToast(error.message || 'Error al guardar el producto', 'error');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        showToast(error.message || 'Error al guardar el producto', 'error');
+      } else {
+        showToast('Error desconocido al guardar el producto', 'error');
+      }
     }
   }
 

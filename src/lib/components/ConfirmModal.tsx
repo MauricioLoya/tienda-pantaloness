@@ -32,8 +32,12 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
     try {
       await onConfirm();
       close();
-    } catch (error: any) {
-      alert(error.message || 'Error en la confirmación');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert(error.message || 'Error en la confirmación');
+      } else {
+      alert("Error desconocido en la confirmación");
+    }
     }
   };
 

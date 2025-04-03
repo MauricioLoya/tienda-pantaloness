@@ -1,6 +1,5 @@
 'use client';
 
-import ResponsiveTable from '@/lib/components/ResponsiveTable';
 import React, { useMemo, useState } from 'react';
 import { OrderAdminTableRow } from '../definitions';
 import Link from 'next/link';

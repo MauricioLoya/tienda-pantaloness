@@ -10,10 +10,9 @@ import { useToast } from '@/lib/components/ToastContext';
 
 interface DeleteCategoryProps {
   category: CategoryItem;
-  btnColor?: string;
 }
 
-const DeleteCategory: React.FC<DeleteCategoryProps> = ({ category, btnColor = 'btn-danger' }) => {
+const DeleteCategory: React.FC<DeleteCategoryProps> = ({ category}) => {
   const router = useRouter();
   const { showToast } = useToast();
 

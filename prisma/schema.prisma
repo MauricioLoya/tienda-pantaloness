@@ -31,7 +31,7 @@ model Region {
   flag         String
   currencyCode String? // Código de moneda para la región
   taxRate      Float? // Tasa de impuesto específica por región
-  shippingFree Float?
+  // shippingFree Float?
   Product      Product[]
   Order        Order[]
   Category     Category[]

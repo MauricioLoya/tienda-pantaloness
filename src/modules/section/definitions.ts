@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prima/client';
-import { Section, SectionType } from '@prisma/client';
+import { SectionType } from '@prisma/client';
 
 export interface HighlightProductItem {
   id: number;

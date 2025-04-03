@@ -10,10 +10,9 @@ import { deleteSectionAction } from '../actions/deleteSectionAction';
 
 interface DeleteSectionProps {
   section: SectionItem;
-  btnColor?: string;
 }
 
-const DeleteSection: React.FC<DeleteSectionProps> = ({ section, btnColor = 'btn-danger' }) => {
+const DeleteSection: React.FC<DeleteSectionProps> = ({ section }) => {
   const router = useRouter();
   const { showToast } = useToast();
 

@@ -34,7 +34,9 @@ const ModalGeneric: React.FC<ModalCreateProps> = props => {
   };
 
   const cancel = () => {
-    cancelBtnFunction && cancelBtnFunction();
+    if (cancelBtnFunction) {
+      cancelBtnFunction();
+    }
     close();
   };
 
