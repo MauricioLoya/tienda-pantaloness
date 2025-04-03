@@ -3,14 +3,12 @@ import React, { useState } from 'react';
 import { Promotion } from '@prisma/client';
 import { FaCopy } from 'react-icons/fa';
 import DisplayInfo from '@/lib/components/DisplayInfo';
-import { RegionItem } from '@/modules/region/definitions';
 
 type Props = {
   promotion: Promotion;
-  region?: RegionItem;
 };
 
-const PromotionDetails: React.FC<Props> = ({ promotion, region }) => {
+const PromotionDetails: React.FC<Props> = ({ promotion }) => {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = (text: string) => {
