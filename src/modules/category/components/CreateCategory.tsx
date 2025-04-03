@@ -24,8 +24,8 @@ const CreateCategory = ({ regions }: { regions: RegionItem[] }) => {
       await createCategoryAction(formState.name, formState.description, formState.regionId);
       close();
       router.refresh();
-    } catch (error: any) {
-      alert(error.message || 'Error al crear la categoría');
+    } catch (error: unknown) {
+      console.error('Error creating category:', error);
     }
   };
 

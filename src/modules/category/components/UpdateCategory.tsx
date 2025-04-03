@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import ModalGeneric from '@/lib/components/ModalGeneric';
 import CategoryForm from './CategoryForm';
-import { CategoryItem, CategoryInput } from '../definitions';
+import { CategoryInput, CategoryItem } from '../definitions';
 import { RegionItem } from '@/modules/region/definitions';
 import { useRouter } from 'next/navigation';
 import { updateCategoryAction } from '../action/updateCategoryAction';
@@ -26,11 +26,14 @@ const UpdateCategory: React.FC<UpdateCategoryProps> = ({ category, regions }) =>
   });
   const { showToast } = useToast();
 
-  const handleValuesChange = (values: any) => {
-    updatedCategory.name = values.name;
-    updatedCategory.description = values.description;
-    updatedCategory.regionId = values.regionId;
-    updatedCategory.backgroundUrl = values.backgroundUrl;
+  const handleValuesChange = (values: CategoryInput) => {
+    setUpdatedCategory(prev => ({
+      ...prev,
+      name: values.name,
+      description: values.description,
+      regionId: values.regionId,
+      backgroundUrl: values.backgroundUrl,
+    }));
   };
 
   const handleSubmit = async (close: () => void) => {
@@ -39,8 +42,11 @@ const UpdateCategory: React.FC<UpdateCategoryProps> = ({ category, regions }) =>
       router.refresh();
       showToast('Categoría actualizada correctamente', 'success');
       close();
-    } catch (error: any) {
-      showToast('Error al crear la categoría', 'error');
+    } catch (error: unknown) {
+      showToast(
+        error instanceof Error ? error.message : 'Error al actualizar la categoría',
+        'error'
+      );
       console.error(error);
     }
   };

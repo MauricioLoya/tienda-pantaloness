@@ -34,17 +34,20 @@ const UpdateSection: React.FC<UpdateSectionProps> = ({
   };
   const handleValuesChange = (values: SectionInput) => {
     console.log(values);
-    updatedSection.type = values.type;
-    updatedSection.title = values.title;
-    updatedSection.description = values.description;
-    updatedSection.regionId = values.regionId;
-    updatedSection.actionUrl = values.actionUrl;
-    updatedSection.order = values.order;
-    updatedSection.backgroundUrl = values.backgroundUrl;
-    updatedSection.backgroundColor = values.backgroundColor;
-    updatedSection.highlightProducts = values.highlightProducts ?? [];
-    updatedSection.buttonText = values.buttonText ?? DefaultColors.buttonText;
-    updatedSection.buttonColor = values.buttonColor ?? DefaultColors.buttonColor;
+    setUpdatedSection(prev => ({
+      ...prev,
+      type: values.type,
+      title: values.title,
+      description: values.description,
+      regionId: values.regionId,
+      actionUrl: values.actionUrl,
+      order: values.order,
+      backgroundUrl: values.backgroundUrl,
+      backgroundColor: values.backgroundColor,
+      highlightProducts: values.highlightProducts ?? [],
+      buttonText: values.buttonText ?? DefaultColors.buttonText,
+      buttonColor: values.buttonColor ?? DefaultColors.buttonColor,
+    }));
   };
 
   const handleSubmit = async (close: () => void) => {
@@ -55,8 +58,8 @@ const UpdateSection: React.FC<UpdateSectionProps> = ({
       router.refresh();
       showToast('Sección actualizada correctamente', 'success');
       close();
-    } catch (error: any) {
-      showToast('Error al actualizar la sección', 'error');
+    } catch (error: unknown) {
+      showToast(error instanceof Error ? error.message : 'Error al actualizar la sección', 'error');
       console.error(error);
     }
   };

@@ -10,6 +10,7 @@ import { VariantItem } from '../definitions';
 import DisplayTableInfo from '@/lib/components/DisplayTableInfo';
 import ActionButton from '@/lib/components/ActionButton';
 import { useToast } from '@/lib/components/ToastContext';
+import { formatPrice } from '@/lib/utils';
 
 interface VariantsFormProps {
   productId?: number;
@@ -50,11 +51,10 @@ const VariantsForm: React.FC<VariantsFormProps> = ({ productId, variants = [] })
     return Math.round(dp * 100) / 100;
   };
 
-  async function handleSubmit(values: VariantFormValues, { resetForm }: any) {
+  async function handleSubmit(values: VariantFormValues, { resetForm }: { resetForm: () => void }) {
     const discountValue = values.discount === '' ? 0 : parseFloat(values.discount);
     const priceValue = parseFloat(values.price);
     const stockValue = parseInt(values.stock, 10);
-    const discountedPrice = calculateDiscountedPrice(priceValue, discountValue);
 
     try {
       if (!productId) return;
@@ -62,9 +62,8 @@ const VariantsForm: React.FC<VariantsFormProps> = ({ productId, variants = [] })
       resetForm();
       router.refresh();
       showToast('Variante agregada correctamente', 'success');
-    } catch (error: any) {
-      // Muestra el error devuelto en un toast
-      showToast(error.message || 'Error al agregar la variante', 'error');
+    } catch (error: Error | unknown) {
+      showToast(error instanceof Error ? error.message : 'Error al agregar la variante', 'error');
     }
   }
 
@@ -73,27 +72,26 @@ const VariantsForm: React.FC<VariantsFormProps> = ({ productId, variants = [] })
       await removeVariantAction(variantId);
       router.refresh();
       showToast('Variante eliminada correctamente', 'success');
-    } catch (error: any) {
-      showToast(error.message || 'Error al eliminar la variante', 'error');
+    } catch (error: Error | unknown) {
+      showToast(error instanceof Error ? error.message : 'Error al eliminar la variante', 'error');
     }
   }
 
   const variantsData = variants.map(variant => ({
     id: variant.id,
     Tamaño: variant.size,
-    Precio: variant.price,
+    Precio: formatPrice(variant.price),
     Stock: variant.stock,
-    Descuento: variant.discount || 0,
-    'Precio con Descuento': variant.discountPrice || 0,
-    Eliminar: <ActionButton onClick={() => handleRemove(variant.id)} />,
+    Descuento: `${variant.discount} %` || 0,
+    'Precio con Descuento': formatPrice(variant.discountPrice ?? 0),
+    Eliminar: (
+      <ActionButton
+        onClick={() => {
+          handleRemove(variant.id);
+        }}
+      />
+    ),
   }));
-
-  const renderCustomCell = (header: string, row: any) => {
-    if (header === 'Eliminar') {
-      return <ActionButton onClick={() => handleRemove(row.id)} />;
-    }
-    return undefined;
-  };
 
   return (
     <div className='card shadow p-4'>
@@ -172,7 +170,6 @@ const VariantsForm: React.FC<VariantsFormProps> = ({ productId, variants = [] })
           headers={['Tamaño', 'Precio', 'Stock', 'Descuento', 'Precio con Descuento', 'Eliminar']}
           data={variantsData}
           keyField='id'
-          renderCustomCell={renderCustomCell}
         />
       </div>
     </div>

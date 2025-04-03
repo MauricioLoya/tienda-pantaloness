@@ -1,5 +1,3 @@
-import { Section, SectionType, HighlightProduct } from '@prisma/client';
-
 export type ServerActionResult<T = void> = {
   success: boolean;
   message: string;

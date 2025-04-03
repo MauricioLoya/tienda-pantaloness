@@ -6,9 +6,9 @@ import { CategoryRepository } from '@/modules/category/definitions';
 import ImagesForm from '@/modules/catalogue/components/ImagesForm';
 import BasicForm from '@/modules/catalogue/components/BasicForm';
 import CategoriesForm from '@/modules/catalogue/components/CategoriesForm';
-import VariantsForm from '@/modules/catalogue/components/VariantsForm';
 import HeaderContent from '@/lib/components/HeaderContent';
 import TagsForm from '@/modules/catalogue/components/TagsForm';
+import VariantsForm from '@/modules/catalogue/components/VariantsForm';
 
 type Props = {
   params: { id: string };
@@ -18,6 +18,7 @@ const UpdateCatalogoPage = async ({ params }: Props) => {
   const { id } = await params;
   const productId = Number(id);
   const productRepo = new ProductRepository();
+
   const productDetail = await productRepo.getProductById(productId);
   const basicData = {
     name: productDetail.product.name,
@@ -46,6 +47,7 @@ const UpdateCatalogoPage = async ({ params }: Props) => {
               allCategories={await new CategoryRepository().getAll()}
             />
             <TagsForm productId={productId} initialTags={productDetail.product.searchWords} />
+            <VariantsForm productId={productId} variants={productDetail.variants} />
           </div>
         </div>
       </Suspense>

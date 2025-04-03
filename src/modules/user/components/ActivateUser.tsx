@@ -21,8 +21,9 @@ const ActivateUser: React.FC<ActivateUserProps> = ({ user, btnColor = 'btn-succe
       await ActivateUserAction(user.id);
       showToast('Usuario activado correctamente', 'success');
       router.refresh();
-    } catch (error: any) {
-      showToast('Error al activar el usuario', 'error');
+    } catch (error: unknown) {
+      showToast(error instanceof Error ? error.message : 'Error al activar el usuario', 'error');
+      console.error(error);
     }
   };
 

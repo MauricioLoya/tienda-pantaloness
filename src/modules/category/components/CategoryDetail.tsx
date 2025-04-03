@@ -23,8 +23,8 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ category, region, produ
       await removeProductFromCategoryAction(category.id, productId);
       setRelatedProducts(prev => prev.filter(product => product.id !== productId));
       showToast('Producto eliminado correctamente', 'success');
-    } catch (error) {
-      showToast('Error al eliminar el producto de la categoría', 'error');
+    } catch (error: unknown) {
+      showToast(error instanceof Error ? error.message : 'Error al eliminar el producto', 'error');
     }
   };
 

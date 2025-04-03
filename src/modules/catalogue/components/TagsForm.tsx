@@ -50,8 +50,8 @@ const TagsForm: React.FC<Props> = ({ productId, initialTags }) => {
     try {
       await addTagsAction(productId, tags);
       showToast('Tags guardadas exitosamente', 'success');
-    } catch (error: any) {
-      showToast(error.message || 'Error al guardar las tags', 'error');
+    } catch (error: unknown) {
+      showToast(error instanceof Error ? error.message : 'Error al eliminar la variante', 'error');
     }
   };
 

@@ -1,9 +1,7 @@
 'use client';
-import React, { useState, Suspense } from 'react';
-import { User } from '@prisma/client';
+import React, { useState } from 'react';
 import { FaCopy } from 'react-icons/fa';
 import DisplayInfo from '@/lib/components/DisplayInfo';
-import GoBack from '@/lib/components/GoBack';
 import { UserItem } from '../definitions';
 
 type Props = {
