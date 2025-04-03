@@ -1,9 +1,9 @@
-import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { notFound } from "next/navigation";
-import { routing } from "@/i18n/routing";
-import { CartProvider } from "@/context/CartContext";
-import "../globals.css";
-import { ToastProvider } from "@/lib/components/ToastContext";
+import { NextIntlClientProvider, hasLocale } from 'next-intl';
+import { notFound } from 'next/navigation';
+import { routing } from '@/i18n/routing';
+import { CartProvider } from '@/context/CartContext';
+import '../globals.css';
+import { ToastProvider } from '@/lib/components/ToastContext';
 export default async function LocaleLayout({
   children,
   params,

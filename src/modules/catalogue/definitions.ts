@@ -1,8 +1,8 @@
-import { prisma } from "@/lib/prima/client";
-import { generateSlug } from "@/lib/utils";
-import { Product } from "@prisma/client";
-import { CategoryItem } from "../category/definitions";
-import { HighlightProductItem } from "../section/definitions";
+import { prisma } from '@/lib/prima/client';
+import { generateSlug } from '@/lib/utils';
+import { Product } from '@prisma/client';
+import { CategoryItem } from '../category/definitions';
+import { HighlightProductItem } from '../section/definitions';
 export interface ProductItem {
   id: number;
   name: string;
@@ -10,7 +10,7 @@ export interface ProductItem {
   active: boolean;
   regionId: string;
   slug: string;
-  searchWords: string
+  searchWords: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -60,18 +60,16 @@ export class ProductRepository {
       include: {
         ProductCategory: { include: { category: true } },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
-    return products.map((prod) => {
-      const categoryNames = prod.ProductCategory.map(
-        (pc) => pc.category.name
-      ).join(", ");
+    return products.map(prod => {
+      const categoryNames = prod.ProductCategory.map(pc => pc.category.name).join(', ');
       return {
         id: prod.id,
         name: prod.name,
         active: prod.active,
-        slug: prod.slug ?? "",
-        regionId: prod.regionId ?? "",
+        slug: prod.slug ?? '',
+        regionId: prod.regionId ?? '',
         categories: categoryNames,
         createdAt: prod.createdAt,
       };
@@ -80,13 +78,13 @@ export class ProductRepository {
   async getAvailableProducts(): Promise<HighlightProductItem[]> {
     const products = await prisma.product.findMany({
       where: { active: true },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
-    return products.map((prod) => ({
+    return products.map(prod => ({
       id: prod.id,
       name: prod.name,
       description: prod.description,
-      slug: prod.slug ?? "",
+      slug: prod.slug ?? '',
       active: prod.active,
       createdAt: prod.createdAt,
       updatedAt: prod.updatedAt,
@@ -102,20 +100,20 @@ export class ProductRepository {
         ProductVariant: true,
       },
     });
-    if (!product) throw new Error("Producto no encontrado");
+    if (!product) throw new Error('Producto no encontrado');
 
-    const images: ImageItem[] = product.ProductImage.map((img) => ({
+    const images: ImageItem[] = product.ProductImage.map(img => ({
       id: img.id,
       url: img.url,
     }));
 
-    const categories: CategoryItem[] = product.ProductCategory.map((pc) => ({
+    const categories: CategoryItem[] = product.ProductCategory.map(pc => ({
       id: pc.category.id,
       name: pc.category.name,
       description: pc.category.description,
     }));
 
-    const variants: VariantItem[] = product.ProductVariant.map((v) => ({
+    const variants: VariantItem[] = product.ProductVariant.map(v => ({
       id: v.id,
       size: v.size,
       price: v.price,
@@ -126,9 +124,9 @@ export class ProductRepository {
     return {
       product: {
         ...product,
-        searchWords: product.searchWords ?? "",
-        slug: product.slug ?? "",
-        regionId: product.regionId ?? "",
+        searchWords: product.searchWords ?? '',
+        slug: product.slug ?? '',
+        regionId: product.regionId ?? '',
       },
       images,
       categories,
@@ -150,7 +148,7 @@ export class ProductRepository {
   }
 
   async updateBasic(id: number, data: Partial<ProductInput>): Promise<Product> {
-    const slug = generateSlug(data.name ?? "");
+    const slug = generateSlug(data.name ?? '');
     return prisma.product.update({
       where: { id },
       data: {
@@ -196,7 +194,7 @@ export class ProductRepository {
       where: { productId, size },
     });
 
-    if (exist) throw new Error("Ya existe una variante con ese tamaño");
+    if (exist) throw new Error('Ya existe una variante con ese tamaño');
     const discountVal = discount ?? 0;
     const discountPrice = price * (1 - discountVal / 100);
     return prisma.productVariant.create({
@@ -215,9 +213,7 @@ export class ProductRepository {
     return prisma.productVariant.delete({ where: { id: variantId } });
   }
 
-  async getProductsForCategory(
-    categoryId: number
-  ): Promise<ProductAdminTableRow[]> {
+  async getProductsForCategory(categoryId: number): Promise<ProductAdminTableRow[]> {
     const products = await prisma.product.findMany({
       where: {
         ProductCategory: {
@@ -230,18 +226,16 @@ export class ProductRepository {
         ProductCategory: { include: { category: true } },
         ProductImage: { include: { product: true } },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
-    return products.map((prod) => {
-      const categoryNames = prod.ProductCategory.map(
-        (pc) => pc.category.name
-      ).join(", ");
+    return products.map(prod => {
+      const categoryNames = prod.ProductCategory.map(pc => pc.category.name).join(', ');
       return {
         id: prod.id,
         name: prod.name,
         active: prod.active,
-        slug: prod.slug ?? "",
-        regionId: prod.regionId ?? "",
+        slug: prod.slug ?? '',
+        regionId: prod.regionId ?? '',
         categories: categoryNames,
         createdAt: prod.createdAt,
         imageUrl: prod.ProductImage[0]?.url,

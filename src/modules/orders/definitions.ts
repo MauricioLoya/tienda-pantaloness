@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prima/client";
-import { Customer, Order, OrderItem, Payment, Promotion } from "@prisma/client";
+import { prisma } from '@/lib/prima/client';
+import { Customer, Order, OrderItem, Payment, Promotion } from '@prisma/client';
 
 export type OrderAdminTableRow = {
   id: number;
@@ -45,7 +45,7 @@ export class OrderRepository implements IOrderRepository {
       });
 
       if (!order) {
-        throw new Error("Orden no encontrada");
+        throw new Error('Orden no encontrada');
       }
 
       return {
@@ -57,7 +57,7 @@ export class OrderRepository implements IOrderRepository {
       };
     } catch (error) {
       console.error(error);
-      throw new Error("Error al obtener la orden");
+      throw new Error('Error al obtener la orden');
     }
   }
 
@@ -83,7 +83,7 @@ export class OrderRepository implements IOrderRepository {
         },
       });
 
-      return orders.map((order) => ({
+      return orders.map(order => ({
         id: order.id,
         orderNumber: order.orderNumber,
         client: order.customer.name,
@@ -91,15 +91,12 @@ export class OrderRepository implements IOrderRepository {
         status: order.status,
         createdAt: order.orderDate,
         itemsCount: order.OrderItem.length,
-        paymentMethod:
-          order.Payment.length > 0
-            ? order.Payment[0].paymentType
-            : "No definido",
-        regionId: order.regionId || "",
+        paymentMethod: order.Payment.length > 0 ? order.Payment[0].paymentType : 'No definido',
+        regionId: order.regionId || '',
       }));
     } catch (error) {
       console.error(error);
-      throw new Error("Error al obtener las órdenes");
+      throw new Error('Error al obtener las órdenes');
     }
   }
 }

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef } from 'react';
 
 export interface ModalCreateProps {
   title: string;
@@ -13,7 +13,7 @@ export interface ModalCreateProps {
   fullScreen?: boolean;
 }
 
-const ModalGeneric: React.FC<ModalCreateProps> = (props) => {
+const ModalGeneric: React.FC<ModalCreateProps> = props => {
   const {
     title,
     triggerBtnTitle,
@@ -21,7 +21,7 @@ const ModalGeneric: React.FC<ModalCreateProps> = (props) => {
     children,
     actionBtnText,
     cancelBtnText,
-    btnColor = "btn-primary",
+    btnColor = 'btn-primary',
     actionBtnFunction,
     cancelBtnFunction,
     fullScreen,
@@ -39,33 +39,30 @@ const ModalGeneric: React.FC<ModalCreateProps> = (props) => {
   };
 
   const modalBoxClasses = fullScreen
-    ? "modal-box w-full h-full max-w-full p-6"
-    : "modal-box w-12/12 max-w-5xl";
+    ? 'modal-box w-full h-full max-w-full p-6'
+    : 'modal-box w-12/12 max-w-5xl';
 
   return (
     <>
       <button
         className={`btn btn-active ${btnColor}`}
-        data-backdrop="static"
+        data-backdrop='static'
         onClick={() => modalRef?.current?.showModal()}
       >
-        <div className="flex items-center gap-2">
+        <div className='flex items-center gap-2'>
           {triggerBtnContent}
           {triggerBtnTitle}
         </div>
       </button>
-      <dialog id="my_modal_4" ref={modalRef} className="modal">
+      <dialog id='my_modal_4' ref={modalRef} className='modal'>
         <div className={modalBoxClasses}>
-          <h1 className="font-bold text-xl mb-6">{title}</h1>
+          <h1 className='font-bold text-xl mb-6'>{title}</h1>
           {children}
-          <div className="modal-action">
-            <button className="btn mr-4" onClick={() => cancel()}>
+          <div className='modal-action'>
+            <button className='btn mr-4' onClick={() => cancel()}>
               {cancelBtnText}
             </button>
-            <button
-              className="btn btn-primary"
-              onClick={() => actionBtnFunction(close)}
-            >
+            <button className='btn btn-primary' onClick={() => actionBtnFunction(close)}>
               {actionBtnText}
             </button>
           </div>

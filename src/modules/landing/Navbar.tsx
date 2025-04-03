@@ -1,50 +1,47 @@
-'use client'
-import CartButton from '@/modules/landing/cart/CartButton'
-import Link from 'next/link'
-import React, { useState } from 'react'
-import LanguageSwitcher from './LanguageSwitcher'
-import { useTranslations } from 'next-intl'
+'use client';
+import CartButton from '@/modules/landing/cart/CartButton';
+import Link from 'next/link';
+import React, { useState } from 'react';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslations } from 'next-intl';
 
 const NavBar: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const t = useTranslations('Navbar')
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const t = useTranslations('Navbar');
 
   return (
-    <nav className="navbar bg-white shadow-lg fixed z-50">
-      <div className="navbar max-w-7xl mx-auto">
-        <div className="flex-1">
-          <Link href={'/'} className="btn btn-ghost text-xl text-primary">
+    <nav className='navbar bg-white shadow-lg fixed z-50'>
+      <div className='navbar max-w-7xl mx-auto'>
+        <div className='flex-1'>
+          <Link href={'/'} className='btn btn-ghost text-xl text-primary'>
             {t('brand_name')}
           </Link>
         </div>
 
         {/* Mobile menu button */}
 
-        <div className="flex-none lg:hidden">
+        <div className='flex-none lg:hidden'>
           <CartButton />
-          <button
-            className="btn btn-square btn-ghost"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
+          <button className='btn btn-square btn-ghost' onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="inline-block w-5 h-5 stroke-current"
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              className='inline-block w-5 h-5 stroke-current'
             >
               <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h16"
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='M4 6h16M4 12h16M4 18h16'
               ></path>
             </svg>
           </button>
         </div>
 
         {/* Desktop menu */}
-        <div className="flex-none hidden lg:flex gap-2">
-          <ul className="menu menu-horizontal px-1">
+        <div className='flex-none hidden lg:flex gap-2'>
+          <ul className='menu menu-horizontal px-1'>
             <li>
               <Link href={'/productos'}>{t('products')}</Link>
             </li>
@@ -62,8 +59,8 @@ const NavBar: React.FC = () => {
 
       {/* Mobile dropdown menu */}
       {isMenuOpen && (
-        <div className="lg:hidden absolute top-16 left-0 right-0 bg-white shadow-lg z-50 p-4">
-          <ul className="menu menu-vertical w-full">
+        <div className='lg:hidden absolute top-16 left-0 right-0 bg-white shadow-lg z-50 p-4'>
+          <ul className='menu menu-vertical w-full'>
             <li>
               <Link href={'/productos'}>{t('products')}</Link>
             </li>
@@ -74,13 +71,13 @@ const NavBar: React.FC = () => {
               <Link href={'/contacto'}>{t('contact')}</Link>
             </li>
           </ul>
-          <div className="flex justify-center mt-4">
+          <div className='flex justify-center mt-4'>
             <LanguageSwitcher />
           </div>
         </div>
       )}
     </nav>
-  )
-}
+  );
+};
 
-export default NavBar
+export default NavBar;

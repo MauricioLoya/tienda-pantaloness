@@ -1,5 +1,5 @@
-import type { Config } from 'tailwindcss'
-import daisyui from 'daisyui'
+import type { Config } from 'tailwindcss';
+import daisyui from 'daisyui';
 
 export default {
   content: [
@@ -8,18 +8,18 @@ export default {
     './src/modules/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/[locales]/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/lib/**/*.{js,ts,jsx,tsx,mdx}'
+    './src/lib/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Poppins', 'sans-serif']
+        sans: ['Poppins', 'sans-serif'],
       },
       colors: {
         background: 'var(--background)',
-        foreground: 'var(--foreground)'
-      }
-    }
+        foreground: 'var(--foreground)',
+      },
+    },
   },
   daisyui: {
     themes: [
@@ -33,10 +33,10 @@ export default {
           info: '#023d79',
           success: '#1d1d1b',
           error: '#ff0000',
-          warning: '#FDE68A'
-        }
-      }
-    ]
+          warning: '#FDE68A',
+        },
+      },
+    ],
   },
-  plugins: [daisyui]
-} satisfies Config
+  plugins: [daisyui],
+} satisfies Config;

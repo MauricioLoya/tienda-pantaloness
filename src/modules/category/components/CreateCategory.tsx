@@ -1,22 +1,21 @@
-"use client";
-import ModalGeneric from "@/lib/components/ModalGeneric";
-import React, { useState } from "react";
-import CategoryForm from "./CategoryForm";
-import { RegionItem } from "@/modules/region/definitions";
-import { createCategoryAction } from "../action/createCategoryAction";
-import { CategoryInput } from "../definitions";
-import { useRouter } from "next/navigation";
-
+'use client';
+import ModalGeneric from '@/lib/components/ModalGeneric';
+import React, { useState } from 'react';
+import CategoryForm from './CategoryForm';
+import { RegionItem } from '@/modules/region/definitions';
+import { createCategoryAction } from '../action/createCategoryAction';
+import { CategoryInput } from '../definitions';
+import { useRouter } from 'next/navigation';
 
 const CreateCategory = ({ regions }: { regions: RegionItem[] }) => {
   const router = useRouter();
-  
+
   const [formState, setFormState] = useState<CategoryInput>({
-    name: "",
-    description: "",
-    regionId: ""
+    name: '',
+    description: '',
+    regionId: '',
   });
-  
+
   const handleValuesChange = (values: CategoryInput) => {
     setFormState(values);
   };
@@ -26,21 +25,21 @@ const CreateCategory = ({ regions }: { regions: RegionItem[] }) => {
       close();
       router.refresh();
     } catch (error: any) {
-      alert(error.message || "Error al crear la categoría");
+      alert(error.message || 'Error al crear la categoría');
     }
   };
 
   return (
     <>
       <ModalGeneric
-        title="Agregar categoria"
-        triggerBtnTitle="Agregar"
-        actionBtnText="Guardar"
+        title='Agregar categoria'
+        triggerBtnTitle='Agregar'
+        actionBtnText='Guardar'
         actionBtnFunction={handleSubmit}
-        cancelBtnText="Cancelar"
-        cancelBtnFunction={() => console.log("click action cancel")}
+        cancelBtnText='Cancelar'
+        cancelBtnFunction={() => console.log('click action cancel')}
       >
-        <CategoryForm regions={regions} onValuesChange={handleValuesChange}/>
+        <CategoryForm regions={regions} onValuesChange={handleValuesChange} />
       </ModalGeneric>
     </>
   );

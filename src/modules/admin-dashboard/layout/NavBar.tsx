@@ -44,10 +44,10 @@ const NavBar: React.FC = () => {
     },
   ];
   return (
-    <div className="flex h-full flex-col px-3 py-4 md:px-2">
+    <div className='flex h-full flex-col px-3 py-4 md:px-2'>
       <Link
-        className="bg-gray-50 mb-2 flex h-20 items-end justify-start rounded-md  p-4 md:h-40 border-dashed border-2"
-        href="/admin"
+        className='bg-gray-50 mb-2 flex h-20 items-end justify-start rounded-md  p-4 md:h-40 border-dashed border-2'
+        href='/admin'
       />
       <div className="text-black flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         {links.map((link) => {
@@ -60,7 +60,7 @@ const NavBar: React.FC = () => {
               }`}
             >
               <span>{link.emoji}</span>
-              <p className="hidden md:block">{link.name}</p>
+              <p className='hidden md:block'>{link.name}</p>
             </Link>
           );
         })}

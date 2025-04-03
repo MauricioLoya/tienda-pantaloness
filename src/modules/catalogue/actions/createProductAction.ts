@@ -1,8 +1,8 @@
-'use server'
+'use server';
 
-import { ProductInput, ProductRepository } from '../definitions'
+import { ProductInput, ProductRepository } from '../definitions';
 
 export async function createProductAction(input: ProductInput) {
-  const repo = new ProductRepository()
-  return repo.createBasic(input)
+  const repo = new ProductRepository();
+  return repo.createBasic(input);
 }

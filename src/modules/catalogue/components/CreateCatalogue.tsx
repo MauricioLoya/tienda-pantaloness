@@ -1,13 +1,13 @@
-"use client";
-import ModalGeneric from "@/lib/components/ModalGeneric";
-import React from "react";
-import VariantsForm from "./VariantsForm";
-import CategoriesForm from "./CategoriesForm";
-import ImagesForm from "./ImagesForm";
-import BasicForm from "./BasicForm";
-import { RegionItem } from "@/modules/region/definitions";
-import { CategoryItem } from "@/modules/category/definitions";
-import TagsForm from "./TagsForm";
+'use client';
+import ModalGeneric from '@/lib/components/ModalGeneric';
+import React from 'react';
+import VariantsForm from './VariantsForm';
+import CategoriesForm from './CategoriesForm';
+import ImagesForm from './ImagesForm';
+import BasicForm from './BasicForm';
+import { RegionItem } from '@/modules/region/definitions';
+import { CategoryItem } from '@/modules/category/definitions';
+import TagsForm from './TagsForm';
 
 const CreateCatalogue = ({
   allCategories,
@@ -19,29 +19,29 @@ const CreateCatalogue = ({
   return (
     <>
       <ModalGeneric
-        title="Agregar producto"
-        triggerBtnTitle="Agregar"
-        actionBtnText="Guardar"
-        actionBtnFunction={(close) => {
-          console.log("click action save");
+        title='Agregar producto'
+        triggerBtnTitle='Agregar'
+        actionBtnText='Guardar'
+        actionBtnFunction={close => {
+          console.log('click action save');
           setTimeout(() => {
             close();
           }, 500);
         }}
-        cancelBtnText="Cancelar"
-        cancelBtnFunction={() => console.log("click action cancel")}
+        cancelBtnText='Cancelar'
+        cancelBtnFunction={() => console.log('click action cancel')}
       >
         <>
-          <div className="flex justify-center mx-auto p-6">
-            <div className="flex flex-initial">
+          <div className='flex justify-center mx-auto p-6'>
+            <div className='flex flex-initial'>
               <BasicForm regions={regions} />
             </div>
-            <div className="flex flex-col flex-2">
+            <div className='flex flex-col flex-2'>
               <ImagesForm />
               <CategoriesForm allCategories={allCategories} />
               <TagsForm
-                onChange={(tags) => {
-                  console.log("Palabras clave:", tags);
+                onChange={tags => {
+                  console.log('Palabras clave:', tags);
                 }}
               />
             </div>

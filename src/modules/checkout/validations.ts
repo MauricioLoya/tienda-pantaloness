@@ -1,43 +1,43 @@
-import { prisma } from '@/lib/prima/client'
+import { prisma } from '@/lib/prima/client';
 
 // Helper function to round to 2 decimal places
 const roundToTwoDecimals = (value: number): number => {
-  return Number(value.toFixed(2))
-}
+  return Number(value.toFixed(2));
+};
 
 export interface CartItem {
-  productId: number
-  variantId: number
-  quantity: number
+  productId: number;
+  variantId: number;
+  quantity: number;
 }
 
 export interface CheckoutInput {
-  items: CartItem[]
+  items: CartItem[];
   customerInfo?: {
-    email?: string
-    name?: string
-  }
+    email?: string;
+    name?: string;
+  };
   shipping?: {
-    address: string
-    city: string
-    country: string
-    postalCode: string
-  }
-  couponCode?: string
+    address: string;
+    city: string;
+    country: string;
+    postalCode: string;
+  };
+  couponCode?: string;
 }
 
 export type LineItemsStripe = {
   price_data: {
-    currency: string
+    currency: string;
     product_data: {
-      name: string
-      description: string
-      images?: [string]
-    }
-    unit_amount: number
-  }
-  quantity: number
-}
+      name: string;
+      description: string;
+      images?: [string];
+    };
+    unit_amount: number;
+  };
+  quantity: number;
+};
 
 /**
  * Error codes for checkout process
@@ -53,13 +53,13 @@ export enum CheckoutErrorCode {
   DISCOUNT_EXCEEDS_TOTAL = 'DISCOUNT_EXCEEDS_TOTAL',
   STRIPE_ERROR = 'STRIPE_ERROR',
   UNKNOWN_ERROR = 'UNKNOWN_ERROR',
-  ITEMS_NOT_BELONG_SAME_REGION = 'ITEMS_NOT_BELONG_SAME_REGION'
+  ITEMS_NOT_BELONG_SAME_REGION = 'ITEMS_NOT_BELONG_SAME_REGION',
 }
 
 export type CheckoutSessionData = {
-  sessionId: string
-  checkoutUrl: string
-}
+  sessionId: string;
+  checkoutUrl: string;
+};
 
 /**
  * Validates cart items and prepares line items for Stripe
@@ -69,17 +69,17 @@ export async function validateAndProcessCartItems(
   items: CartItem[],
   promotionId?: number
 ): Promise<{
-  isValid: boolean
-  lineItems: LineItemsStripe[]
-  errors: string[]
+  isValid: boolean;
+  lineItems: LineItemsStripe[];
+  errors: string[];
 }> {
-  const errors: string[] = []
+  const errors: string[] = [];
 
-  const lineItems: LineItemsStripe[] = []
+  const lineItems: LineItemsStripe[] = [];
 
   // Fetch all products and variants in one query to reduce database calls
-  const productIds = items.map(item => item.productId)
-  const variantIds = items.map(item => item.variantId)
+  const productIds = items.map(item => item.productId);
+  const variantIds = items.map(item => item.variantId);
 
   const products = await prisma.product.findMany({
     where: { id: { in: productIds } },
@@ -91,19 +91,19 @@ export async function validateAndProcessCartItems(
       region: {
         select: {
           name: true,
-          currencyCode: true
-        }
+          currencyCode: true,
+        },
       },
       ProductImage: {
-        select: { url: true }
-      }
-    }
-  })
+        select: { url: true },
+      },
+    },
+  });
 
   const variants = await prisma.productVariant.findMany({
     where: {
       id: { in: variantIds },
-      productId: { in: productIds }
+      productId: { in: productIds },
     },
     select: {
       id: true,
@@ -111,81 +111,71 @@ export async function validateAndProcessCartItems(
       price: true,
       stock: true,
       size: true,
-      discountPrice: true
-    }
-  })
+      discountPrice: true,
+    },
+  });
 
   // Create lookup maps for faster access
-  const productMap = new Map(products.map(p => [p.id, p]))
-  const variantMap = new Map(variants.map(v => [`${v.productId}-${v.id}`, v]))
+  const productMap = new Map(products.map(p => [p.id, p]));
+  const variantMap = new Map(variants.map(v => [`${v.productId}-${v.id}`, v]));
 
-  const areAllProductsFromSameRegion = products.every(
-    p => p.regionId === region
-  )
+  const areAllProductsFromSameRegion = products.every(p => p.regionId === region);
   if (!areAllProductsFromSameRegion) {
-    errors.push('Todos los productos deben ser de la misma región.')
+    errors.push('Todos los productos deben ser de la misma región.');
   }
 
   for (const item of items) {
     if (item.quantity <= 0) {
-      errors.push(
-        `La cantidad para el item con variantId ${item.variantId} debe ser mayor que 0.`
-      )
-      continue
+      errors.push(`La cantidad para el item con variantId ${item.variantId} debe ser mayor que 0.`);
+      continue;
     }
 
-    const product = productMap.get(item.productId)
+    const product = productMap.get(item.productId);
     if (!product) {
-      errors.push(`El producto ${item.productId} no existe.`)
-      continue
+      errors.push(`El producto ${item.productId} no existe.`);
+      continue;
     }
 
-    const variant = variantMap.get(`${item.productId}-${item.variantId}`)
+    const variant = variantMap.get(`${item.productId}-${item.variantId}`);
     if (!variant) {
-      errors.push(
-        `La variante ${item.variantId} del producto ${item.productId} no existe.`
-      )
-      continue
+      errors.push(`La variante ${item.variantId} del producto ${item.productId} no existe.`);
+      continue;
     }
 
     if (variant.stock < item.quantity) {
       errors.push(
         `Stock insuficiente para la variante ${item.variantId} del producto ${item.productId}.`
-      )
-      continue
+      );
+      continue;
     }
 
-    let unitPrice = roundToTwoDecimals(variant.discountPrice ?? variant.price)
-    let subtotal = roundToTwoDecimals(unitPrice)
+    let unitPrice = roundToTwoDecimals(variant.discountPrice ?? variant.price);
+    let subtotal = roundToTwoDecimals(unitPrice);
 
     if (promotionId) {
-      console.log('Applying promotion:', promotionId)
+      console.log('Applying promotion:', promotionId);
 
-      const now = new Date()
+      const now = new Date();
       const promotion = await prisma.promotion.findFirst({
         where: {
           id: promotionId,
           active: true,
           isDeleted: false,
           startDate: { lte: now },
-          endDate: { gte: now }
-        }
-      })
+          endDate: { gte: now },
+        },
+      });
 
       if (promotion) {
         // Determine if it's a percentage discount (assuming discount > 1 means percentage)
         if (promotion.discount > 0 && promotion.discount <= 100) {
           // Percentage discount
-          unitPrice = roundToTwoDecimals(
-            unitPrice - (unitPrice * promotion.discount) / 100
-          )
+          unitPrice = roundToTwoDecimals(unitPrice - (unitPrice * promotion.discount) / 100);
         } else {
           // Fixed amount discount per unit
-          unitPrice = roundToTwoDecimals(
-            Math.max(0, unitPrice - promotion.discount)
-          )
+          unitPrice = roundToTwoDecimals(Math.max(0, unitPrice - promotion.discount));
         }
-        subtotal = roundToTwoDecimals(unitPrice)
+        subtotal = roundToTwoDecimals(unitPrice);
       }
     }
 
@@ -195,20 +185,20 @@ export async function validateAndProcessCartItems(
         product_data: {
           name: `${product.name} - ${variant.size}`,
           description: product.description,
-          images: [product.ProductImage.map(img => img.url)[0]]
+          images: [product.ProductImage.map(img => img.url)[0]],
         },
-        unit_amount: Math.round(subtotal * 100) // Stripe requires amount in cents (whole numbers)
+        unit_amount: Math.round(subtotal * 100), // Stripe requires amount in cents (whole numbers)
       },
-      quantity: item.quantity
-    })
+      quantity: item.quantity,
+    });
   }
 
   return {
     isValid: errors.length === 0,
     lineItems,
 
-    errors
-  }
+    errors,
+  };
 }
 
 /**
@@ -218,17 +208,17 @@ export async function processPromoCode(
   couponCode: string | undefined,
   region: string
 ): Promise<{
-  isValidPromo: boolean
-  promotionId?: number
-  errors: string[]
+  isValidPromo: boolean;
+  promotionId?: number;
+  errors: string[];
 }> {
-  const errors: string[] = []
-  let promotionId: number | undefined = undefined
+  const errors: string[] = [];
+  let promotionId: number | undefined = undefined;
 
   if (couponCode) {
-    console.log('Validating promotion:', couponCode, region)
+    console.log('Validating promotion:', couponCode, region);
 
-    const now = new Date()
+    const now = new Date();
     const promotion = await prisma.promotion.findFirst({
       where: {
         code: couponCode,
@@ -236,31 +226,31 @@ export async function processPromoCode(
         active: true,
         isDeleted: false,
         startDate: { lte: now },
-        endDate: { gte: now }
-      }
-    })
+        endDate: { gte: now },
+      },
+    });
 
     if (!promotion) {
-      errors.push(`El cupón ${couponCode} no es válido.`)
+      errors.push(`El cupón ${couponCode} no es válido.`);
       return {
         isValidPromo: false,
-        errors
-      }
+        errors,
+      };
     }
 
-    promotionId = promotion.id
+    promotionId = promotion.id;
   }
 
   return {
     isValidPromo: errors.length === 0,
     promotionId,
-    errors
-  }
+    errors,
+  };
 }
 
 export async function validateRegions(region: string): Promise<boolean> {
   const regions = await prisma.region.findFirst({
-    where: { name: region }
-  })
-  return regions ? true : false
+    where: { name: region },
+  });
+  return regions ? true : false;
 }

@@ -1,7 +1,7 @@
 'use server';
 
-import { PromotionRepository } from '../definitions'
+import { PromotionRepository } from '../definitions';
 
 export async function ActivatePromotionAction(id: number) {
-  return new PromotionRepository().activate(id)
+  return new PromotionRepository().activate(id);
 }

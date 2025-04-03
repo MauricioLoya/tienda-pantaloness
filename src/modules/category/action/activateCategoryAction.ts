@@ -1,7 +1,7 @@
 'use server';
 
-import { CategoryRepository } from "../definitions";
+import { CategoryRepository } from '../definitions';
 
 export async function ActivateCategoryAction(id: number) {
-  return new CategoryRepository().activate(id)
+  return new CategoryRepository().activate(id);
 }

@@ -1,32 +1,35 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import ModalGeneric from "@/lib/components/ModalGeneric";
-import SectionForm from "./SectionForm";
-import { RegionItem } from "@/modules/region/definitions";
-import { useRouter } from "next/navigation";
-import { createSectionAction } from "../actions/createSectionAction";
-import { SectionType } from "@prisma/client";
-import { HighlightProductItem, SectionInput } from "../definitions";
+import React, { useState } from 'react';
+import ModalGeneric from '@/lib/components/ModalGeneric';
+import SectionForm from './SectionForm';
+import { RegionItem } from '@/modules/region/definitions';
+import { useRouter } from 'next/navigation';
+import { createSectionAction } from '../actions/createSectionAction';
+import { SectionType } from '@prisma/client';
+import { HighlightProductItem, SectionInput } from '../definitions';
 
 interface CreateSectionProps {
   regions: RegionItem[];
   availableProducts: HighlightProductItem[];
   usedOrders?: number[];
-
 }
 
-const CreateSection: React.FC<CreateSectionProps> = ({ regions, availableProducts, usedOrders }) => {
+const CreateSection: React.FC<CreateSectionProps> = ({
+  regions,
+  availableProducts,
+  usedOrders,
+}) => {
   const router = useRouter();
   const [formValues, setFormValues] = useState<SectionInput>({
     type: SectionType.banner,
-    title: "",
-    description: "",
-    regionId: "",
-    actionUrl: "",
+    title: '',
+    description: '',
+    regionId: '',
+    actionUrl: '',
     order: 1,
-    backgroundUrl: "",
-    backgroundColor: "#063d79",
+    backgroundUrl: '',
+    backgroundColor: '#063d79',
   });
 
   const handleSubmit = async (close: () => void) => {
@@ -35,22 +38,22 @@ const CreateSection: React.FC<CreateSectionProps> = ({ regions, availableProduct
       close();
       router.refresh();
     } catch (error: any) {
-      alert(error.message || "Error al crear la sección");
+      alert(error.message || 'Error al crear la sección');
     }
   };
 
   return (
     <ModalGeneric
-      title="Crear Sección"
-      triggerBtnTitle="Agregar Sección"
-      actionBtnText="Guardar"
-      cancelBtnText="Cancelar"
-      actionBtnFunction={(close) => handleSubmit(close)}
+      title='Crear Sección'
+      triggerBtnTitle='Agregar Sección'
+      actionBtnText='Guardar'
+      cancelBtnText='Cancelar'
+      actionBtnFunction={close => handleSubmit(close)}
       cancelBtnFunction={() => {}}
       fullScreen={false}
     >
       <SectionForm
-        onValuesChange={(values) => setFormValues(values)}
+        onValuesChange={values => setFormValues(values)}
         regions={regions}
         availableProducts={availableProducts}
         usedOrders={usedOrders}

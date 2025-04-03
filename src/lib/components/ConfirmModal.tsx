@@ -1,7 +1,7 @@
 'use client';
 
-import React from "react";
-import ModalGeneric from "./ModalGeneric";
+import React from 'react';
+import ModalGeneric from './ModalGeneric';
 
 export interface ConfirmModalProps {
   title: string;
@@ -33,7 +33,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
       await onConfirm();
       close();
     } catch (error: any) {
-      alert(error.message || "Error en la confirmación");
+      alert(error.message || 'Error en la confirmación');
     }
   };
 
@@ -45,12 +45,12 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
       actionBtnText={confirmBtnText}
       cancelBtnText={cancelBtnText}
       btnColor={btnColor}
-      actionBtnFunction={(close) => handleConfirm(close)}
+      actionBtnFunction={close => handleConfirm(close)}
       cancelBtnFunction={onCancel}
       fullScreen={fullScreen}
     >
-      <div className="py-4">
-        <p className="text-base text-gray-700">{message}</p>
+      <div className='py-4'>
+        <p className='text-base text-gray-700'>{message}</p>
       </div>
     </ModalGeneric>
   );

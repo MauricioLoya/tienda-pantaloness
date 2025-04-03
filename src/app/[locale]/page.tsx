@@ -1,15 +1,15 @@
-import Loader from "@/lib/components/Loader";
-import FooterPage from "@/modules/landing/FooterPage";
-import NavBar from "@/modules/landing/Navbar";
-import SectionBox from "@/modules/landing/SectionBox";
-import ProductCard from "@/modules/product-list/componentes/ProductCard";
-import { BannerSection } from "@/modules/section/components/BannerSection";
-import { HighlightSection } from "@/modules/section/components/HighlightSection";
-import { SectionRepository } from "@/modules/section/definitions";
-import { SectionType } from "@prisma/client";
-import { useTranslations } from "next-intl";
-import { getTranslations } from "next-intl/server";
-import { Suspense } from "react";
+import Loader from '@/lib/components/Loader';
+import FooterPage from '@/modules/landing/FooterPage';
+import NavBar from '@/modules/landing/Navbar';
+import SectionBox from '@/modules/landing/SectionBox';
+import ProductCard from '@/modules/product-list/componentes/ProductCard';
+import { BannerSection } from '@/modules/section/components/BannerSection';
+import { HighlightSection } from '@/modules/section/components/HighlightSection';
+import { SectionRepository } from '@/modules/section/definitions';
+import { SectionType } from '@prisma/client';
+import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
+import { Suspense } from 'react';
 
 // const HomePage: React.FC = async () => {
 //   // const t = getTranslations('HomePage')
@@ -221,8 +221,8 @@ const HomePage: React.FC = async () => {
   return (
     <>
       <NavBar />
-      {sections.map((section) => {
-        <br />
+      {sections.map(section => {
+        <br />;
         switch (section.type) {
           case SectionType.banner:
             return <BannerSection key={section.id} section={section} />;

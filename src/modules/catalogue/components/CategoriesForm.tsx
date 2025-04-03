@@ -1,12 +1,12 @@
-"use client";
-import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { addCategoryAction } from "../actions/addCategoryAction";
-import { removeCategoryAction } from "../actions/removeCategoryAction";
-import { useRouter } from "next/navigation";
-import { CategoryItem } from "@/modules/category/definitions";
-import { useToast } from "@/lib/components/ToastContext";
+'use client';
+import React from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { addCategoryAction } from '../actions/addCategoryAction';
+import { removeCategoryAction } from '../actions/removeCategoryAction';
+import { useRouter } from 'next/navigation';
+import { CategoryItem } from '@/modules/category/definitions';
+import { useToast } from '@/lib/components/ToastContext';
 
 interface CategoriesFormProps {
   productId?: number;
@@ -19,7 +19,7 @@ interface CategoryFormValues {
 }
 
 const CategorySchema = Yup.object().shape({
-  selectedCat: Yup.string().required("Selecciona una categoría"),
+  selectedCat: Yup.string().required('Selecciona una categoría'),
 });
 
 const CategoriesForm: React.FC<CategoriesFormProps> = ({
@@ -30,9 +30,7 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
   const router = useRouter();
   const { showToast } = useToast();
 
-  const availableCats = allCategories.filter(
-    (c) => !categories.some((cc) => cc.id === c.id)
-  );
+  const availableCats = allCategories.filter(c => !categories.some(cc => cc.id === c.id));
 
   const handleAdd = async (
     values: CategoryFormValues,
@@ -44,9 +42,9 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
       await addCategoryAction(productId, catId);
       resetForm();
       router.refresh();
-      showToast("Categoría agregada correctamente", "success");
+      showToast('Categoría agregada correctamente', 'success');
     } catch (error: any) {
-      showToast(error.message || "Error al agregar la categoría", "error");
+      showToast(error.message || 'Error al agregar la categoría', 'error');
     }
   };
 
@@ -55,60 +53,56 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
       try {
         await removeCategoryAction(productId, categoryId);
         router.refresh();
-        showToast("Categoría eliminada correctamente", "success");
+        showToast('Categoría eliminada correctamente', 'success');
       } catch (error: any) {
-        showToast(error.message || "Error al eliminar la categoría", "error");
+        showToast(error.message || 'Error al eliminar la categoría', 'error');
       }
     }
   }
 
   return (
-    <div className="card shadow p-4">
-      <div className="grid gap-5">
-        <h2 className="text-xl font-bold">Categorías</h2>
+    <div className='card shadow p-4'>
+      <div className='grid gap-5'>
+        <h2 className='text-xl font-bold'>Categorías</h2>
         <Formik
-          initialValues={{ selectedCat: "" }}
+          initialValues={{ selectedCat: '' }}
           validationSchema={CategorySchema}
           onSubmit={handleAdd}
         >
           {({ isSubmitting }) => (
-            <Form className="flex flex-col gap-2">
-              <div className="flex gap-2">
-                <Field
-                  as="select"
-                  name="selectedCat"
-                  className="select select-bordered w-full"
-                >
-                  <option value="">Selecciona una categoría</option>
-                  {availableCats.map((cat) => (
+            <Form className='flex flex-col gap-2'>
+              <div className='flex gap-2'>
+                <Field as='select' name='selectedCat' className='select select-bordered w-full'>
+                  <option value=''>Selecciona una categoría</option>
+                  {availableCats.map(cat => (
                     <option key={cat.id} value={cat.id}>
                       {cat.name}
                     </option>
                   ))}
                 </Field>
                 <button
-                  type="submit"
+                  type='submit'
                   disabled={isSubmitting || !productId}
-                  className="btn btn-secondary"
+                  className='btn btn-secondary'
                 >
                   Agregar
                 </button>
               </div>
               <ErrorMessage
-                name="selectedCat"
-                component="div"
-                className="text-error text-sm mt-1"
+                name='selectedCat'
+                component='div'
+                className='text-error text-sm mt-1'
               />
             </Form>
           )}
         </Formik>
-        <div className="flex flex-wrap gap-2">
-          {categories.map((cat) => (
-            <div key={cat.id} className="flex gap-2">
-              <button className="btn flex-wrap">
+        <div className='flex flex-wrap gap-2'>
+          {categories.map(cat => (
+            <div key={cat.id} className='flex gap-2'>
+              <button className='btn flex-wrap'>
                 {cat.name}
                 <div
-                  className="btn btn-xs btn-circle btn-error"
+                  className='btn btn-xs btn-circle btn-error'
                   onClick={() => handleRemove(cat.id)}
                 >
                   X

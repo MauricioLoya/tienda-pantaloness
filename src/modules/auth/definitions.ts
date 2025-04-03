@@ -1,11 +1,8 @@
-import { prisma } from '@/lib/prima/client'
-import bcrypt from 'bcrypt'
+import { prisma } from '@/lib/prima/client';
+import bcrypt from 'bcrypt';
 
 interface IAuthRepository {
-  loginAdmin: (
-    username: string,
-    password: string
-  ) => Promise<{ email: string; name: string }>
+  loginAdmin: (username: string, password: string) => Promise<{ email: string; name: string }>;
 }
 
 export class AuthRepository implements IAuthRepository {
@@ -13,17 +10,17 @@ export class AuthRepository implements IAuthRepository {
     try {
       const userFound = await prisma.user.findUnique({
         where: {
-          email
-        }
-      })
+          email,
+        },
+      });
       if (!userFound) {
-        throw new Error('User not found')
+        throw new Error('User not found');
       }
-      const matchPassword = await bcrypt.compare(password, userFound.password)
-      if (!matchPassword) throw new Error('Wrong password')
-      return { email: userFound.email, name: userFound.name }
+      const matchPassword = await bcrypt.compare(password, userFound.password);
+      if (!matchPassword) throw new Error('Wrong password');
+      return { email: userFound.email, name: userFound.name };
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 }
