@@ -1,8 +1,8 @@
-'use server'
+'use server';
 
-import { ProductRepository } from '../definitions'
+import { ProductRepository } from '../definitions';
 
 export async function addCategoryAction(productId: number, categoryId: number) {
-  const repo = new ProductRepository()
-  return repo.addCategory(productId, categoryId)
+  const repo = new ProductRepository();
+  return repo.addCategory(productId, categoryId);
 }

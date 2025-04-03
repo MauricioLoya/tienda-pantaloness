@@ -1,31 +1,31 @@
-import React from 'react'
-import { ProductListRepository } from '../definitions'
-import { notFound } from 'next/navigation'
-import ProductImageGallery from './ProductImageGallery'
-import ProductVariantSelector from './ProductVariantSelector'
+import React from 'react';
+import { ProductListRepository } from '../definitions';
+import { notFound } from 'next/navigation';
+import ProductImageGallery from './ProductImageGallery';
+import ProductVariantSelector from './ProductVariantSelector';
 
 interface Props {
-  slug: string
-  selectedSize?: string
+  slug: string;
+  selectedSize?: string;
 }
 
 // This component will be rendered when the data is available
 const ProductDetails = async ({ slug, selectedSize }: Props) => {
-  const productRepository = new ProductListRepository()
+  const productRepository = new ProductListRepository();
 
   try {
-    const productDetail = await productRepository.productDetail(slug)
+    const productDetail = await productRepository.productDetail(slug);
 
     if (!productDetail) {
-      notFound()
+      notFound();
     }
 
     // Sample product images - replace with actual images from your API
-    const productImages = productDetail.images
+    const productImages = productDetail.images;
 
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className='container mx-auto px-4 py-8'>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
           {/* Left side - Image Gallery */}
           <ProductImageGallery
             images={productImages}
@@ -34,12 +34,10 @@ const ProductDetails = async ({ slug, selectedSize }: Props) => {
           />
 
           {/* Right side - Product Details */}
-          <div className="space-y-6">
+          <div className='space-y-6'>
             <div>
-              <h1 className="text-3xl font-bold">
-                {productDetail.product.name}
-              </h1>
-              <p className="text-gray-600">Temporada de otoño</p>
+              <h1 className='text-3xl font-bold'>{productDetail.product.name}</h1>
+              <p className='text-gray-600'>Temporada de otoño</p>
             </div>
 
             <ProductVariantSelector
@@ -53,11 +51,11 @@ const ProductDetails = async ({ slug, selectedSize }: Props) => {
           </div>
         </div>
       </div>
-    )
+    );
   } catch (error) {
-    console.log(error)
-    return notFound()
+    console.log(error);
+    return notFound();
   }
-}
+};
 
-export default ProductDetails
+export default ProductDetails;

@@ -1,11 +1,11 @@
 'use client';
 
-import React from "react";
-import ConfirmModal from "@/lib/components/ConfirmModal";
-import { CategoryItem } from "../definitions";
-import { useRouter } from "next/navigation";
-import { ActivateCategoryAction } from "../action/activateCategoryAction";
-import { FaCheckCircle } from "react-icons/fa";
+import React from 'react';
+import ConfirmModal from '@/lib/components/ConfirmModal';
+import { CategoryItem } from '../definitions';
+import { useRouter } from 'next/navigation';
+import { ActivateCategoryAction } from '../action/activateCategoryAction';
+import { FaCheckCircle } from 'react-icons/fa';
 import { useToast } from '@/lib/components/ToastContext';
 
 interface ActivateCategoryProps {
@@ -13,25 +13,28 @@ interface ActivateCategoryProps {
   btnColor?: string;
 }
 
-const ActivateCategory: React.FC<ActivateCategoryProps> = ({ category, btnColor = "btn-danger" }) => {
+const ActivateCategory: React.FC<ActivateCategoryProps> = ({
+  category,
+  btnColor = 'btn-danger',
+}) => {
   const router = useRouter();
   const { showToast } = useToast();
 
   const handleConfirmActivate = async () => {
-    console.log("Deleting category", category);
+    console.log('Deleting category', category);
     await ActivateCategoryAction(category.id);
-    showToast("Categoría activada correctamente", "success");
+    showToast('Categoría activada correctamente', 'success');
     router.refresh();
   };
 
   return (
     <ConfirmModal
-      title="Activar Categoría"
+      title='Activar Categoría'
       message={`¿Estás seguro de activar la categoría "${category.name}"?`}
-      triggerBtnTitle="Activar"
+      triggerBtnTitle='Activar'
       triggerBtnContent={<FaCheckCircle />}
-      confirmBtnText="Sí, activar"
-      cancelBtnText="Cancelar"
+      confirmBtnText='Sí, activar'
+      cancelBtnText='Cancelar'
       onConfirm={handleConfirmActivate}
       btnColor={btnColor}
     />

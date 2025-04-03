@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prima/client";
-import { Section, SectionType } from "@prisma/client";
+import { prisma } from '@/lib/prima/client';
+import { Section, SectionType } from '@prisma/client';
 
 export interface HighlightProductItem {
   id: number;
@@ -55,7 +55,7 @@ export class SectionRepository {
 
     if (data.type === SectionType.highlight && data.highlightProducts) {
       await Promise.all(
-        data.highlightProducts.map((product) =>
+        data.highlightProducts.map(product =>
           prisma.highlightProduct.create({
             data: {
               productId: product.id,
@@ -76,10 +76,10 @@ export class SectionRepository {
         HighlightProduct: {
           include: {
             product: {
-              include : {
+              include: {
                 ProductImage: true,
-              }
-            }
+              },
+            },
           },
         },
       },
@@ -97,22 +97,19 @@ export class SectionRepository {
       order: section.order,
       backgroundUrl: section.backgroundUrl,
       backgroundColor: section.backgroundColor,
-      buttonText: section.buttonText ?? "",
-      buttonColor: section.buttonColor ?? "",
+      buttonText: section.buttonText ?? '',
+      buttonColor: section.buttonColor ?? '',
       highlightProducts:
-        section.HighlightProduct.map((hp) => ({
+        section.HighlightProduct.map(hp => ({
           id: hp.product.id,
           name: hp.product.name,
-          slug: hp.product.slug ?? "",
-          imageUrl: hp.product.ProductImage[0]?.url ?? "/placeholder.jpg",
+          slug: hp.product.slug ?? '',
+          imageUrl: hp.product.ProductImage[0]?.url ?? '/placeholder.jpg',
         })) || [],
     };
   }
 
-  async updateSection(
-    id: number,
-    data: Partial<SectionInput>
-  ): Promise<SectionItem> {
+  async updateSection(id: number, data: Partial<SectionInput>): Promise<SectionItem> {
     await prisma.section.update({
       where: { id },
       data: {
@@ -125,7 +122,7 @@ export class SectionRepository {
         backgroundUrl: data.backgroundUrl,
         backgroundColor: data.backgroundColor,
         buttonColor: data.buttonColor,
-        buttonText: data.buttonText
+        buttonText: data.buttonText,
       },
     });
 
@@ -134,7 +131,7 @@ export class SectionRepository {
         where: { sectionId: id },
       });
       await Promise.all(
-        data.highlightProducts.map((product) =>
+        data.highlightProducts.map(product =>
           prisma.highlightProduct.create({
             data: { productId: product.id, sectionId: id },
           })
@@ -152,7 +149,7 @@ export class SectionRepository {
   async getSectionsByRegion(regionCode: string): Promise<SectionItem[]> {
     const sections = await prisma.section.findMany({
       where: { regionCode },
-      orderBy: { order: "asc" },
+      orderBy: { order: 'asc' },
     });
     const items: SectionItem[] = [];
     for (const sec of sections) {
@@ -162,7 +159,7 @@ export class SectionRepository {
   }
   async getAll(): Promise<SectionItem[]> {
     const sections = await prisma.section.findMany({
-      orderBy: { order: "asc" },
+      orderBy: { order: 'asc' },
     });
     const items: SectionItem[] = [];
     for (const sec of sections) {
@@ -179,9 +176,9 @@ export class SectionRepository {
           include: {
             product: {
               include: {
-                ProductImage: true
-              }
-            }
+                ProductImage: true,
+              },
+            },
           },
         },
       },
@@ -197,18 +194,16 @@ export class SectionRepository {
       order: section.order,
       backgroundUrl: section.backgroundUrl,
       backgroundColor: section.backgroundColor,
-      buttonText: section.buttonText ?? "",
-      buttonColor: section.buttonColor ?? "",
+      buttonText: section.buttonText ?? '',
+      buttonColor: section.buttonColor ?? '',
       highlightProducts:
-        section.HighlightProduct.map((hp) => ({
+        section.HighlightProduct.map(hp => ({
           id: hp.product.id,
           name: hp.product.name,
-          slug: hp.product.slug ?? "",
-          imageUrl: hp.product.ProductImage[0]?.url ?? "/placeholder.jpg",
-
+          slug: hp.product.slug ?? '',
+          imageUrl: hp.product.ProductImage[0]?.url ?? '/placeholder.jpg',
         })) || [],
     };
-    
   }
   async getUsedOrders(): Promise<number[]> {
     const sections = await prisma.section.findMany({
@@ -216,7 +211,6 @@ export class SectionRepository {
         order: true,
       },
     });
-    return sections.map((section) => section.order);
+    return sections.map(section => section.order);
   }
-  
 }

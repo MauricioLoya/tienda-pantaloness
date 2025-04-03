@@ -11,7 +11,9 @@ interface ToastContextValue {
 const ToastContext = createContext<ToastContextValue | undefined>(undefined);
 
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [toast, setToast] = useState<{ message: string; type: ToastType; duration: number } | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: ToastType; duration: number } | null>(
+    null
+  );
 
   const showToast = (message: string, type: ToastType = 'info', duration: number = 3000) => {
     setToast({ message, type, duration });

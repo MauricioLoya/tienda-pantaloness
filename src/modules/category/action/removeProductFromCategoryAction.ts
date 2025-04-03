@@ -2,7 +2,10 @@
 
 import { prisma } from '@/lib/prima/client';
 
-export async function removeProductFromCategoryAction(categoryId: number, productId: number): Promise<void> {
+export async function removeProductFromCategoryAction(
+  categoryId: number,
+  productId: number
+): Promise<void> {
   try {
     await prisma.productCategory.deleteMany({
       where: {

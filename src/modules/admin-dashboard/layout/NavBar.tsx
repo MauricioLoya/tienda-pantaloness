@@ -1,53 +1,53 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import React from 'react'
-import { SignOut } from '../components/signout-button'
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import React from 'react';
+import { SignOut } from '../components/signout-button';
 
 const NavBar: React.FC = () => {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   const links = [
     { name: 'Dashboard', href: '/admin', emoji: '📈' },
     {
       name: 'Ordenes',
       href: '/admin/ordenes',
-      emoji: '📦'
+      emoji: '📦',
     },
     {
       name: 'Categorias',
       href: '/admin/categorias',
-      emoji: '📝'
+      emoji: '📝',
     },
     {
       name: 'Catalogo',
       href: '/admin/catalogo',
-      emoji: '👖'
+      emoji: '👖',
     },
     {
       name: 'Promociones',
       href: '/admin/promociones',
-      emoji: '🎉'
+      emoji: '🎉',
     },
     {
       name: 'Usuarios',
       href: '/admin/users',
-      emoji: '👥'
+      emoji: '👥',
     },
     {
       name: 'Secciones',
       href: '/admin/sections',
-      emoji: '🌟'
-    }
-  ]
+      emoji: '🌟',
+    },
+  ];
   return (
-    <div className="flex h-full flex-col px-3 py-4 md:px-2">
+    <div className='flex h-full flex-col px-3 py-4 md:px-2'>
       <Link
-        className="bg-gray-50 mb-2 flex h-20 items-end justify-start rounded-md  p-4 md:h-40 border-dashed border-2"
-        href="/admin"
+        className='bg-gray-50 mb-2 flex h-20 items-end justify-start rounded-md  p-4 md:h-40 border-dashed border-2'
+        href='/admin'
       />
-      <div className="text-black flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
+      <div className='text-black flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2'>
         {links.map(link => {
           return (
             <Link
@@ -58,11 +58,11 @@ const NavBar: React.FC = () => {
               }`}
             >
               <span>{link.emoji}</span>
-              <p className="hidden md:block">{link.name}</p>
+              <p className='hidden md:block'>{link.name}</p>
             </Link>
-          )
+          );
         })}
-        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
+        <div className='hidden h-auto w-full grow rounded-md bg-gray-50 md:block'></div>
 
         <SignOut />
         {/* <button
@@ -75,7 +75,7 @@ const NavBar: React.FC = () => {
           </button> */}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default NavBar
+export default NavBar;

@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prima/client";
-import { User } from "@prisma/client";
+import { prisma } from '@/lib/prima/client';
+import { User } from '@prisma/client';
 
 export interface UserItem {
   id: number;

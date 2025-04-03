@@ -1,10 +1,10 @@
-"use client";
-import React, { useState, useMemo } from "react";
-import Link from "next/link";
-import DisplayTableInfo from "@/lib/components/DisplayTableInfo";
-import FilterBar, { FilterCriteria } from "@/lib/components/FilterBar";
-import { Promotion } from "@prisma/client";
-import { RegionItem } from "@/modules/region/definitions";
+'use client';
+import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
+import DisplayTableInfo from '@/lib/components/DisplayTableInfo';
+import FilterBar, { FilterCriteria } from '@/lib/components/FilterBar';
+import { Promotion } from '@prisma/client';
+import { RegionItem } from '@/modules/region/definitions';
 
 interface Props {
   values: Promotion[];
@@ -15,45 +15,41 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
   const [filters, setFilters] = useState<FilterCriteria>({});
 
   const filteredData = useMemo(() => {
-    return values.filter((promotion) => {
+    return values.filter(promotion => {
       const matchesSearch = filters.search
         ? promotion.name.toLowerCase().includes(filters.search.toLowerCase()) ||
           promotion.code.toLowerCase().includes(filters.search.toLowerCase())
         : true;
-      const matchesRegion = filters.region
-        ? promotion.regionId === filters.region
-        : true;
-      const matchesDeleted = filters.isDeleted
-        ? promotion.isDeleted
-        : !promotion.isDeleted;
+      const matchesRegion = filters.region ? promotion.regionId === filters.region : true;
+      const matchesDeleted = filters.isDeleted ? promotion.isDeleted : !promotion.isDeleted;
       return matchesSearch && matchesRegion && matchesDeleted;
     });
   }, [values, filters]);
 
   const headers = [
-    "Código",
-    "Nombre",
-    "Región",
-    "Fecha",
-    "Descuento",
-    "Activo",
-    "Eliminado",
-    "Opciones",
+    'Código',
+    'Nombre',
+    'Región',
+    'Fecha',
+    'Descuento',
+    'Activo',
+    'Eliminado',
+    'Opciones',
   ];
-  const data = filteredData.map((promotion) => ({
+  const data = filteredData.map(promotion => ({
     Código: promotion.code,
     Nombre: promotion.name,
     Región: (() => {
-      const r = regions.find((r) => r.code === promotion.regionId);
-      return r ? `${r.flag} ${r.name}` : "No asignada";
+      const r = regions.find(r => r.code === promotion.regionId);
+      return r ? `${r.flag} ${r.name}` : 'No asignada';
     })(),
-    Fecha: `${promotion.startDate.toISOString().split("T")[0]} a ${promotion.endDate.toISOString().split("T")[0]}`,
+    Fecha: `${promotion.startDate.toISOString().split('T')[0]} a ${promotion.endDate.toISOString().split('T')[0]}`,
     Descuento: `${promotion.discount}%`,
-    Activo: promotion.active ? "Sí" : "No",
-    Eliminado: promotion.isDeleted ? "Sí" : "No",
+    Activo: promotion.active ? 'Sí' : 'No',
+    Eliminado: promotion.isDeleted ? 'Sí' : 'No',
     Opciones: (
       <Link
-        className="text-indigo-600 hover:text-indigo-900 transition"
+        className='text-indigo-600 hover:text-indigo-900 transition'
         href={`/admin/promociones/${promotion.id}`}
       >
         Detalles
@@ -64,7 +60,7 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
   return (
     <div>
       <FilterBar onFilterChange={setFilters} regions={regions} />
-      <DisplayTableInfo headers={headers} data={data} keyField="Código" />
+      <DisplayTableInfo headers={headers} data={data} keyField='Código' />
     </div>
   );
 };

@@ -1,40 +1,38 @@
-import React from 'react'
-import { OrderRepository } from '../definitions'
-import Link from 'next/link'
-import DisplayInfo from '@/lib/components/DisplayInfo'
+import React from 'react';
+import { OrderRepository } from '../definitions';
+import Link from 'next/link';
+import DisplayInfo from '@/lib/components/DisplayInfo';
 type Props = {
-  id: number
-}
+  id: number;
+};
 const OrderDetail: React.FC<Props> = async ({ id }) => {
-  const orderRepo = new OrderRepository()
-  const detail = await orderRepo.getOrderById(id)
+  const orderRepo = new OrderRepository();
+  const detail = await orderRepo.getOrderById(id);
   if (!detail) {
-    return <div>Orden no encontrada</div>
+    return <div>Orden no encontrada</div>;
   }
   return (
     <>
-      <div className="p-2">
-        <Link className="text-xs text-blue-500 hover:underline" href="./">
+      <div className='p-2'>
+        <Link className='text-xs text-blue-500 hover:underline' href='./'>
           Atras
         </Link>
-        <h1 className="text-2xl font-semibold text-gray-900 my-2">
-          Orden No. {detail.order.id}
-        </h1>
-        <div className="grid gap-6">
+        <h1 className='text-2xl font-semibold text-gray-900 my-2'>Orden No. {detail.order.id}</h1>
+        <div className='grid gap-6'>
           <DisplayInfo
             info={[
               {
                 label: 'Cliente',
-                value: detail.customer.name
+                value: detail.customer.name,
               },
               {
                 label: 'Correo Electrónico',
-                value: detail.customer.email
+                value: detail.customer.email,
               },
               {
                 label: 'Teléfono',
-                value: detail.customer.phone
-              }
+                value: detail.customer.phone,
+              },
             ]}
           />
 
@@ -42,28 +40,28 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
             info={[
               {
                 label: 'Lina de Envío 1',
-                value: detail.order.shipping_line1
+                value: detail.order.shipping_line1,
               },
               {
                 label: 'Lina de Envío 2',
-                value: detail.order.shipping_line2
+                value: detail.order.shipping_line2,
               },
               {
                 label: 'Ciudad',
-                value: detail.order.city
+                value: detail.order.city,
               },
               {
                 label: 'Estado',
-                value: detail.order.state
+                value: detail.order.state,
               },
               {
                 label: 'Código Postal',
-                value: detail.order.postalCode
+                value: detail.order.postalCode,
               },
               {
                 label: 'País',
-                value: detail.order.country
-              }
+                value: detail.order.country,
+              },
             ]}
           />
 
@@ -71,16 +69,16 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
             info={[
               {
                 label: 'Total',
-                value: detail.order.totalAmount
+                value: detail.order.totalAmount,
               },
               {
                 label: 'Estado',
-                value: detail.order.status
+                value: detail.order.status,
               },
               {
                 label: 'Fecha',
-                value: detail.order.orderDate.toISOString()
-              }
+                value: detail.order.orderDate.toISOString(),
+              },
             ]}
           />
 
@@ -88,7 +86,7 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
             info={[
               {
                 label: 'Productos',
-                value: detail.items.length
+                value: detail.items.length,
               },
               {
                 label: 'Listado de Productos',
@@ -96,8 +94,8 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
                   <div key={item.id}>
                     {item.quantity} x {item.productName} - ${item.price} c/u
                   </div>
-                ))
-              }
+                )),
+              },
             ]}
           />
 
@@ -105,22 +103,22 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
             info={[
               {
                 label: 'Método de Pago',
-                value: detail.payment.paymentType
+                value: detail.payment.paymentType,
               },
               {
                 label: 'Número de Tarjeta',
-                value: detail.payment.amount
+                value: detail.payment.amount,
               },
               {
                 label: 'Stripe',
-                value: detail.payment.stripePayment
-              }
+                value: detail.payment.stripePayment,
+              },
             ]}
           />
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default OrderDetail
+export default OrderDetail;

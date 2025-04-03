@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prima/client";
-import { Promotion } from "@prisma/client";
+import { prisma } from '@/lib/prima/client';
+import { Promotion } from '@prisma/client';
 
 export interface PromotionItem {
   id: number;
@@ -32,7 +32,7 @@ export const fromDatabase = (prom: Promotion): PromotionItem => ({
   name: prom.name,
   description: prom.description,
   discount: prom.discount,
-  regionId: prom.regionId ?? "",
+  regionId: prom.regionId ?? '',
   startDate: prom.startDate,
   endDate: prom.endDate,
   active: prom.active,
@@ -81,22 +81,19 @@ export class PromotionRepository implements IPromotionRepository {
     }
   }
 
-  async update(
-    id: number,
-    data: Partial<PromotionInput>
-  ): Promise<PromotionItem> {
+  async update(id: number, data: Partial<PromotionInput>): Promise<PromotionItem> {
     console.log(data);
-    console.log('ID',id);
+    console.log('ID', id);
     try {
       const promotion = await prisma.promotion.update({
         where: { id },
         data,
       });
 
-      console.log("promotion",promotion);
+      console.log('promotion', promotion);
       const a = fromDatabase(promotion);
-      console.log("aaa",a);
-      return a
+      console.log('aaa', a);
+      return a;
     } catch (error) {
       throw error;
     }
@@ -114,7 +111,7 @@ export class PromotionRepository implements IPromotionRepository {
   }
 
   async activate(id: number): Promise<void> {
-    console.log("activate...", id);
+    console.log('activate...', id);
     try {
       await prisma.promotion.update({
         where: { id },

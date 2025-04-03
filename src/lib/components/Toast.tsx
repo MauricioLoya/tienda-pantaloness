@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { ToastType } from "../types";
+import React, { useEffect, useState } from 'react';
+import { ToastType } from '../types';
 
 export interface ToastProps {
   message: string;
@@ -9,11 +9,7 @@ export interface ToastProps {
   duration?: number;
 }
 
-const Toast: React.FC<ToastProps> = ({
-  message,
-  type = "info",
-  duration = 3000,
-}) => {
+const Toast: React.FC<ToastProps> = ({ message, type = 'info', duration = 3000 }) => {
   const [show, setShow] = useState(true);
 
   useEffect(() => {
@@ -26,13 +22,13 @@ const Toast: React.FC<ToastProps> = ({
   if (!show) return null;
 
   const alertClass = {
-    success: "alert alert-success",
-    error: "alert alert-error",
-    info: "alert alert-info",
+    success: 'alert alert-success',
+    error: 'alert alert-error',
+    info: 'alert alert-info',
   }[type];
 
   return (
-    <div className="toast toast-top toast-end">
+    <div className='toast toast-top toast-end'>
       <div className={`alert ${alertClass}`}>
         <span>{message}</span>
       </div>

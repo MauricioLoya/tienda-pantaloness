@@ -3,9 +3,9 @@ export const formatPrice = (price: number): string => {
     style: 'currency',
     currency: 'MXN',
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(price)
-}
+    maximumFractionDigits: 2,
+  }).format(price);
+};
 
 export function generateRandomCharacters(length: number): string {
   let result = '';
@@ -27,19 +27,22 @@ export function generateRandomCharacters(length: number): string {
 
 export function generateSlug(name: string): string {
   const slug = name
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-");
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-');
 
   const randomStr = generateRandomCharacters(6);
   return `${slug}-${randomStr}`;
 }
 
 export function generateOrderNumber(): string {
-  const datePart = new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 12);
+  const datePart = new Date()
+    .toISOString()
+    .replace(/[-:.TZ]/g, '')
+    .slice(0, 12);
   const randomPart = generateRandomCharacters(4);
   return `${datePart}-${randomPart}`;
 }

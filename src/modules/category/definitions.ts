@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prima/client";
-import { Category } from "@prisma/client";
+import { prisma } from '@/lib/prima/client';
+import { Category } from '@prisma/client';
 
 export interface CategoryItem {
   id: number;
@@ -23,7 +23,7 @@ export const fromDatabase = (cat: Category): CategoryItem => ({
   description: cat.description,
   regionId: cat.regionId ?? undefined,
   isDeleted: cat.isDeleted,
-  backgroundUrl: cat.backgroundUrl ?? "",
+  backgroundUrl: cat.backgroundUrl ?? '',
 });
 
 export interface ICategoryRepository {
@@ -79,7 +79,7 @@ export class CategoryRepository implements ICategoryRepository {
   async getAll(): Promise<CategoryItem[]> {
     try {
       const categories = await prisma.category.findMany();
-      return categories.map((cat) => ({
+      return categories.map(cat => ({
         id: cat.id,
         name: cat.name,
         description: cat.description,

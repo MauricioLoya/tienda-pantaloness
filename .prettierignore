@@ -1,0 +1,31 @@
+# Node modules
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Build files
+build/
+dist/
+
+# Coverage reports
+coverage/
+
+# Logs
+logs/
+*.log
+
+# Cache
+.cache/
+.eslintcache
+
+# IDE files
+.idea/
+.vscode/*
+!.vscode/settings.json

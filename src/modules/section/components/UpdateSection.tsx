@@ -1,24 +1,20 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import ModalGeneric from "@/lib/components/ModalGeneric";
-import SectionForm from "./SectionForm";
-import {
-  HighlightProductItem,
-  SectionInput,
-  SectionItem,
-} from "../definitions";
-import { RegionItem } from "@/modules/region/definitions";
-import { useRouter } from "next/navigation";
-import { updateSectionAction } from "../actions/updateSectionAction";
-import { FaEdit } from "react-icons/fa";
-import { useToast } from "@/lib/components/ToastContext";
+import React, { useState } from 'react';
+import ModalGeneric from '@/lib/components/ModalGeneric';
+import SectionForm from './SectionForm';
+import { HighlightProductItem, SectionInput, SectionItem } from '../definitions';
+import { RegionItem } from '@/modules/region/definitions';
+import { useRouter } from 'next/navigation';
+import { updateSectionAction } from '../actions/updateSectionAction';
+import { FaEdit } from 'react-icons/fa';
+import { useToast } from '@/lib/components/ToastContext';
 
 interface UpdateSectionProps {
   section: SectionItem;
   regions: RegionItem[];
   availableProducts: HighlightProductItem[];
-  usedOrders?: number[];  
+  usedOrders?: number[];
 }
 
 const UpdateSection: React.FC<UpdateSectionProps> = ({
@@ -33,8 +29,8 @@ const UpdateSection: React.FC<UpdateSectionProps> = ({
     ...section,
   });
   const DefaultColors = {
-    buttonText: "#063d79",
-    buttonColor: "#000000",
+    buttonText: '#063d79',
+    buttonColor: '#000000',
   };
   const handleValuesChange = (values: SectionInput) => {
     console.log(values);
@@ -48,8 +44,7 @@ const UpdateSection: React.FC<UpdateSectionProps> = ({
     updatedSection.backgroundColor = values.backgroundColor;
     updatedSection.highlightProducts = values.highlightProducts ?? [];
     updatedSection.buttonText = values.buttonText ?? DefaultColors.buttonText;
-    updatedSection.buttonColor =
-      values.buttonColor ?? DefaultColors.buttonColor;
+    updatedSection.buttonColor = values.buttonColor ?? DefaultColors.buttonColor;
   };
 
   const handleSubmit = async (close: () => void) => {
@@ -58,23 +53,23 @@ const UpdateSection: React.FC<UpdateSectionProps> = ({
 
       await updateSectionAction(updatedSection.id, updatedSection);
       router.refresh();
-      showToast("Sección actualizada correctamente", "success");
+      showToast('Sección actualizada correctamente', 'success');
       close();
     } catch (error: any) {
-      showToast("Error al actualizar la sección", "error");
+      showToast('Error al actualizar la sección', 'error');
       console.error(error);
     }
   };
 
   return (
     <ModalGeneric
-      title="Actualizar Sección"
-      triggerBtnTitle="Actualizar"
+      title='Actualizar Sección'
+      triggerBtnTitle='Actualizar'
       triggerBtnContent={<FaEdit />}
-      actionBtnText="Actualizar Cambios"
-      cancelBtnText="Cancelar"
+      actionBtnText='Actualizar Cambios'
+      cancelBtnText='Cancelar'
       actionBtnFunction={handleSubmit}
-      cancelBtnFunction={() => console.log("Cancelar")}
+      cancelBtnFunction={() => console.log('Cancelar')}
       fullScreen={false}
     >
       <SectionForm

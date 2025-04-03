@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prima/client";
+import { prisma } from '@/lib/prima/client';
 
 export type RegionItem = {
   code: string;
@@ -9,17 +9,15 @@ export type RegionItem = {
 };
 
 export class RegionRepository {
-
   async getAll(): Promise<RegionItem[]> {
     const regions = await prisma.region.findMany();
-    return regions.map((region) => ({
+    return regions.map(region => ({
       code: region.code,
       name: region.name,
       flag: region.flag,
       currencyCode: region.currencyCode || undefined,
       taxRate: region.taxRate || undefined,
     }));
-
   }
 
   async getById(code: string): Promise<RegionItem | null> {
