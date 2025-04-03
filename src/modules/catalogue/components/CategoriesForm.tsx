@@ -43,8 +43,8 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
       resetForm();
       router.refresh();
       showToast('Categoría agregada correctamente', 'success');
-    } catch (error: any) {
-      showToast(error.message || 'Error al agregar la categoría', 'error');
+    } catch (error: unknown) {
+      showToast(error instanceof Error ? error.message : 'Error al eliminar la variante', 'error');
     }
   };
 
@@ -54,8 +54,11 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
         await removeCategoryAction(productId, categoryId);
         router.refresh();
         showToast('Categoría eliminada correctamente', 'success');
-      } catch (error: any) {
-        showToast(error.message || 'Error al eliminar la categoría', 'error');
+      } catch (error: unknown) {
+        showToast(
+          error instanceof Error ? error.message : 'Error al eliminar la variante',
+          'error'
+        );
       }
     }
   }

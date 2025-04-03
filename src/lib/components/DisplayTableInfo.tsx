@@ -4,7 +4,7 @@ type Props = {
   headers: string[];
   data: { [key: string]: string | number | React.ReactNode }[];
   keyField?: string;
-  renderCustomCell?: (header: string, row: any, index: number) => React.ReactNode;
+  renderCustomCell?: (header: string, row: React.ReactNode, index: number) => React.ReactNode;
 };
 
 const DisplayTableInfo: React.FC<Props> = ({ headers, data, keyField = '', renderCustomCell }) => {
@@ -33,9 +33,7 @@ const DisplayTableInfo: React.FC<Props> = ({ headers, data, keyField = '', rende
                     .replace(/\s(.)/g, (_, char) => char.toUpperCase());
                   return (
                     <td key={colIndex} className='px-6 py-4 whitespace-nowrap'>
-                      {renderCustomCell
-                        ? (renderCustomCell(header, row, colIndex) ?? row[propName] ?? row[header])
-                        : (row[propName] ?? row[header])}
+                      {row[propName] ?? row[header]}
                     </td>
                   );
                 })}

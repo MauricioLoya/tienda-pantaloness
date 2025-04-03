@@ -37,8 +37,8 @@ const CreateSection: React.FC<CreateSectionProps> = ({
       await createSectionAction(formValues);
       close();
       router.refresh();
-    } catch (error: any) {
-      alert(error.message || 'Error al crear la sección');
+    } catch (error: unknown) {
+      console.error('Error creating section:', error);
     }
   };
 

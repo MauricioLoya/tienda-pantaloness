@@ -24,8 +24,9 @@ const ActivatePromotion: React.FC<ActivatePromotionProps> = ({
       await ActivatePromotionAction(promotion.id);
       showToast('Promoción activada correctamente', 'success');
       router.refresh();
-    } catch (error: any) {
-      showToast('Error al activar la promoción', 'error');
+    } catch (error: unknown) {
+      showToast(error instanceof Error ? error.message : 'Error al activar la promoción', 'error');
+      console.error(error);
     }
   };
 

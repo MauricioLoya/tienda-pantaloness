@@ -24,8 +24,9 @@ const DeletePromotion: React.FC<DeletePromotionProps> = ({
       await DeletePromotionAction(promotion.id);
       showToast('Promoción eliminada correctamente', 'success');
       router.refresh();
-    } catch (error: any) {
-      showToast('Error al eliminar la promoción', 'error');
+    } catch (error: unknown) {
+      showToast(error instanceof Error ? error.message : 'Error al eliminar la promoción', 'error');
+      console.error(error);
     }
   };
 

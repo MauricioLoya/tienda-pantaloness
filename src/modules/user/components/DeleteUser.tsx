@@ -21,8 +21,9 @@ const DeleteUser: React.FC<DeleteUserProps> = ({ user, btnColor = 'btn-danger' }
       await deleteUserAction(user.id);
       showToast('Usuario eliminada correctamente', 'success');
       router.refresh();
-    } catch (error: any) {
-      showToast('Error al eliminar el usuario', 'error');
+    } catch (error: unknown) {
+      showToast(error instanceof Error ? error.message : 'Error al eliminar el usuario', 'error');
+      console.error(error);
     }
   };
 
