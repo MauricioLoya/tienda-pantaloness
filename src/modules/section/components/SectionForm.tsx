@@ -67,7 +67,7 @@ const SectionForm: React.FC<SectionFormProps> = ({
     highlightProducts: Yup.array()
       .of(Yup.number())
       .when('type', {
-        is: value => value === SectionType.highlight,
+        is: (value: SectionType) => value === SectionType.highlight,
         then: () => Yup.array().min(1, 'Debes seleccionar al menos un producto destacado'),
         otherwise: () => Yup.array().notRequired(),
       }),
