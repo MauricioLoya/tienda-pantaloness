@@ -76,6 +76,11 @@ export async function createCheckoutSessionAction(
       };
     }
 
+    const metadata: Record<string, string> = {
+      region: region,
+      promotionId: promotionId ? String(promotionId) : '',
+    };
+
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       locale: StripeLocales[region] as Stripe.Checkout.SessionCreateParams.Locale,
@@ -90,7 +95,7 @@ export async function createCheckoutSessionAction(
       payment_method_types: ['card'],
       line_items: lineItems as Stripe.Checkout.SessionCreateParams.LineItem[],
       mode: 'payment',
-      customer_email: input.customerInfo?.email || undefined,
+      metadata,
       success_url: `${process.env.APP_URL}${region}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.APP_URL}${region}/cart`,
     });

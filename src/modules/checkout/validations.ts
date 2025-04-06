@@ -13,16 +13,6 @@ export interface CartItem {
 
 export interface CheckoutInput {
   items: CartItem[];
-  customerInfo?: {
-    email?: string;
-    name?: string;
-  };
-  shipping?: {
-    address: string;
-    city: string;
-    country: string;
-    postalCode: string;
-  };
   couponCode?: string;
 }
 
@@ -183,7 +173,7 @@ export async function validateAndProcessCartItems(
       price_data: {
         currency: product?.region?.currencyCode ?? 'usd',
         product_data: {
-          name: `${product.name} - ${variant.size}`,
+          name: `${product.name} - ${variant.size} [${variant.id}]`,
           description: product.description,
           images: [product.ProductImage.map(img => img.url)[0]],
         },

@@ -36,16 +36,6 @@ export default function CartPage() {
           variantId: item.variantId,
           quantity: item.quantity,
         })),
-        customerInfo: {
-          email: '',
-          name: '',
-        },
-        shipping: {
-          address: 'Test Address',
-          city: 'Test City',
-          country: 'Test Country',
-          postalCode: '12345',
-        },
         couponCode: promotionCode ?? undefined,
       };
       console.log(cartForCheckout);
@@ -103,9 +93,8 @@ export default function CartPage() {
                 </p>
                 <div>
                   <p
-                    className={`${
-                      item.discountPrice ? 'line-through text-sm text-gray-500' : ''
-                    } font-medium`}
+                    className={`${item.discountPrice ? 'line-through text-sm text-gray-500' : ''
+                      } font-medium`}
                   >
                     {formatPrice(item.price)}
                   </p>

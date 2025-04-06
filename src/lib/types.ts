@@ -19,3 +19,10 @@ export interface ModalCreateProps {
 }
 
 export type ToastType = 'success' | 'error' | 'info';
+
+export const OrderStatus = {
+  PROCESSING: 'processing',
+  SUCCEED: 'succeed',
+  SHIPPED: 'shipped',
+  CANCELED: 'canceled',
+};
