@@ -1,7 +1,7 @@
 'use client';
 
 import ModalGeneric from '@/lib/components/ModalGeneric';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import UserForm from './UserForm';
 import { useRouter } from 'next/navigation';
 import { FaEdit } from 'react-icons/fa';
@@ -16,6 +16,16 @@ interface UpdateUserProps {
 const UpdateUser: React.FC<UpdateUserProps> = ({ user }) => {
   const router = useRouter();
   const { showToast } = useToast();
+  // const [updatedUser, setUpdatedUser] = useState<UserItem>(user);
+
+  // const handleValuesChange = useCallback((values: UserInput) => {
+  //   setUpdatedUser((prevUser) => ({
+  //     ...prevUser,
+  //     email: values.email,
+  //     name: values.name,
+  //     superAdmin: values.superAdmin,
+  //   }));
+  // }, []);
   const [updatedUser] = useState<UserItem>({
     id: user.id,
     email: user.email,
