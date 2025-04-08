@@ -192,3 +192,9 @@ model HighlightProduct {
   product   Product @relation(fields: [productId], references: [id])
   section   Section @relation(fields: [sectionId], references: [id])
 }
+
+
+model Setting {
+  key   String @id
+  value Json
+}
