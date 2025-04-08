@@ -1,6 +1,5 @@
 import React from 'react';
 import { OrderRepository } from '../definitions';
-import Link from 'next/link';
 import DisplayInfo from '@/lib/components/DisplayInfo';
 type Props = {
   id: number;
@@ -14,10 +13,6 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
   return (
     <>
       <div className='p-2'>
-        <Link className='text-xs text-blue-500 hover:underline' href='./'>
-          Atras
-        </Link>
-        <h1 className='text-2xl font-semibold text-gray-900 my-2'>Orden No. {detail.order.id}</h1>
         <div className='grid gap-6'>
           <DisplayInfo
             info={[
