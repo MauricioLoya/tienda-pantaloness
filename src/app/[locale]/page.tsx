@@ -7,7 +7,7 @@ import { SectionType } from '@prisma/client';
 // import Loader from '@/lib/components/Loader';
 
 // import SectionBox from '@/modules/landing/SectionBox';
-// import ProductCard from '@/modules/product-list/componentes/ProductCard';
+import ProductCard from '@/modules/product-list/componentes/ProductCard';
 // import { useTranslations } from 'next-intl';
 // import { getTranslations } from 'next-intl/server';
 // import { Suspense } from 'react';

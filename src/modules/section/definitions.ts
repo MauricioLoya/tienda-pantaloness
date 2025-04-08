@@ -6,6 +6,11 @@ export interface HighlightProductItem {
   name: string;
   imageUrl?: string;
   slug: string;
+  isAvailable: boolean;
+  basePrice: number;
+  discountedPrice?: number;
+  discountPercentage?: number;
+  description: string;
 }
 
 export interface SectionInput {
@@ -39,7 +44,6 @@ export interface SectionItem {
 
 export class SectionRepository {
   async createSection(data: SectionInput): Promise<SectionItem> {
-    console.log(data);
     const section = await prisma.section.create({
       data: {
         type: data.type,
@@ -78,6 +82,7 @@ export class SectionRepository {
             product: {
               include: {
                 ProductImage: true,
+                ProductVariant: true,
               },
             },
           },
@@ -105,6 +110,11 @@ export class SectionRepository {
           name: hp.product.name,
           slug: hp.product.slug ?? '',
           imageUrl: hp.product.ProductImage[0]?.url ?? '/placeholder.jpg',
+          isAvailable: hp.product.active,
+          basePrice: hp.product.ProductVariant[0]?.price ?? 0,
+          discountedPrice: hp.product.ProductVariant[0]?.discountPrice ?? 0,
+          discountPercentage: hp.product.ProductVariant[0]?.discount ?? 0,
+          description: hp.product.description,
         })) || [],
     };
   }
@@ -177,6 +187,7 @@ export class SectionRepository {
             product: {
               include: {
                 ProductImage: true,
+                ProductVariant: true,
               },
             },
           },
@@ -202,6 +213,11 @@ export class SectionRepository {
           name: hp.product.name,
           slug: hp.product.slug ?? '',
           imageUrl: hp.product.ProductImage[0]?.url ?? '/placeholder.jpg',
+          isAvailable: hp.product.active,
+          basePrice: hp.product.ProductVariant[0]?.price ?? 0,
+          discountedPrice: hp.product.ProductVariant[0]?.discountPrice ?? 0,
+          discountPercentage: hp.product.ProductVariant[0]?.discount ?? 0,
+          description: hp.product.description,
         })) || [],
     };
   }
