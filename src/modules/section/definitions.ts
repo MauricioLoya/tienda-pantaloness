@@ -74,49 +74,7 @@ export class SectionRepository {
   }
 
   async getById(id: number): Promise<SectionItem | null> {
-    const section = await prisma.section.findUnique({
-      where: { id },
-      include: {
-        HighlightProduct: {
-          include: {
-            product: {
-              include: {
-                ProductImage: true,
-                ProductVariant: true,
-              },
-            },
-          },
-        },
-      },
-    });
-    if (!section) {
-      return null;
-    }
-    return {
-      id: section.id,
-      type: section.type,
-      title: section.title,
-      description: section.description,
-      regionId: section.regionId,
-      actionUrl: section.actionUrl,
-      order: section.order,
-      backgroundUrl: section.backgroundUrl,
-      backgroundColor: section.backgroundColor,
-      buttonText: section.buttonText ?? '',
-      buttonColor: section.buttonColor ?? '',
-      highlightProducts:
-        section.HighlightProduct.map(hp => ({
-          id: hp.product.id,
-          name: hp.product.name,
-          slug: hp.product.slug ?? '',
-          imageUrl: hp.product.ProductImage[0]?.url ?? '/placeholder.jpg',
-          isAvailable: hp.product.active,
-          basePrice: hp.product.ProductVariant[0]?.price ?? 0,
-          discountedPrice: hp.product.ProductVariant[0]?.discountPrice ?? 0,
-          discountPercentage: hp.product.ProductVariant[0]?.discount ?? 0,
-          description: hp.product.description,
-        })) || [],
-    };
+    return this.toSectionItem(id);
   }
 
   async updateSection(id: number, data: Partial<SectionInput>): Promise<SectionItem> {
@@ -156,9 +114,9 @@ export class SectionRepository {
     await prisma.section.delete({ where: { id } });
   }
 
-  async getSectionsByRegion(regionCode: string): Promise<SectionItem[]> {
+  async getAllByRegion(regionCode: string): Promise<SectionItem[]> {
     const sections = await prisma.section.findMany({
-      where: { regionCode },
+      where: { regionId: regionCode },
       orderBy: { order: 'asc' },
     });
     const items: SectionItem[] = [];
@@ -167,10 +125,12 @@ export class SectionRepository {
     }
     return items;
   }
+
   async getAll(): Promise<SectionItem[]> {
     const sections = await prisma.section.findMany({
       orderBy: { order: 'asc' },
     });
+
     const items: SectionItem[] = [];
     for (const sec of sections) {
       items.push(await this.toSectionItem(sec.id));
