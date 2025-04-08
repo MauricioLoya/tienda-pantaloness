@@ -23,15 +23,6 @@ const ProductCard: React.FC<Props> = ({
   isAvailable,
   slug,
 }) => {
-  console.log('thumbnail', thumbnail);
-  console.log('name', name);
-  console.log('description', description);
-  console.log('basePrice', basePrice);
-  console.log('discountedPrice', discountedPrice);
-  console.log('discountPercentage', discountPercentage);
-  console.log('isAvailable', isAvailable);
-  console.log('slug', slug);
-  console.log('thumbnail', thumbnail);
   return (
     <Link href={`/productos/${slug}`} className='block'>
       <div className='card card-compact bg-base-100 lg:w-72 shadow-xl h-[600px] flex flex-col group hover:shadow-2xl transition-shadow duration-300'>

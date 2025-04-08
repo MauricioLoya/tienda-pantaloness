@@ -23,8 +23,8 @@ export const BannerSection: React.FC<BannerSectionProps> = ({ section }) => {
         <h2 className='mb-5 text-5xl font-bold'>{section.title}</h2>
         <p className='mb-5 max-w-md'>{section.description}</p>
         {section.actionUrl && (
-          <a href={section.actionUrl} className='btn btn-primary'>
-            Ir a la sección
+          <a href={section.actionUrl} className={`btn ${section.buttonColor}`}>
+            {section.buttonText}
           </a>
         )}
       </div>
