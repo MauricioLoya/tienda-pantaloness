@@ -16,7 +16,10 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
 
   async handle(event: Stripe.Event): Promise<void> {
     const session = event.data.object as Stripe.Checkout.Session;
-
+    if (session.payment_status !== 'paid') {
+      console.log('La sesión de pago no fue exitosa.');
+      return;
+    }
     const lineItems = await this.stripe.checkout.sessions.listLineItems(session.id, {
       limit: 100,
     });
@@ -28,7 +31,6 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
         throw new Error('No se encontraron detalles del cliente.');
       }
 
-      // Buscar cliente por email y teléfono
       let customer = await tx.customer.findFirst({
         where: {
           email: customerDetails.email || '',
@@ -36,7 +38,6 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
         },
       });
 
-      // Si no existe el cliente, crearlo
       if (!customer) {
         customer = await tx.customer.create({
           data: {
@@ -50,22 +51,20 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
         console.log(`Cliente existente encontrado: ${customer.id}`);
       }
 
-      // Crear el pedido
       const orderNumber = generateOrderNumber();
 
-      // Obtener dirección de envío
       const shippingDetails: Stripe.Address | null = customerDetails.address;
 
       if (!shippingDetails) {
         throw new Error('No se encontraron detalles de envío.');
       }
-
+      const totalAmount = session.amount_total ? session.amount_total / 100 : 0;
       const order = await tx.order.create({
         data: {
           orderNumber: orderNumber,
           customerId: customer.id,
           orderDate: new Date(),
-          totalAmount: session.amount_total ? session.amount_total / 100 : 0, // Convertir de centavos a unidades
+          totalAmount: totalAmount,
           checkoutId: session.id,
           status: OrderStatus.PROCESSING,
           shipping_line1: shippingDetails.line1 || '',
@@ -77,14 +76,43 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
           promotionId: session.metadata?.promotionId
             ? Number(session.metadata.promotionId)
             : undefined,
-          regionId: session.metadata?.regionId, // Si estás pasando la región como metadata en la sesión
+          regionId: session.metadata?.regionId,
         },
       });
 
-      console.log(`Pedido creado: ${order.id}, Número: ${orderNumber}`);
-
       for (const item of lineItems.data) {
+        const productName = item.description || 'Producto';
+        const quantity = item.quantity || 1;
+        const price = item.amount_total ? item.amount_total / 100 : 0;
+
+        const productDescription = item.price?.product || 'Descripción no disponible';
+        const productImage = item.price?.product ? '' : '';
+
+        await tx.orderItem.create({
+          data: {
+            orderId: order.id,
+            productName,
+            productDescription: productDescription.toString(),
+            productImage,
+            quantity,
+            price,
+          },
+        });
+        console.log(`✅ Producto agregado a la orden: ${productName} x${quantity}`);
       }
+
+      await tx.payment.create({
+        data: {
+          orderId: order.id,
+          stripePayment: totalAmount,
+          paymentDate: new Date(),
+          amount: totalAmount,
+          status: session.payment_status || 'desconocido',
+          paymentType: session.payment_method_types?.[0] || 'desconocido',
+        },
+      });
+
+      console.log(`✅ Pago creado para la orden: ${order.id}`);
     });
   }
 }

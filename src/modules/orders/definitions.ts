@@ -1,6 +1,15 @@
 import { prisma } from '@/lib/prima/client';
 import { Customer, Order, OrderItem, Payment, Promotion } from '@prisma/client';
 
+export type OrderStatusInput = {
+  status: string;
+};
+
+export type OrderStatusItem = {
+  id: number;
+  status: string;
+};
+
 export type OrderAdminTableRow = {
   id: number;
   orderNumber: string;

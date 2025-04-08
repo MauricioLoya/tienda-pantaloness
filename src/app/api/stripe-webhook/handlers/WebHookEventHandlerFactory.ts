@@ -12,13 +12,13 @@ export class WebhookEventHandlerFactory {
     this.emailService = emailService;
   }
 
-  getHandler(event: Stripe.Event): WebhookEventHandler | null {
-    switch (event.type) {
+  getHandler(eventType: Stripe.Event['type']): WebhookEventHandler | null {
+    switch (eventType) {
       case 'checkout.session.completed':
+        console.log('Evento de sesión de pago completada recibido!!!!');
         return new CheckoutSessionCompletedHandler(this.stripe, this.emailService);
-      // Puedes agregar otros tipos de eventos y sus respectivos handlers aquí
       default:
-        console.log(`Evento no manejado: ${event.type}`);
+        console.log(`Evento no manejado: ${eventType}`);
         return null;
     }
   }

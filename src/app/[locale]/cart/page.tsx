@@ -14,7 +14,6 @@ import { CheckoutInput } from '@/modules/checkout/validations';
 import { useLocale, useTranslations } from 'next-intl';
 
 export default function CartPage() {
-  // const headersList = await headers()
   const locale = useLocale();
   const t = useTranslations('CartPage');
   const { items, removeItem, updateQuantity, total } = useCart();

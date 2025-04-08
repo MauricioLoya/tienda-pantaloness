@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prima/client';
 
 export interface RegionFreeShipping {
   amount: number;
+  regionCode: string;
+  enabled: boolean;
 }
 
 export type RegionItem = {
