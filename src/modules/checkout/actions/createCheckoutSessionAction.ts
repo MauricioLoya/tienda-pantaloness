@@ -80,6 +80,24 @@ export async function createCheckoutSessionAction(
       region: region,
       promotionId: promotionId ? String(promotionId) : '',
     };
+    const subtotal = lineItems.reduce((acc, item) => acc + item.price_data.unit_amount, 0);
+    const isFreeShipping = subtotal >= 300 * 100;
+    const shippingOptions: Stripe.Checkout.SessionCreateParams.ShippingOption[] = [
+      {
+        shipping_rate_data: {
+          type: 'fixed_amount',
+          fixed_amount: {
+            amount: isFreeShipping ? 0 : 10000,
+            currency: region === 'mx' ? 'mxn' : 'usd',
+          },
+          display_name: 'Envío estándar',
+          delivery_estimate: {
+            minimum: { unit: 'business_day', value: 3 },
+            maximum: { unit: 'business_day', value: 5 },
+          },
+        },
+      },
+    ];
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
@@ -96,6 +114,7 @@ export async function createCheckoutSessionAction(
       line_items: lineItems as Stripe.Checkout.SessionCreateParams.LineItem[],
       mode: 'payment',
       metadata,
+      shipping_options: shippingOptions,
       success_url: `${process.env.APP_URL}${region}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.APP_URL}${region}/cart`,
     });

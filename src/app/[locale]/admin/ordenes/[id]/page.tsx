@@ -19,7 +19,7 @@ const OrderDetailPage: React.FC<Props> = async ({ params }) => {
   return (
     <>
       <Suspense fallback={<Loader />}>
-        <HeaderContent title={`Orden No. ${detail.order.id}`} href='./' action={actions} />
+        <HeaderContent title={`Orden No. ${detail.order.orderNumber}`} href='./' action={actions} />
         <OrderDetail id={Number(id)} />
       </Suspense>
     </>

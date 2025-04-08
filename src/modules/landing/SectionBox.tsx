@@ -6,7 +6,7 @@ type Props = {
 };
 const SectionBox: React.FC<Props> = ({ children, className, bgColor }) => {
   return (
-    <section className={`${bgColor}`}>
+    <section className={`${bgColor}`} style={{ backgroundColor: bgColor }}>
       <div className={`mx-auto max-w-7xl px-5 py-10 ${className}`}>{children}</div>
     </section>
   );

@@ -17,6 +17,14 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
           <DisplayInfo
             info={[
               {
+                label: 'Estado',
+                value: detail.order.status,
+              },
+            ]}
+          />
+          <DisplayInfo
+            info={[
+              {
                 label: 'Cliente',
                 value: detail.customer.name,
               },

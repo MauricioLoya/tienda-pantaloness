@@ -47,6 +47,7 @@ const SectionForm: React.FC<SectionFormProps> = ({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [previewError, setPreviewError] = useState(false);
+  const [prevValues, setPrevValues] = useState<SectionInput | null>(null);
 
   const validationSchema = Yup.object().shape({
     type: Yup.mixed<SectionType>().oneOf(Object.values(SectionType)).required(),
@@ -79,8 +80,11 @@ const SectionForm: React.FC<SectionFormProps> = ({
     const { values } = useFormikContext<SectionInput>();
 
     useEffect(() => {
-      onChange(values);
-    }, [values, onChange]);
+      if (values && values !== prevValues) {
+        onChange(values);
+        setPrevValues(values);
+      }
+    }, [values]);
 
     useEffect(() => {
       handlePreview(values.backgroundUrl);

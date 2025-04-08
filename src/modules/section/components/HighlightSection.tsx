@@ -3,6 +3,7 @@
 import React from 'react';
 import { SectionItem } from '../definitions';
 import ProductCard from '@/modules/product-list/componentes/ProductCard';
+import SectionBox from '@/modules/landing/SectionBox';
 
 interface HighlightSectionProps {
   section: SectionItem;
@@ -10,7 +11,9 @@ interface HighlightSectionProps {
 
 export const HighlightSection: React.FC<HighlightSectionProps> = ({ section }) => {
   return (
-    <div className={`p-6`} style={{ backgroundColor: section.backgroundColor }}>
+    <SectionBox bgColor={section.backgroundColor}>
+
+
       <h2 className='text-white font-semibold text-4xl mb-4'>{section.title}</h2>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-6'>
         {section.highlightProducts.map(prod => (
@@ -34,6 +37,6 @@ export const HighlightSection: React.FC<HighlightSectionProps> = ({ section }) =
           </a>
         </div>
       )}
-    </div>
+    </SectionBox>
   );
 };
