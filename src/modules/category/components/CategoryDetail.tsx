@@ -71,7 +71,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ category, region, produ
                 <h2 className='card-title'>{product.name}</h2>
                 <p className='text-sm text-gray-600'>{product.slug}</p>
                 <div className='card-actions justify-end'>
-                  <Link href={`/admin/catalogo/${product.id}`} className='btn btn-sm btn-info'>
+                  <Link href={`/admin/products/${product.id}`} className='btn btn-sm btn-info'>
                     Ver detalles
                   </Link>
                   <button

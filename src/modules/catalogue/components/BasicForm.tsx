@@ -44,7 +44,7 @@ const BasicForm: React.FC<BasicFormProps> = ({
       if (!productId) {
         const product = await createProductAction(values);
         showToast('Producto creado correctamente', 'success');
-        router.push(`/admin/catalogo/${product.id}/edit`);
+        router.push(`/admin/products/${product.id}/edit`);
       } else {
         await updateProductAction(productId, values);
         showToast('Producto actualizado correctamente', 'success');

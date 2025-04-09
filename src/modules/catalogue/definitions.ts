@@ -3,6 +3,7 @@ import { generateSlug } from '@/lib/utils';
 import { Product } from '@prisma/client';
 import { CategoryItem } from '../category/definitions';
 import { HighlightProductItem } from '../section/definitions';
+
 export interface ProductItem {
   id: number;
   name: string;
@@ -10,6 +11,7 @@ export interface ProductItem {
   active: boolean;
   regionId: string;
   slug: string;
+  isDeleted: boolean;
   searchWords: string;
   createdAt: Date;
   updatedAt: Date;
@@ -52,6 +54,7 @@ export type ProductAdminTableRow = {
   regionId: string;
   categories: string;
   createdAt: Date;
+  isDeleted: boolean;
 };
 
 export class ProductRepository {
@@ -72,12 +75,17 @@ export class ProductRepository {
         regionId: prod.regionId ?? '',
         categories: categoryNames,
         createdAt: prod.createdAt,
+        isDeleted: prod.isDeleted,
       };
     });
   }
   async getAvailableProducts(): Promise<HighlightProductItem[]> {
     const products = await prisma.product.findMany({
       where: { active: true },
+      include: {
+        ProductImage: true,
+        ProductVariant: true,
+      },
       orderBy: { createdAt: 'desc' },
     });
     return products.map(prod => ({
@@ -88,6 +96,9 @@ export class ProductRepository {
       active: prod.active,
       createdAt: prod.createdAt,
       updatedAt: prod.updatedAt,
+      isDeleted: prod.isDeleted,
+      isAvailable: prod.active && !prod.isDeleted,
+      basePrice: prod.ProductVariant?.[0]?.price ?? 0,
     }));
   }
 
@@ -242,10 +253,33 @@ export class ProductRepository {
       };
     });
   }
+
   async updateSearchWords(productId: number, words: string) {
     return prisma.product.update({
       where: { id: productId },
       data: { searchWords: words },
     });
+  }
+
+  async delete(id: number): Promise<void> {
+    try {
+      await prisma.product.update({
+        where: { id },
+        data: { isDeleted: true },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async activate(id: number): Promise<void> {
+    try {
+      await prisma.product.update({
+        where: { id },
+        data: { isDeleted: false },
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 }

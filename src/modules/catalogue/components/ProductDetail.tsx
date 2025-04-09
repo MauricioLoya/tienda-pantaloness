@@ -3,7 +3,6 @@
 import React from 'react';
 import DisplayInfo from '@/lib/components/DisplayInfo';
 import DisplayTableInfo from '@/lib/components/DisplayTableInfo';
-import Link from 'next/link';
 import { ProductDetail } from '../definitions';
 import ImagePreview from '@/lib/components/ImagePreview';
 
@@ -112,12 +111,6 @@ const ProductDetails: React.FC<Props> = ({ productProp }) => {
         ) : (
           <p className='text-gray-600'>No hay variantes disponibles.</p>
         )}
-      </div>
-
-      <div className='mt-8'>
-        <Link href={`/admin/catalogo/${product.id}/editar`} className='btn btn-outline btn-info'>
-          Editar Producto
-        </Link>
       </div>
     </div>
   );

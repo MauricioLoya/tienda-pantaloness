@@ -8,7 +8,7 @@ const CatalogoPage: React.FC = async () => {
     <>
       <Suspense fallback={<Loader />}>
         <div className='flex items-center justify-end border-b pb-2 mb-4'>
-          <Link href='catalogo/new' className='btn btn-primary'>
+          <Link href='products/new' className='btn btn-primary'>
             Agregar
           </Link>
         </div>

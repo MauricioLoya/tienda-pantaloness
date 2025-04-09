@@ -49,6 +49,7 @@ const UpdateCatalogoPage = async ({ params }: Props) => {
             <TagsForm productId={productId} initialTags={productDetail.product.searchWords} />
             <VariantsForm productId={productId} variants={productDetail.variants} />
           </div>
+
         </div>
       </Suspense>
     </>
