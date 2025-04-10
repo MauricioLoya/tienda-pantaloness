@@ -1,13 +1,11 @@
 'use client';
-
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { ProductAdminTableRow } from '../definitions';
-import DisplayTableInfo from '@/lib/components/DisplayTableInfo';
 import FilterBar, { FilterCriteria, FilterOption, SearchColumn } from '@/lib/components/FilterBar';
 import { RegionItem } from '@/modules/region/definitions';
 import { CategoryItem } from '@/modules/category/definitions';
-
+import GenericDataTable, { TableHeader } from '@/lib/components/GenericDataTable';
 type Props = {
   values: ProductAdminTableRow[];
   categories: CategoryItem[];
@@ -96,7 +94,6 @@ const ProductTable: React.FC<Props> = ({ values, regions, categories }) => {
 
       let matchesCreatedAt = true;
       const productDateStr = product.createdAt.toISOString().split('T')[0];
-
       if (filters.createdAt_from) {
         if (productDateStr < filters.createdAt_from) {
           matchesCreatedAt = false;
@@ -107,9 +104,6 @@ const ProductTable: React.FC<Props> = ({ values, regions, categories }) => {
           matchesCreatedAt = false;
         }
       }
-
-
-
       let matchesCategories = true;
       if (filters.categories && Array.isArray(filters.categories) && filters.categories.length > 0) {
         const prodCategories = Array.isArray(product.categories)
@@ -121,51 +115,52 @@ const ProductTable: React.FC<Props> = ({ values, regions, categories }) => {
           matchesCategories = false;
         }
       }
-
       return matchesSearch && matchesRegion && matchesStatus && matchesDeleted && matchesCreatedAt && matchesCategories;
     });
   }, [values, filters, searchColumns]);
 
-  const headers = [
-    'ID',
-    'Slug',
-    'Nombre',
-    'Estado',
-    'Eliminado',
-    'Región',
-    'Categorías',
-    'Fecha de Creación',
-    'Opciones',
-  ];
+  const data = useMemo(() => {
+    return filteredProducts.map(product => {
+      const prodCategories = Array.isArray(product.categories)
+        ? product.categories
+        : product.categories
+          ? product.categories.split(',').map(cat => cat.trim())
+          : [];
+      return {
+        ID: product.id,
+        Slug: product.slug,
+        Nombre: product.name,
+        Estado: product.active ? 'activo' : 'inactivo',
+        Eliminado: product.isDeleted ? 'si' : 'no',
+        Región: (() => {
+          const r = regions.find(r => r.code === product.regionId);
+          return r ? `${r.flag} ${r.name}` : 'No asignada';
+        })(),
+        Categorías: prodCategories.length > 0 ? prodCategories.join(', ') : 'Ninguna',
+        'Fecha de Creación': product.createdAt.toISOString().split('T')[0],
+        Opciones: (
+          <Link
+            className="text-indigo-600 hover:text-indigo-900 transition"
+            href={`/admin/products/${product.id}`}
+          >
+            Detalles
+          </Link>
+        ),
+      };
+    });
+  }, [filteredProducts, regions]);
 
-  const data = filteredProducts.map(product => {
-    const prodCategories = Array.isArray(product.categories)
-      ? product.categories
-      : product.categories
-        ? product.categories.split(',').map(cat => cat.trim())
-        : [];
-    return {
-      ID: product.id,
-      Nombre: product.name,
-      Slug: product.slug,
-      Estado: product.active ? 'activo' : 'inactivo',
-      Eliminado: product.isDeleted ? 'si' : 'no',
-      Región: (() => {
-        const r = regions.find(r => r.code === product.regionId);
-        return r ? `${r.flag} ${r.name}` : 'No asignada';
-      })(),
-      Categorías: prodCategories.length > 0 ? prodCategories.join(', ') : 'Ninguna',
-      'Fecha de Creación': product.createdAt.toISOString().split('T')[0],
-      Opciones: (
-        <Link
-          className="text-indigo-600 hover:text-indigo-900 transition"
-          href={`/admin/products/${product.id}`}
-        >
-          Detalles
-        </Link>
-      ),
-    };
-  });
+  const tableHeaders = [
+    { label: 'ID', field: 'ID', sortable: true },
+    { label: 'Slug', field: 'Slug', sortable: true },
+    { label: 'Nombre', field: 'Nombre', sortable: true },
+    { label: 'Estado', field: 'Estado', sortable: false },
+    { label: 'Fecha de Creación', field: 'Fecha de Creación', sortable: true },
+    { label: 'Región', field: 'Región', sortable: false },
+    { label: 'Eliminado', field: 'Eliminado', sortable: false },
+    { label: 'Categorías', field: 'Categorías', sortable: false },
+    { label: 'Opciones', field: 'Opciones', sortable: false },
+  ] as TableHeader[];
 
   return (
     <div>
@@ -174,7 +169,15 @@ const ProductTable: React.FC<Props> = ({ values, regions, categories }) => {
         filtersOptions={filterOptions}
         searchColumns={searchColumns}
       />
-      <DisplayTableInfo headers={headers} data={data} keyField="ID" />
+      <GenericDataTable
+        headers={tableHeaders}
+        data={data}
+        keyField="ID"
+        defaultSortField="ID"
+        defaultSortOrder="asc"
+        itemsPerPageOptions={[10, 25, 50, 100]}
+        defaultItemsPerPage={10}
+      />
     </div>
   );
 };
