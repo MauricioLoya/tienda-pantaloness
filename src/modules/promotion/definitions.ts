@@ -112,7 +112,6 @@ export class PromotionRepository implements IPromotionRepository {
   }
 
   async activate(id: number): Promise<void> {
-    console.log('activate...', id);
     try {
       await prisma.promotion.update({
         where: { id },
