@@ -5,12 +5,12 @@ import Pagination from './Pagination';
 export interface TableHeader {
   label: string;
   field: string;
-  sortable?: boolean; // si es false, la columna no se ordenará; por defecto true si no se define.
+  sortable?: boolean;
 }
 
 export interface GenericDataTableProps {
   headers: TableHeader[];
-  data: { [key: string]: any }[];  // datos ya mapeados para la tabla
+  data: { [key: string]: any }[];
   keyField?: string;
   defaultSortField?: string;
   defaultSortOrder?: 'asc' | 'desc';
@@ -32,7 +32,6 @@ const GenericDataTable: React.FC<GenericDataTableProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(defaultItemsPerPage);
 
-  // Ordenar los datos basado en sortField y sortOrder
   const sortedData = useMemo(() => {
     let sorted = [...data];
     if (sortField) {
@@ -57,28 +56,23 @@ const GenericDataTable: React.FC<GenericDataTableProps> = ({
     return sorted;
   }, [data, sortField, sortOrder]);
 
-  // Calcular los datos de la página actual
   const totalPages = Math.ceil(sortedData.length / itemsPerPage);
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return sortedData.slice(startIndex, startIndex + itemsPerPage);
   }, [sortedData, currentPage, itemsPerPage]);
 
-  // Función que se llama al hacer clic sobre un header
   const handleHeaderClick = (header: TableHeader) => {
-    if (header.sortable === false) return; // si la columna no se debe ordenar, no hace nada.
+    if (header.sortable === false) return;
     if (sortField === header.field) {
-      // siempre se alterna el orden al clic en el mismo header
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
       setSortField(header.field);
       setSortOrder('asc');
     }
-    // Reinicia la página actual al cambiar el sort
     setCurrentPage(1);
   };
 
-  // Genera una clave única para cada fila
   const generateKey = (row: any, index: number) => {
     return row[keyField] || index;
   };
@@ -135,7 +129,7 @@ const GenericDataTable: React.FC<GenericDataTableProps> = ({
           itemsPerPage={itemsPerPage}
           onItemsPerPageChange={(value: number) => {
             setItemsPerPage(value);
-            setCurrentPage(1); // reiniciamos a la primera página al cambiar el límite
+            setCurrentPage(1);
           }}
           itemsPerPageOptions={itemsPerPageOptions}
         />
