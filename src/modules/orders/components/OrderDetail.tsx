@@ -106,15 +106,15 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
             info={[
               {
                 label: 'Método de Pago',
-                value: detail.payment.paymentType,
+                value: detail.payment?.paymentType || 'No definido',
               },
               {
                 label: 'Número de Tarjeta',
-                value: detail.payment.amount,
+                value: detail.payment?.amount || 'No definido',
               },
               {
                 label: 'Stripe',
-                value: detail.payment.stripePayment,
+                value: detail.payment?.stripePayment || 'No definido',
               },
             ]}
           />
