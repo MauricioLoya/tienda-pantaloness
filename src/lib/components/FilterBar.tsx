@@ -32,7 +32,6 @@ interface FilterBarProps {
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, filtersOptions = [], searchColumns }) => {
-  // Usamos un arreglo vacío por defecto en caso de que filtersOptions sea undefined.
   const getInitialFilters = (): FilterCriteria =>
     filtersOptions.reduce((acc, option) => {
       switch (option.type) {
@@ -40,7 +39,6 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, filtersOptions = 
           acc[option.name] = false;
           break;
         case 'dateRange':
-          // Se crean dos claves: una para el inicio y otra para el fin.
           acc[`${option.name}_from`] = '';
           acc[`${option.name}_to`] = '';
           break;
@@ -63,7 +61,6 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, filtersOptions = 
     setFilters(updatedFilters);
   };
 
-  // Función para limpiar los filtros
   const clearFilters = () => {
     const initial = getInitialFilters();
     setFilters(initial);
@@ -75,7 +72,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, filtersOptions = 
 
   return (
     <div className="max-w-12xl mx-auto collapse collapse-arrow bg-base-200 rounded-lg shadow mb-6">
-      <input type="checkbox" defaultChecked className="collapse-checkbox" />
+      <input type="checkbox" className="collapse-checkbox" />
       <div className="collapse-title text-xl font-medium flex items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
