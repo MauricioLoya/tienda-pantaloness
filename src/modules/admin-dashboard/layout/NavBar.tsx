@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 import { SignOut } from "../components/signout-button";
 
 interface Props {
@@ -16,7 +16,7 @@ const NavBar: React.FC<Props> = ({ logoUrl, storeName }) => {
     { name: "Dashboard", href: "/admin", emoji: "📈" },
     {
       name: "Ordenes",
-      href: "/admin/ordenes",
+      href: "/admin/orders",
       emoji: "📦",
     },
     {
