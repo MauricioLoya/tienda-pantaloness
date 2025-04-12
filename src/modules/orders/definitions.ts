@@ -13,7 +13,11 @@ export type OrderStatusItem = {
 export type OrderAdminTableRow = {
   id: number;
   orderNumber: string;
-  client: string;
+  client: {
+    name: string;
+    email: string;
+    phone: string;
+  };
   totalAmount: number;
   status: string;
   createdAt: Date;
@@ -81,7 +85,7 @@ export class OrderRepository implements IOrderRepository {
           orderDate: true,
           regionId: true,
           customer: {
-            select: { name: true },
+            select: { name: true, email: true, phone: true },
           },
           OrderItem: {
             select: { id: true },
@@ -95,7 +99,11 @@ export class OrderRepository implements IOrderRepository {
       return orders.map(order => ({
         id: order.id,
         orderNumber: order.orderNumber || 'N/A',
-        client: order.customer.name,
+        client: {
+          name: order.customer.name || 'N/A',
+          email: order.customer.email || 'N/A',
+          phone: order.customer.phone || 'N/A',
+        },
         totalAmount: order.totalAmount,
         status: order.status,
         createdAt: order.orderDate,

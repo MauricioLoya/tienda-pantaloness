@@ -63,7 +63,7 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
 
   // Las columnas de búsqueda se aplican al filtro "search".
   const searchColumns: SearchColumn[] = [
-    { label: 'Cliente', field: 'client' },
+    // { label: 'Cliente', field: 'client' },
     { label: 'Order #', field: 'orderNumber' },
   ];
 
@@ -113,7 +113,13 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
   const data = useMemo(() => {
     return filteredOrders.map(order => ({
       'Order #': order.orderNumber,
-      Cliente: order.client,
+      Cliente: (
+        <div className="flex flex-col">
+          <span>{order.client.name}</span>
+          <span className="text-xs text-gray-500">{order.client.email}</span>
+          <span className="text-xs text-gray-500">{order.client.phone}</span>
+        </div>
+      ),
       Total: `$${order.totalAmount.toFixed(2)}`,
       Estado: order.status,
       Fecha: order.createdAt.toISOString().split('T')[0],
@@ -122,7 +128,6 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
         const r = regions.find(r => r.code === order.regionId);
         return r ? `${r.flag} ${r.name}` : 'No asignada';
       })(),
-      'Método de Pago': order.paymentMethod,
       Acciones: (
         <Link
           className="text-indigo-600 hover:text-indigo-900 transition"
@@ -143,7 +148,6 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
     { label: 'Fecha', field: 'Fecha', sortable: true },
     { label: 'Región', field: 'Región', sortable: false },
     { label: 'Items', field: 'Items', sortable: true },
-    { label: 'Método de Pago', field: 'Método de Pago', sortable: true },
     { label: 'Acciones', field: 'Acciones', sortable: false },
   ] as TableHeader[];
 
