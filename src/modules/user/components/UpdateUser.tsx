@@ -31,6 +31,7 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ user }) => {
     email: user.email,
     name: user.name,
     superAdmin: user.superAdmin,
+    password: user.password,
     isDeleted: user.isDeleted,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt
@@ -40,6 +41,7 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ user }) => {
     updatedUser.email = values.email
     updatedUser.name = values.name
     updatedUser.superAdmin = values.superAdmin
+    updatedUser.password = values.password
   };
 
   const handleSubmit = async (close: () => void) => {

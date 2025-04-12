@@ -1,11 +1,13 @@
 import { prisma } from '@/lib/prima/client';
 import { User } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 export interface UserItem {
   id: number;
   email: string;
   name: string;
   superAdmin: boolean;
+  password?: string;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -55,11 +57,28 @@ export class UserRepository implements IUserRepository {
   }
 
   async create(data: UserInput): Promise<UserItem> {
+    const existingUser = await this.getByEmail(data.email);
+    if (existingUser) {
+      throw new Error('User already exists');
+    }
+    // Hash the password before saving
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    data.password = hashedPassword;
     const user = await prisma.user.create({ data });
     return fromDatabase(user);
   }
 
   async update(id: number, data: Partial<UserInput>): Promise<UserItem> {
+    console.log('Updating user with ID:', id);
+    console.log('Data to update:', data);
+
+    // Hash the password before saving
+    if (data.password) {
+      console.log('Hashing password');
+
+      const hashedPassword = await bcrypt.hash(data.password, 10);
+      data.password = hashedPassword;
+    }
     const user = await prisma.user.update({ where: { id }, data });
     return fromDatabase(user);
   }
