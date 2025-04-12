@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import React, { useState, useMemo } from 'react';
 import Pagination from './Pagination';
@@ -33,7 +34,7 @@ const GenericDataTable: React.FC<GenericDataTableProps> = ({
   const [itemsPerPage, setItemsPerPage] = useState<number>(defaultItemsPerPage);
 
   const sortedData = useMemo(() => {
-    let sorted = [...data];
+    const sorted = [...data];
     if (sortField) {
       sorted.sort((a, b) => {
         const aVal = a[sortField];

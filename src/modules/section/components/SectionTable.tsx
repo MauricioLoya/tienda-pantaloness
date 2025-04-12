@@ -17,7 +17,7 @@ const SectionTable: React.FC<Props> = ({ values, regions }) => {
   const filteredData = useMemo(() => {
     return values.filter(section => {
       const matchesSearch = filters.search
-        ? section.title.toLowerCase().includes(filters.search.toLowerCase())
+        ? section.title.toLowerCase().includes(filters.search.toString().toLowerCase())
         : true;
       const matchesRegion = filters.region ? section.regionId === filters.region : true;
       return matchesSearch && matchesRegion;
@@ -46,7 +46,7 @@ const SectionTable: React.FC<Props> = ({ values, regions }) => {
 
   return (
     <div>
-      <FilterBar onFilterChange={setFilters} regions={regions} />
+      <FilterBar onFilterChange={setFilters} />
       <DisplayTableInfo headers={headers} data={data} keyField='ID' />
     </div>
   );

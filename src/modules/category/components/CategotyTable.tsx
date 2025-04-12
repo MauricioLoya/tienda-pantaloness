@@ -18,7 +18,7 @@ const CategoryTable: React.FC<Props> = ({ values, regions }) => {
   const filteredData = useMemo(() => {
     return values.filter(category => {
       const matchesSearch = filters.search
-        ? category.name.toLowerCase().includes(filters.search.toLowerCase())
+        ? category.name.toLowerCase().includes(filters.search.toString().toLowerCase())
         : true;
       const matchesRegion = filters.region ? category.regionId === filters.region : true;
       const matchesStatus = filters.isDeleted ? category.isDeleted : !category.isDeleted;
@@ -48,7 +48,7 @@ const CategoryTable: React.FC<Props> = ({ values, regions }) => {
 
   return (
     <div>
-      <FilterBar onFilterChange={setFilters} regions={regions} />
+      <FilterBar onFilterChange={setFilters} />
       <DisplayTableInfo headers={headers} data={data} keyField='ID' />
     </div>
   );

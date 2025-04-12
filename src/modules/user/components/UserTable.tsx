@@ -15,8 +15,8 @@ const UserTable: React.FC<Props> = ({ values }) => {
   const filteredData = useMemo(() => {
     return values.filter(user => {
       const matchesSearch = filters.search
-        ? user.email.toLowerCase().includes(filters.search.toLowerCase()) ||
-          user.name.toLowerCase().includes(filters.search.toLowerCase())
+        ? user.email.toLowerCase().includes(filters.search.toString().toLowerCase()) ||
+        user.name.toLowerCase().includes(filters.search.toString().toLowerCase())
         : true;
       const matchesStatus = filters.isDeleted ? user.isDeleted : !user.isDeleted;
       return matchesSearch && matchesStatus;

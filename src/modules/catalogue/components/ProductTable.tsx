@@ -63,11 +63,11 @@ const ProductTable: React.FC<Props> = ({ values, regions, categories }) => {
     },
   ];
 
-  const searchColumns: SearchColumn[] = [
+  const searchColumns: SearchColumn[] = useMemo(() => [
     { label: 'Nombre', field: 'name' },
     { label: 'Slug', field: 'slug' },
     { label: 'ID', field: 'id' },
-  ];
+  ], []);
 
   const filteredProducts = useMemo(() => {
     const activeSearchColumn = searchColumns.find(sc => {

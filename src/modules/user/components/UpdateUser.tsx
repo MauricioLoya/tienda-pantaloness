@@ -1,7 +1,7 @@
 'use client';
 
 import ModalGeneric from '@/lib/components/ModalGeneric';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import UserForm from './UserForm';
 import { useRouter } from 'next/navigation';
 import { FaEdit } from 'react-icons/fa';

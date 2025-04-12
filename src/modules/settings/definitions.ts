@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from '@/lib/prima/client';
 import { RegionItem } from '../region/definitions';
 export type SettingKey =

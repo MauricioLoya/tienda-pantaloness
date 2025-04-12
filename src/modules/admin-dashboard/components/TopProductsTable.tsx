@@ -19,7 +19,9 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({ products }) => {
                     <tbody>
                         {products.map((product, index) => (
                             <tr key={index} className="hover">
-                                <td>{product.productName}</td>
+                                <td>
+                                    <span className="font-semibold">{index + 1}.</span> {product.productName}
+                                </td>
                                 <td className="text-right">{product.sales}</td>
                             </tr>
                         ))}

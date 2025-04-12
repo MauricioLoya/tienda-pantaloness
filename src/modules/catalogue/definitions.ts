@@ -250,6 +250,7 @@ export class ProductRepository {
         categories: categoryNames,
         createdAt: prod.createdAt,
         imageUrl: prod.ProductImage[0]?.url,
+        isDeleted: prod.isDeleted,
       };
     });
   }

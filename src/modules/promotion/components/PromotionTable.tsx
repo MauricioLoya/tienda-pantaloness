@@ -17,8 +17,8 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
   const filteredData = useMemo(() => {
     return values.filter(promotion => {
       const matchesSearch = filters.search
-        ? promotion.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-          promotion.code.toLowerCase().includes(filters.search.toLowerCase())
+        ? promotion.name.toLowerCase().includes(filters.search.toString().toLowerCase()) ||
+        promotion.code.toLowerCase().includes(filters.search.toString().toLowerCase())
         : true;
       const matchesRegion = filters.region ? promotion.regionId === filters.region : true;
       const matchesDeleted = filters.isDeleted ? promotion.isDeleted : !promotion.isDeleted;
@@ -59,7 +59,7 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
 
   return (
     <div>
-      <FilterBar onFilterChange={setFilters} regions={regions} />
+      <FilterBar onFilterChange={setFilters} />
       <DisplayTableInfo headers={headers} data={data} keyField='Código' />
     </div>
   );
