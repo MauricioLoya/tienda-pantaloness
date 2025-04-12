@@ -36,7 +36,7 @@ const AdminFilters = ({ regions }: Props) => {
 
     return (
         <div className="p-6 bg-white rounded-lg shadow-sm mb-6">
-            <div className="flex flex-col md:flex-row gap-4 items-end">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div className="flex-1">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                         Región
