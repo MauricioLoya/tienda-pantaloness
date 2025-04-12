@@ -6,6 +6,8 @@ import FilterBar, { FilterCriteria, FilterOption, SearchColumn } from '@/lib/com
 import { RegionItem } from '@/modules/region/definitions';
 import { CategoryItem } from '@/modules/category/definitions';
 import GenericDataTable, { TableHeader } from '@/lib/components/GenericDataTable';
+import CopyClipboard from '@/lib/components/CopyClipboard';
+
 type Props = {
   values: ProductAdminTableRow[];
   categories: CategoryItem[];
@@ -139,12 +141,20 @@ const ProductTable: React.FC<Props> = ({ values, regions, categories }) => {
         Categorías: prodCategories.length > 0 ? prodCategories.join(', ') : 'Ninguna',
         'Fecha de Creación': product.createdAt.toISOString().split('T')[0],
         Opciones: (
-          <Link
-            className="text-indigo-600 hover:text-indigo-900 transition"
-            href={`/admin/products/${product.id}`}
-          >
-            Detalles
-          </Link>
+          <div className="flex flex-col items-center gap-2">
+            <Link
+              className="btn btn-xs btn-primary"
+              href={`/admin/products/${product.id}`}
+            >
+              Detalles
+            </Link>
+            <CopyClipboard
+              text={product.slug}
+              label="Copiar Slug"
+              buttonSize="btn-xs"
+              buttonColor="btn-accent"
+            />
+          </div>
         ),
       };
     });
@@ -152,13 +162,13 @@ const ProductTable: React.FC<Props> = ({ values, regions, categories }) => {
 
   const tableHeaders = [
     { label: 'ID', field: 'ID', sortable: true },
-    { label: 'Slug', field: 'Slug', sortable: true },
+    // { label: 'Slug', field: 'Slug', sortable: true },
     { label: 'Nombre', field: 'Nombre', sortable: true },
     { label: 'Estado', field: 'Estado', sortable: false },
     { label: 'Fecha de Creación', field: 'Fecha de Creación', sortable: true },
     { label: 'Región', field: 'Región', sortable: false },
     { label: 'Eliminado', field: 'Eliminado', sortable: false },
-    { label: 'Categorías', field: 'Categorías', sortable: false },
+    // { label: 'Categorías', field: 'Categorías', sortable: false },
     { label: 'Opciones', field: 'Opciones', sortable: false },
   ] as TableHeader[];
 

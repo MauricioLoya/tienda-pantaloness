@@ -1,21 +1,39 @@
-import React from 'react';
-type Props = {
-  info: { label: string; value: string | number | React.ReactNode }[];
+'use client';
+
+import React, { ReactNode } from 'react';
+import CopyClipboard from './CopyClipboard';
+
+type InfoItem = {
+  label: string;
+  value: string | number | boolean | ReactNode | null;
+  copyable?: boolean;
+  onCopy?: () => void;
 };
+
+type Props = {
+  info: InfoItem[];
+};
+
 const DisplayInfo: React.FC<Props> = ({ info }) => {
   return (
-    <div className='flow-root rounded-lg border border-gray-100 py-3 shadow-sm'>
-      <dl className='-my-3 divide-y divide-gray-100 text-sm'>
-        {info.map((item, index) => (
-          <div
-            key={index}
-            className='grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4'
-          >
-            <dt className='font-medium text-gray-900'>{item.label}</dt>
-            <dd className='text-gray-700 sm:col-span-2'>{item.value}</dd>
+    <div className="space-y-4">
+      {info.map((item) => (
+        <div key={item.label} className="flex flex-col">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-500">{item.label}</span>
+            {item.copyable && (
+              <CopyClipboard text={String(item.value)} />
+            )}
           </div>
-        ))}
-      </dl>
+          <div className="mt-1 text-gray-900">
+            {typeof item.value === 'boolean'
+              ? item.value
+                ? 'Sí'
+                : 'No'
+              : item.value || 'No disponible'}
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

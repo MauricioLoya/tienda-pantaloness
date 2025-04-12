@@ -31,9 +31,20 @@ const ProductDetails: React.FC<Props> = ({ productProp }) => {
           <h2 className='text-xl font-semibold mb-4'>Información General</h2>
           <DisplayInfo
             info={[
-              { label: 'Nombre', value: product.name },
+              {
+                label: 'Nombre',
+                value: product.name,
+                copyable: true
+              },
               { label: 'Descripción', value: product.description },
               { label: 'Activo', value: product.active ? 'Sí' : 'No' },
+              { label: 'Región', value: product.regionId },
+              {
+                label: 'Slug',
+                value: product.slug || 'No definido',
+                copyable: true
+              },
+              { label: 'Palabras clave', value: product.searchWords },
             ]}
           />
         </div>
