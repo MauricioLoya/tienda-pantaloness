@@ -5,6 +5,7 @@ import DisplayTableInfo from '@/lib/components/DisplayTableInfo';
 import FilterBar, { FilterCriteria } from '@/lib/components/FilterBar';
 import { Promotion } from '@prisma/client';
 import { RegionItem } from '@/modules/region/definitions';
+import dayjs from 'dayjs';
 
 interface Props {
   values: Promotion[];
@@ -30,7 +31,8 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
     'Código',
     'Nombre',
     'Región',
-    'Fecha',
+    'Fecha Inicio',
+    'Fecha Fin',
     'Descuento',
     'Activo',
     'Eliminado',
@@ -43,7 +45,8 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
       const r = regions.find(r => r.code === promotion.regionId);
       return r ? `${r.flag} ${r.name}` : 'No asignada';
     })(),
-    Fecha: `${promotion.startDate.toISOString().split('T')[0]} a ${promotion.endDate.toISOString().split('T')[0]}`,
+    'Fecha Inicio': `${dayjs(promotion.startDate).format('DD/MMM/YYYY')}`,
+    'Fecha Fin': `${dayjs(promotion.endDate).format('DD/MMM/YYYY')}`,
     Descuento: `${promotion.discount}%`,
     Activo: promotion.active ? 'Sí' : 'No',
     Eliminado: promotion.isDeleted ? 'Sí' : 'No',
