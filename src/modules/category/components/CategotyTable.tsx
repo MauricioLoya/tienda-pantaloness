@@ -26,7 +26,7 @@ const CategoryTable: React.FC<Props> = ({ values, regions }) => {
     });
   }, [values, filters]);
 
-  const headers = ['ID', 'Nombre', 'Descripción', 'Region', 'Estatus', 'Opciones'];
+  const headers = ['ID', 'Nombre', 'Region', 'Estatus', 'Opciones'];
   const data = filteredData.map(category => ({
     ID: category.id,
     Nombre: category.name,
