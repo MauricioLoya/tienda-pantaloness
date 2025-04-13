@@ -19,7 +19,7 @@ const SectionPage: React.FC = async () => {
           <CreateSection
             regions={regions}
             availableProducts={availableProducts}
-            usedOrders={usedOrders}
+            usedOrdersByRegion={usedOrders}
           />
         </div>
         <SectionList />

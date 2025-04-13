@@ -25,6 +25,7 @@ type SectionFormProps = {
   availableProducts?: HighlightProductItem[];
   onValuesChange: (values: SectionInput) => void;
   usedOrdersByRegion?: UsedOrdersByRegion;
+  onValidityChange?: (isValid: boolean) => void
 };
 
 const SectionForm: React.FC<SectionFormProps> = ({
@@ -43,6 +44,7 @@ const SectionForm: React.FC<SectionFormProps> = ({
   availableProducts = [],
   onValuesChange,
   usedOrdersByRegion = {},
+  onValidityChange
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -84,10 +86,8 @@ const SectionForm: React.FC<SectionFormProps> = ({
       }),
   });
 
-  const FormObserver: React.FC<{
-    onChange: (values: SectionInput) => void;
-  }> = ({ onChange }) => {
-    const { values } = useFormikContext<SectionInput>();
+  const FormObserver: React.FC<{ onChange: (values: SectionInput) => void }> = ({ onChange }) => {
+    const { values, isValid } = useFormikContext<SectionInput>();
 
     useEffect(() => {
       if (values && values !== prevValues) {
@@ -95,6 +95,12 @@ const SectionForm: React.FC<SectionFormProps> = ({
         setPrevValues(values);
       }
     }, [values]);
+
+    useEffect(() => {
+      if (onValidityChange) {
+        onValidityChange(isValid);
+      }
+    }, [isValid]);
 
     useEffect(() => {
       handlePreview(values.backgroundUrl);
@@ -129,7 +135,10 @@ const SectionForm: React.FC<SectionFormProps> = ({
       <Formik
         initialValues={initialData as SectionInput}
         validationSchema={validationSchema}
-        onSubmit={() => { }}
+        onSubmit={(values, actions) => {
+          onValuesChange(values);
+          actions.setSubmitting(false);
+        }}
       >
         {({ values, setFieldValue }) => (
           <Form className='flex flex-col gap-4'>

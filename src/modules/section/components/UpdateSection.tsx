@@ -26,15 +26,17 @@ const UpdateSection: React.FC<UpdateSectionProps> = ({
   console.log("usedOrdersByRegion", usedOrdersByRegion)
   const router = useRouter();
   const { showToast } = useToast();
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [updatedSection, setUpdatedSection] = useState<SectionItem>({
     ...section,
   });
+
   const DefaultColors = {
     buttonText: '#063d79',
     buttonColor: '#000000',
   };
+
   const handleValuesChange = (values: SectionInput) => {
-    console.log(values);
     setUpdatedSection(prev => ({
       ...prev,
       type: values.type,
@@ -53,8 +55,10 @@ const UpdateSection: React.FC<UpdateSectionProps> = ({
 
   const handleSubmit = async (close: () => void) => {
     try {
-      console.log(updatedSection);
-
+      if (!isFormValid) {
+        showToast('Por favor corrige los errores antes de enviar el formulario.', 'error');
+        return;
+      }
       await updateSectionAction(updatedSection.id, updatedSection);
       router.refresh();
       showToast('Sección actualizada correctamente', 'success');
@@ -78,6 +82,7 @@ const UpdateSection: React.FC<UpdateSectionProps> = ({
     >
       <SectionForm
         onValuesChange={handleValuesChange}
+        onValidityChange={setIsFormValid}
         initialData={updatedSection}
         regions={regions}
         availableProducts={availableProducts}

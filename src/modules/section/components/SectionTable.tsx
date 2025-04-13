@@ -2,9 +2,10 @@
 
 import React, { useState, useMemo } from 'react';
 import DisplayTableInfo from '@/lib/components/DisplayTableInfo';
-import FilterBar, { FilterCriteria } from '@/lib/components/FilterBar';
+import FilterBar, { FilterCriteria, FilterOption, SearchColumn } from '@/lib/components/FilterBar';
 import { RegionItem } from '@/modules/region/definitions';
 import { SectionItem } from '../definitions';
+import GenericDataTable, { TableHeader } from '@/lib/components/GenericDataTable';
 
 interface Props {
   values: SectionItem[];
@@ -13,28 +14,69 @@ interface Props {
 
 const SectionTable: React.FC<Props> = ({ values, regions }) => {
   const [filters, setFilters] = useState<FilterCriteria>({});
+  const filterOptions: FilterOption[] = [
+    {
+      name: 'search',
+      label: 'Buscar',
+      type: 'text',
+      placeholder: 'Buscar por ID o Título'
+    },
+    {
+      name: 'type',
+      label: 'Tipo',
+      type: 'select',
+      defaultValue: 'Todos',
+      options: [
+        { label: 'Destacados', value: 'highlight' },
+        { label: 'Banner', value: 'banner' },
+      ],
+    },
+    {
+      name: 'region',
+      label: 'Región',
+      type: 'select',
+      defaultValue: 'Todas',
+      options: regions.map(r => ({
+        label: r.flag ? `${r.flag} ${r.name}` : r.name,
+        value: r.code,
+      })),
+    },
+  ];
+  const searchColumns: SearchColumn[] = [
+    { label: 'ID', field: 'id' },
+    { label: 'Título', field: 'title' }
+  ];
 
-  const filteredData = useMemo(() => {
-    return values.filter(section => {
-      const matchesSearch = filters.search
-        ? section.title.toLowerCase().includes(filters.search.toString().toLowerCase())
-        : true;
-      const matchesRegion = filters.region ? section.regionId === filters.region : true;
-      return matchesSearch && matchesRegion;
+  const filteredSections = useMemo(() => {
+    const activeSearchColumn = searchColumns.find(sc => {
+      const val = filters[sc.field];
+      return val && String(val).trim() !== '';
     });
-  }, [values, filters]);
 
-  const headers = ['ID', 'Tipo', 'Título', 'Región', 'Orden', 'Opciones'];
-  const data = filteredData.map(section => ({
-    ID: section.id,
-    Tipo: section.type,
-    Título: section.title,
-    Región: (() => {
+    return values.filter(section => {
+      let matchesSearch = true;
+      if (activeSearchColumn) {
+        matchesSearch = String(section[activeSearchColumn.field as keyof SectionItem])
+          .toLowerCase()
+          .includes(String(filters[activeSearchColumn.field]).toLowerCase());
+      }
+      const matchesRegion = filters.region ? section.regionId === filters.region : true;
+      const matchesType = filters.type ? section.type === filters.type : true;
+
+      return matchesSearch && matchesRegion && matchesType;
+    });
+  }, [values, filters, searchColumns]);
+
+  const data = filteredSections.map(section => ({
+    id: section.id,
+    title: section.title,
+    type: section.type,
+    region: (() => {
       const r = regions.find(rg => rg.code === section.regionId);
       return r ? `${r.flag} ${r.name}` : 'No asignada';
     })(),
-    Orden: section.order,
-    Opciones: (
+    order: section.order,
+    options: (
       <a
         href={`/admin/sections/${section.id}`}
         className='text-indigo-600 hover:text-indigo-900 transition'
@@ -44,10 +86,31 @@ const SectionTable: React.FC<Props> = ({ values, regions }) => {
     ),
   }));
 
+  const tableHeaders: TableHeader[] = [
+    { label: 'ID', field: 'id', sortable: true },
+    { label: 'Título', field: 'title', sortable: true },
+    { label: 'Tipo', field: 'type', sortable: true },
+    { label: 'Región', field: 'region', sortable: true },
+    { label: 'Orden', field: 'order', sortable: true },
+    { label: 'Opciones', field: 'options', sortable: false },
+  ];
+
   return (
     <div>
-      <FilterBar onFilterChange={setFilters} />
-      <DisplayTableInfo headers={headers} data={data} keyField='ID' />
+      <FilterBar
+        onFilterChange={setFilters}
+        filtersOptions={filterOptions}
+        searchColumns={searchColumns}
+      />
+      <GenericDataTable
+        headers={tableHeaders}
+        data={data}
+        keyField="ID"
+        defaultSortField="ID"
+        defaultSortOrder="asc"
+        itemsPerPageOptions={[10, 25, 50, 100]}
+        defaultItemsPerPage={10}
+      />
     </div>
   );
 };

@@ -184,15 +184,19 @@ export class SectionRepository {
         })) || [],
     };
   }
-  async getUsedOrdersByRegion(): Promise<UsedOrdersByRegion> {
+  async getUsedOrdersByRegion(excludeSectionId?: number): Promise<UsedOrdersByRegion> {
     const sections = await prisma.section.findMany({
       select: {
+        id: true,
         regionId: true,
         order: true,
       },
     });
     const usedOrdersByRegion: UsedOrdersByRegion = {};
     sections.forEach(section => {
+      if (excludeSectionId && section.id === excludeSectionId) {
+        return;
+      }
       if (section.regionId) {
         if (!usedOrdersByRegion[section.regionId]) {
           usedOrdersByRegion[section.regionId] = [];
@@ -200,8 +204,6 @@ export class SectionRepository {
         usedOrdersByRegion[section.regionId].push(section.order);
       }
     });
-    console.log('getUsedOrdersByRegion', usedOrdersByRegion);
-
     return usedOrdersByRegion;
   }
 }
