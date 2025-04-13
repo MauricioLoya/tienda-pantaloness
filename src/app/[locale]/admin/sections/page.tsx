@@ -8,7 +8,7 @@ import { SectionRepository } from '@/modules/section/definitions';
 
 const SectionPage: React.FC = async () => {
   const regions = await new RegionRepository().getAll();
-  const usedOrders = await new SectionRepository().getUsedOrders();
+  const usedOrders = await new SectionRepository().getUsedOrdersByRegion();
 
   const availableProducts = await new ProductRepository().getAvailableProducts();
 

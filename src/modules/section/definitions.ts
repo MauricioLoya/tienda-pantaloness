@@ -1,6 +1,9 @@
 import { prisma } from '@/lib/prima/client';
 import { SectionType } from '@prisma/client';
 
+export interface UsedOrdersByRegion {
+  [regionCode: string]: number[];
+}
 export interface HighlightProductItem {
   id: number;
   name: string;
@@ -181,12 +184,24 @@ export class SectionRepository {
         })) || [],
     };
   }
-  async getUsedOrders(): Promise<number[]> {
+  async getUsedOrdersByRegion(): Promise<UsedOrdersByRegion> {
     const sections = await prisma.section.findMany({
       select: {
+        regionId: true,
         order: true,
       },
     });
-    return sections.map(section => section.order);
+    const usedOrdersByRegion: UsedOrdersByRegion = {};
+    sections.forEach(section => {
+      if (section.regionId) {
+        if (!usedOrdersByRegion[section.regionId]) {
+          usedOrdersByRegion[section.regionId] = [];
+        }
+        usedOrdersByRegion[section.regionId].push(section.order);
+      }
+    });
+    console.log('getUsedOrdersByRegion', usedOrdersByRegion);
+
+    return usedOrdersByRegion;
   }
 }

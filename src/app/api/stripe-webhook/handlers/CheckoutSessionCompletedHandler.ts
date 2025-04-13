@@ -3,7 +3,7 @@ import { WebhookEventHandler } from './WebhookEventHandler';
 import { EmailService } from '@/services/email/EmailService';
 import { prisma } from '@/lib/prima/client';
 import { OrderStatus } from '@/lib/types';
-import { generateOrderNumber } from '@/lib/utils';
+import { generateShortId } from '@/lib/utils';
 
 export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
   private stripe: Stripe;
@@ -51,7 +51,7 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
         console.log(`Cliente existente encontrado: ${customer.id}`);
       }
 
-      const orderNumber = generateOrderNumber();
+      const orderNumber = generateShortId();
 
       const shippingDetails: Stripe.Address | null = customerDetails.address;
 

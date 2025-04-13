@@ -7,7 +7,7 @@ import { RegionItem } from '@/modules/region/definitions';
 import Loader from '@/lib/components/Loader';
 import { SectionType } from '@prisma/client';
 import HighlightProductSelector from './HighlightProductSelector';
-import { HighlightProductItem, SectionInput } from '../definitions';
+import { HighlightProductItem, SectionInput, UsedOrdersByRegion } from '../definitions';
 
 const buttonColorOptions = [
   'btn-primary',
@@ -24,7 +24,7 @@ type SectionFormProps = {
   regions: RegionItem[];
   availableProducts?: HighlightProductItem[];
   onValuesChange: (values: SectionInput) => void;
-  usedOrders?: number[];
+  usedOrdersByRegion?: UsedOrdersByRegion;
 };
 
 const SectionForm: React.FC<SectionFormProps> = ({
@@ -42,7 +42,7 @@ const SectionForm: React.FC<SectionFormProps> = ({
   regions,
   availableProducts = [],
   onValuesChange,
-  usedOrders = [],
+  usedOrdersByRegion = {},
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,9 +57,19 @@ const SectionForm: React.FC<SectionFormProps> = ({
     actionUrl: Yup.string().url('Debe ser una URL válida').notRequired(),
     order: Yup.number()
       .min(1, 'El orden debe ser al menos 1')
-      .notOneOf(
-        usedOrders,
-        ({ value }) => `El orden ${value} ya está ocupado. Órdenes usadas: ${usedOrders.join(', ')}`
+      .test(
+        'unique-order-region',
+        function (value) {
+          const { regionId } = this.parent;
+          if (!regionId || !usedOrdersByRegion || !usedOrdersByRegion[regionId]) return true;
+          const ordersForRegion = usedOrdersByRegion[regionId];
+          if (value !== undefined && ordersForRegion.includes(value)) {
+            return this.createError({
+              message: `El orden ${value} ya está ocupado en la región ${regionId}. Órdenes usadas: ${ordersForRegion.join(', ')}`,
+            });
+          }
+          return true;
+        }
       ),
     backgroundUrl: Yup.string().url('Debe ser una URL válida').notRequired(),
     backgroundColor: Yup.string().notRequired(),

@@ -7,18 +7,19 @@ import { RegionItem } from '@/modules/region/definitions';
 import { useRouter } from 'next/navigation';
 import { createSectionAction } from '../actions/createSectionAction';
 import { SectionType } from '@prisma/client';
-import { HighlightProductItem, SectionInput } from '../definitions';
+import { HighlightProductItem, SectionInput, UsedOrdersByRegion } from '../definitions';
 
 interface CreateSectionProps {
   regions: RegionItem[];
   availableProducts: HighlightProductItem[];
-  usedOrders?: number[];
+  usedOrdersByRegion?: UsedOrdersByRegion;
+
 }
 
 const CreateSection: React.FC<CreateSectionProps> = ({
   regions,
   availableProducts,
-  usedOrders,
+  usedOrdersByRegion,
 }) => {
   const router = useRouter();
   const [formValues, setFormValues] = useState<SectionInput>({
@@ -49,14 +50,14 @@ const CreateSection: React.FC<CreateSectionProps> = ({
       actionBtnText='Guardar'
       cancelBtnText='Cancelar'
       actionBtnFunction={close => handleSubmit(close)}
-      cancelBtnFunction={() => {}}
+      cancelBtnFunction={() => { }}
       fullScreen={false}
     >
       <SectionForm
         onValuesChange={values => setFormValues(values)}
         regions={regions}
         availableProducts={availableProducts}
-        usedOrders={usedOrders}
+        usedOrdersByRegion={usedOrdersByRegion}
       />
     </ModalGeneric>
   );

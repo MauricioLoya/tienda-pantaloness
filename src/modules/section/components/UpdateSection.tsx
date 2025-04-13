@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import ModalGeneric from '@/lib/components/ModalGeneric';
 import SectionForm from './SectionForm';
-import { HighlightProductItem, SectionInput, SectionItem } from '../definitions';
+import { HighlightProductItem, SectionInput, SectionItem, UsedOrdersByRegion } from '../definitions';
 import { RegionItem } from '@/modules/region/definitions';
 import { useRouter } from 'next/navigation';
 import { updateSectionAction } from '../actions/updateSectionAction';
@@ -14,15 +14,16 @@ interface UpdateSectionProps {
   section: SectionItem;
   regions: RegionItem[];
   availableProducts: HighlightProductItem[];
-  usedOrders?: number[];
+  usedOrdersByRegion?: UsedOrdersByRegion;
 }
 
 const UpdateSection: React.FC<UpdateSectionProps> = ({
   section,
   regions,
   availableProducts,
-  usedOrders,
+  usedOrdersByRegion,
 }) => {
+  console.log("usedOrdersByRegion", usedOrdersByRegion)
   const router = useRouter();
   const { showToast } = useToast();
   const [updatedSection, setUpdatedSection] = useState<SectionItem>({
@@ -80,7 +81,7 @@ const UpdateSection: React.FC<UpdateSectionProps> = ({
         initialData={updatedSection}
         regions={regions}
         availableProducts={availableProducts}
-        usedOrders={usedOrders}
+        usedOrdersByRegion={usedOrdersByRegion}
       />
     </ModalGeneric>
   );
