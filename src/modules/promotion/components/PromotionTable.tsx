@@ -141,7 +141,7 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
         </Link>
         <CopyClipboard
           text={promotion.code}
-          label="Copiar Slug"
+          label="Copiar código"
           buttonSize="btn-xs"
           buttonColor="btn-accent"
         />

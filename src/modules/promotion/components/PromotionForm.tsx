@@ -1,28 +1,33 @@
 'use client';
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage, useFormikContext } from 'formik';
 import * as Yup from 'yup';
 import { RegionItem } from '@/modules/region/definitions';
 import { PromotionInput } from '../definitions';
 
-
 type PromotionFormProps = {
   initialData?: Partial<PromotionInput>;
   regions: RegionItem[];
   onValuesChange: (values: PromotionInput) => void;
-}
+  onValidityChange?: (isValid: boolean) => void;
+};
 
-const PromotionForm: React.FC<PromotionFormProps> = ({ initialData = {
-  code: '',
-  name: '',
-  description: '',
-  discount: 0,
-  startDate: '',
-  endDate: '',
-  active: false,
-  regionId: '',
-}, onValuesChange, regions }) => {
+const PromotionForm: React.FC<PromotionFormProps> = ({
+  initialData = {
+    code: '',
+    name: '',
+    description: '',
+    discount: 0,
+    startDate: '',
+    endDate: '',
+    active: false,
+    regionId: '',
+  },
+  onValuesChange,
+  regions,
+  onValidityChange,
+}) => {
+  const [prevValues, setPrevValues] = useState<PromotionInput | null>(null);
 
   const PromotionSchema = Yup.object().shape({
     code: Yup.string()
@@ -44,10 +49,21 @@ const PromotionForm: React.FC<PromotionFormProps> = ({ initialData = {
   });
 
   const FormObserver: React.FC<{ onChange: (values: PromotionInput) => void }> = ({ onChange }) => {
-    const { values } = useFormikContext<PromotionInput>();
+    const { values, isValid } = useFormikContext<PromotionInput>();
+
     useEffect(() => {
-      onChange(values);
+      if (values && values !== prevValues) {
+        onChange(values);
+        setPrevValues(values);
+      }
     }, [values, onChange]);
+
+    useEffect(() => {
+      if (onValidityChange) {
+        onValidityChange(isValid);
+      }
+    }, [isValid, onValidityChange]);
+
     return null;
   };
 
@@ -56,7 +72,11 @@ const PromotionForm: React.FC<PromotionFormProps> = ({ initialData = {
       <Formik
         initialValues={initialData as PromotionInput}
         validationSchema={PromotionSchema}
-        onSubmit={() => { }}
+        validateOnMount
+        onSubmit={(values, actions) => {
+          onValuesChange(values);
+          actions.setSubmitting(false);
+        }}
       >
         {() => (
           <Form>

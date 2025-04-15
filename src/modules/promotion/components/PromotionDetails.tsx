@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Promotion } from '@prisma/client';
 import { FaCopy } from 'react-icons/fa';
 import DisplayInfo from '@/lib/components/DisplayInfo';
+import CopyClipboard from '@/lib/components/CopyClipboard';
 
 type Props = {
   promotion: Promotion;
@@ -25,15 +26,14 @@ const PromotionDetails: React.FC<Props> = ({ promotion }) => {
             {
               label: 'Código',
               value: (
-                <div>
-                  <span>{promotion.code}</span>
-                  <button
-                    onClick={() => copyToClipboard(promotion.code)}
-                    className={`ml-2 text-grey-500 hover:underline ${copied ? 'text-green-500' : ''
-                      }`}
-                  >
-                    {copied ? 'Copiado!' : <FaCopy />}
-                  </button>
+                <div className="flex flex-row items-center gap-2">
+                  {promotion.code}
+                  <CopyClipboard
+                    text={promotion.code}
+                    label="Copiar código"
+                    buttonSize="btn-xs"
+                    buttonColor="btn-accent"
+                  />
                 </div>
               ),
             },
@@ -41,11 +41,11 @@ const PromotionDetails: React.FC<Props> = ({ promotion }) => {
             { label: 'Descripción', value: promotion.description },
             { label: 'Descuento', value: `${promotion.discount}%` },
             {
-              label: 'Fecha de inicio',
+              label: 'Fecha inicio',
               value: promotion.startDate.toISOString().split('T')[0],
             },
             {
-              label: 'Fecha de inicio',
+              label: 'Fecha fin',
               value: promotion.endDate.toISOString().split('T')[0],
             },
             { label: 'Activo', value: promotion.active ? 'Sí' : 'No' },

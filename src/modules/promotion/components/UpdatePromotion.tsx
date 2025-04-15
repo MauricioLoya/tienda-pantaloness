@@ -17,7 +17,7 @@ interface UpdatePromotionProps {
 const UpdatePromotion: React.FC<UpdatePromotionProps> = ({ promotion, regions }) => {
   const router = useRouter();
   const { showToast } = useToast();
-  const [updatedPromotion] = useState<PromotionItem>({
+  const [updatedPromotion, setUpdatedPromotion] = useState<PromotionItem>({
     id: promotion.id,
     code: promotion.code,
     name: promotion.name,
@@ -29,28 +29,36 @@ const UpdatePromotion: React.FC<UpdatePromotionProps> = ({ promotion, regions })
     active: promotion.active,
     isDeleted: promotion.isDeleted,
     createdAt: promotion.createdAt,
-  })
+  });
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   const handleValuesChange = (values: PromotionInput) => {
-    updatedPromotion.code = values.code;
-    updatedPromotion.name = values.name;
-    updatedPromotion.description = values.description;
-    updatedPromotion.discount = values.discount;
-    updatedPromotion.regionId = values.regionId;
-    updatedPromotion.startDate = values.startDate;
-    updatedPromotion.endDate = values.endDate;
-    updatedPromotion.active = values.active;
+    setUpdatedPromotion(prev => ({
+      ...prev,
+      code: values.code,
+      name: values.name,
+      description: values.description,
+      discount: values.discount,
+      regionId: values.regionId,
+      startDate: values.startDate,
+      endDate: values.endDate,
+      active: values.active,
+    }));
   };
 
   const handleSubmit = async (close: () => void) => {
+    if (!isFormValid) {
+      showToast('Por favor, corrige los errores en el formulario.', 'error');
+      return;
+    }
     try {
       await UpdatePromotionAction(updatedPromotion);
       router.refresh();
       showToast('Promoción actualizada correctamente', 'success');
       close();
     } catch (errors) {
-      showToast('Por favor, corrige los errores en el formulario.', 'error');
-      console.error(errors)
+      showToast('Error al actualizar la promoción. Verifica el formulario.', 'error');
+      console.error(errors);
     }
   };
 
@@ -68,6 +76,7 @@ const UpdatePromotion: React.FC<UpdatePromotionProps> = ({ promotion, regions })
         initialData={updatedPromotion}
         onValuesChange={handleValuesChange}
         regions={regions}
+        onValidityChange={setIsFormValid}
       />
     </ModalGeneric>
   );
