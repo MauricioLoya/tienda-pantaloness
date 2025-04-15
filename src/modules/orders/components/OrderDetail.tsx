@@ -20,6 +20,16 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
                 label: 'Estado',
                 value: detail.order.status,
               },
+              {
+                label: 'Número de Orden',
+                value: detail.order.orderNumber,
+                copyable: true,
+              },
+              {
+                label: 'ID de Orden',
+                value: detail.order.id,
+                copyable: true,
+              },
             ]}
           />
           <DisplayInfo
@@ -27,14 +37,17 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
               {
                 label: 'Cliente',
                 value: detail.customer.name,
+                copyable: true,
               },
               {
                 label: 'Correo Electrónico',
                 value: detail.customer.email,
+                copyable: true,
               },
               {
                 label: 'Teléfono',
                 value: detail.customer.phone,
+                copyable: true,
               },
             ]}
           />
@@ -107,10 +120,6 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
               {
                 label: 'Método de Pago',
                 value: detail.payment?.paymentType || 'No definido',
-              },
-              {
-                label: 'Número de Tarjeta',
-                value: detail.payment?.amount || 'No definido',
               },
               {
                 label: 'Stripe',

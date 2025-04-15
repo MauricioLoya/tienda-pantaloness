@@ -2,9 +2,20 @@
 
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { useCart } from '@/context/CartContext';
+import { useEffect } from 'react';
 
 export default function CheckoutSuccessPage() {
   const t = useTranslations('CheckoutSuccessPage');
+  const { clearCart } = useCart();
+
+  useEffect(() => {
+    setTimeout(() => {
+      clearCart();
+    }, 700);
+  }, []);
+
+
 
   return (
     <div className='container mx-auto px-4 py-16 text-center'>

@@ -16,24 +16,27 @@ type Props = {
 
 const DisplayInfo: React.FC<Props> = ({ info }) => {
   return (
-    <div className="space-y-4">
-      {info.map((item) => (
-        <div key={item.label} className="flex flex-col">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-500">{item.label}</span>
-            {item.copyable && (
-              <CopyClipboard text={String(item.value)} />
-            )}
+    <div className="flow-root rounded-lg border border-base-200 py-3 shadow-sm">
+      <dl className="-my-3 divide-y divide-base-200 text-sm">
+        {info.map((item, index) => (
+          <div
+            key={index}
+            className="grid grid-cols-1 gap-1 p-3 even:bg-base-200 sm:grid-cols-3 sm:gap-4"
+          >
+            <dt className="font-medium text-base-content">{item.label}</dt>
+            <dd className="text-base-content/80 sm:col-span-2">
+              {item.value}
+              {item.copyable && (
+                <span className="ml-2">
+                  <CopyClipboard
+                    text={String(item.value)}
+                  />
+                </span>
+              )}
+            </dd>
           </div>
-          <div className="mt-1 text-gray-900">
-            {typeof item.value === 'boolean'
-              ? item.value
-                ? 'Sí'
-                : 'No'
-              : item.value || 'No disponible'}
-          </div>
-        </div>
-      ))}
+        ))}
+      </dl>
     </div>
   );
 };
