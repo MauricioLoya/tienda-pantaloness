@@ -1,7 +1,6 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import { Promotion } from '@prisma/client';
-import { FaCopy } from 'react-icons/fa';
 import DisplayInfo from '@/lib/components/DisplayInfo';
 import CopyClipboard from '@/lib/components/CopyClipboard';
 
@@ -10,14 +9,6 @@ type Props = {
 };
 
 const PromotionDetails: React.FC<Props> = ({ promotion }) => {
-  const [copied, setCopied] = useState(false);
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
   return (
     <div className='p-4'>
       <div className='grid gap-6'>

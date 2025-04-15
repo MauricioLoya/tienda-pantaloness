@@ -99,7 +99,6 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
   }, [values, filters]);
 
 
-  // Mapeamos la data para la tabla.
   const data = useMemo(() => {
     return filteredOrders.map(order => ({
       'Order #': order.orderNumber,
@@ -120,10 +119,7 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
         return r ? `${r.flag} ${r.name}` : 'No asignada';
       })(),
       Acciones: (
-        <Link
-          className="text-indigo-600 hover:text-indigo-900 transition"
-          href={`/admin/orders/${order.id}`}
-        >
+        <Link className="btn btn-xs btn-primary" href={`/admin/orders/${order.id}`}>
           Detalles
         </Link>
       ),

@@ -59,10 +59,10 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
     },
   ];
 
-  const searchColumns: SearchColumn[] = [
+  const searchColumns: SearchColumn[] = useMemo(() => ([
     { label: 'Nombre', field: 'name' },
     { label: 'Código', field: 'code' },
-  ];
+  ]), []);
 
   const filteredData = useMemo(() => {
     const activeSearchColumn = searchColumns.find((sc) => {

@@ -41,10 +41,10 @@ const CategoryTable: React.FC<Props> = ({ values, regions }) => {
     },
   ];
 
-  const searchColumns: SearchColumn[] = [
+  const searchColumns: SearchColumn[] = useMemo(() => ([
     { label: 'Nombre', field: 'name' },
     { label: 'ID', field: 'id' },
-  ];
+  ]), []);
 
   const filteredData = useMemo(() => {
     const activeSearchColumn = searchColumns.find(sc => {

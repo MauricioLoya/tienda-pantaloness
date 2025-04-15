@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import DisplayTableInfo from '@/lib/components/DisplayTableInfo';
 import FilterBar, { FilterCriteria, FilterOption, SearchColumn } from '@/lib/components/FilterBar';
 import { RegionItem } from '@/modules/region/definitions';
 import { SectionItem } from '../definitions';
 import GenericDataTable, { TableHeader } from '@/lib/components/GenericDataTable';
+import Link from 'next/link';
 
 interface Props {
   values: SectionItem[];
@@ -42,10 +42,10 @@ const SectionTable: React.FC<Props> = ({ values, regions }) => {
       })),
     },
   ];
-  const searchColumns: SearchColumn[] = [
+  const searchColumns: SearchColumn[] = useMemo(() => ([
     { label: 'ID', field: 'id' },
     { label: 'Título', field: 'title' }
-  ];
+  ]), []);
 
   const filteredSections = useMemo(() => {
     const activeSearchColumn = searchColumns.find(sc => {
@@ -77,12 +77,9 @@ const SectionTable: React.FC<Props> = ({ values, regions }) => {
     })(),
     order: section.order,
     options: (
-      <a
-        href={`/admin/sections/${section.id}`}
-        className='text-indigo-600 hover:text-indigo-900 transition'
-      >
+      <Link className="btn btn-xs btn-primary" href={`/admin/sections/${section.id}`}>
         Detalles
-      </a>
+      </Link>
     ),
   }));
 

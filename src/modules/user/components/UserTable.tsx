@@ -38,11 +38,11 @@ const UserTable: React.FC<Props> = ({ values }) => {
     },
   ];
 
-  const searchColumns: SearchColumn[] = [
+  const searchColumns: SearchColumn[] = useMemo(() => ([
     { label: 'Email', field: 'email' },
     { label: 'Nombre', field: 'name' },
     { label: 'ID', field: 'id' },
-  ];
+  ]), []);
 
   const filteredData = useMemo(() => {
     const activeSearchColumn = searchColumns.find(sc => {
@@ -87,14 +87,9 @@ const UserTable: React.FC<Props> = ({ values }) => {
     createdAt: new Date(user.createdAt).toLocaleDateString(),
     superAdmin: user.superAdmin ? 'Sí' : 'No',
     isDeleted: user.isDeleted ? 'Sí' : 'No',
-
-
     options: (
       <div className="flex flex-col items-center gap-2">
-        <Link
-          className="btn btn-xs btn-primary"
-          href={`/admin/users/${user.id}`}
-        >
+        <Link className="btn btn-xs btn-primary" href={`/admin/users/${user.id}`}>
           Detalles
         </Link>
         <CopyClipboard
