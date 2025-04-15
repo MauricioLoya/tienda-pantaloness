@@ -36,8 +36,8 @@ const ProductDetails = async ({ slug, selectedSize }: Props) => {
           {/* Right side - Product Details */}
           <div className='space-y-6'>
             <div>
-              <h1 className='text-3xl font-bold'>{productDetail.product.name}</h1>
-              <p className='text-gray-600'>Temporada de otoño</p>
+              <h1 className='text-3xl font-bold mb-4'>{productDetail.product.name}</h1>
+              <p className='text-gray-600 mt-4'>{productDetail.product.description}</p>
             </div>
 
             <ProductVariantSelector
