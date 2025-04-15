@@ -274,4 +274,152 @@ export class ProductListRepository implements IProductListRepository {
       throw error;
     }
   }
+
+  async getRelatedProducts(slug: string): Promise<ItemProduct[]> {
+    try {
+      // Obtener el producto principal para encontrar relacionados
+      const product = await this.productDetail(slug);
+      if (!product) {
+        return [];
+      }
+
+      // Extraer información relevante del producto para buscar similares
+      const productInfo = {
+        categories: await prisma.productCategory.findMany({
+          where: { productId: product.product.id },
+          select: { categoryId: true },
+        }),
+        variants: product.variants,
+        name: product.product.name,
+        regionId: product.product.regionId,
+      };
+
+      // Prioridad:
+      // 1. Misma categoría,
+      // 2. Rango de precio similar,
+      // 3. Mismas tallas,
+      // 4. Palabras similares en nombre
+      const relatedProductsQuery = await prisma.product.findMany({
+        where: {
+          // Excluir el producto actual
+          id: { not: product.product.id },
+
+          // Solo productos activos y disponibles
+          active: true,
+          isDeleted: false,
+
+          // Misma región
+          regionId: productInfo.regionId,
+
+          // Al menos un producto con variante disponible
+          ProductVariant: {
+            some: {
+              stock: { gt: 0 },
+            },
+          },
+
+          // Condiciones OR para encontrar relaciones
+          OR: [
+            // 1. Misma categoría (mayor prioridad)
+            {
+              ProductCategory: {
+                some: {
+                  categoryId: {
+                    in: productInfo.categories.map(c => c.categoryId),
+                  },
+                },
+              },
+            },
+            // 2. Rango de precio similar (±25%)
+            {
+              ProductVariant: {
+                some: {
+                  price: {
+                    gte: Math.min(...productInfo.variants.map(v => v.price * 0.75)),
+                    lte: Math.max(...productInfo.variants.map(v => v.price * 1.25)),
+                  },
+                },
+              },
+            },
+            // 3. Palabras clave similares en nombre o descripción
+            {
+              OR: [
+                {
+                  name: {
+                    contains: productInfo.name.split(' ')[0],
+                    mode: 'insensitive',
+                  },
+                },
+                {
+                  searchWords: {
+                    contains: productInfo.name.split(' ')[0],
+                    mode: 'insensitive',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        // Incluir imágenes y variantes para la respuesta
+        include: {
+          ProductImage: {
+            select: {
+              url: true,
+            },
+            take: 1,
+          },
+          ProductVariant: {
+            select: {
+              price: true,
+              discount: true,
+              discountPrice: true,
+              size: true,
+            },
+          },
+          ProductCategory: {
+            select: {
+              categoryId: true,
+            },
+          },
+        },
+        // Ordenar para dar prioridad a productos que coinciden con más criterios
+        orderBy: [
+          // Dar prioridad a productos nuevos (creados recientemente)
+          { createdAt: 'desc' },
+        ],
+        // Limitar a 8 resultados
+        take: 8,
+      });
+
+      // Transformar resultados al formato ItemProduct
+      return relatedProductsQuery.map(product => {
+        // Encontrar la variante con el precio más bajo para mostrar
+        const variantWithLowestPrice = product.ProductVariant.reduce(
+          (prev, current) => (current.price < prev.price ? current : prev),
+          product.ProductVariant[0]
+        );
+
+        // Verificar si alguna variante tiene descuento
+        const hasDiscount = product.ProductVariant.some(
+          variant => variant.discount && variant.discount > 0
+        );
+
+        return {
+          id: product.id,
+          slug: product.slug ?? '',
+          name: product.name,
+          description: product.description,
+          price: variantWithLowestPrice.price,
+          discountedPrice: variantWithLowestPrice.discountPrice,
+          discountPercentage: variantWithLowestPrice.discount,
+          thumbnail: product.ProductImage[0]?.url ?? 'not-found',
+          hasDiscount,
+          isAvailable: product.active,
+        };
+      });
+    } catch (error) {
+      console.log('Error fetching related products:', error);
+      return [];
+    }
+  }
 }
