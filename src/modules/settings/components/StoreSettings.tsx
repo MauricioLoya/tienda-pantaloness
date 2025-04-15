@@ -4,7 +4,7 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
 import { RegionFreeShipping, RegionItem } from "../../region/definitions";
-import { saveSettingsAction } from "../actions/saveSettingsAction";
+// import { saveSettingsAction } from "../actions/saveSettingsAction";
 import { useToast } from '@/lib/components/ToastContext';
 import { useRouter } from 'next/navigation';
 
@@ -46,7 +46,10 @@ const StoreSettings: React.FC<Props> = ({ initialValues, regions }) => {
     try {
       console.log("values", values);
 
-      await saveSettingsAction(values);
+
+
+      // await saveSettingsAction(values);
+      // saveSettingsAction
       router.refresh();
       showToast('Configuraciones actualizadas correctamente', 'success');
     } catch (error: unknown) {
