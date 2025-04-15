@@ -28,10 +28,13 @@ const UpdateCategory: React.FC<UpdateCategoryProps> = ({ category, regions }) =>
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   const handleValuesChange = (values: CategoryInput) => {
-    updatedCategory.name = values.name;
-    updatedCategory.description = values.description;
-    updatedCategory.regionId = values.regionId;
-    updatedCategory.backgroundUrl = values.backgroundUrl;
+    setUpdatedCategory(prev => ({
+      ...prev,
+      name: values.name,
+      description: values.description,
+      regionId: values.regionId,
+      backgroundUrl: values.backgroundUrl
+    }));
   };
 
   const handleSubmit = async (close: () => void) => {

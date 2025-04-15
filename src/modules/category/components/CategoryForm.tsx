@@ -28,6 +28,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [previewError, setPreviewError] = useState(false);
+  const [prevValues, setPrevValues] = useState<CategoryInput | null>(null);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('El nombre es requerido'),
@@ -39,7 +40,10 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   const FormObserver: React.FC<{ onChange: (values: CategoryInput) => void }> = ({ onChange }) => {
     const { values, isValid } = useFormikContext<CategoryInput>();
     useEffect(() => {
-      onChange(values);
+      if (values && values !== prevValues) {
+        onChange(values);
+        setPrevValues(values);
+      }
     }, [values, onChange]);
     useEffect(() => {
       if (onValidityChange) {
