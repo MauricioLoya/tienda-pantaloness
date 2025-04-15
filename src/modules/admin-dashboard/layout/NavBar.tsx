@@ -21,7 +21,7 @@ const NavBar: React.FC<Props> = ({ logoUrl, storeName }) => {
     },
     {
       name: "Categorias",
-      href: "/admin/categorias",
+      href: "/admin/categories",
       emoji: "📝",
     },
     {

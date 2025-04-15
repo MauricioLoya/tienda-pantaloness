@@ -17,23 +17,28 @@ interface UpdateCategoryProps {
 
 const UpdateCategory: React.FC<UpdateCategoryProps> = ({ category, regions }) => {
   const router = useRouter();
-  const [updatedCategory] = useState<CategoryItem>({
+  const { showToast } = useToast();
+  const [updatedCategory, setUpdatedCategory] = useState<CategoryItem>({
     id: category.id,
     name: category.name || '',
     description: category.description || '',
     regionId: category.regionId || '',
     backgroundUrl: category.backgroundUrl || '',
   });
-  const { showToast } = useToast();
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   const handleValuesChange = (values: CategoryInput) => {
     updatedCategory.name = values.name;
     updatedCategory.description = values.description;
     updatedCategory.regionId = values.regionId;
     updatedCategory.backgroundUrl = values.backgroundUrl;
-  }
+  };
 
   const handleSubmit = async (close: () => void) => {
+    if (!isFormValid) {
+      showToast('Por favor, corrige los errores en el formulario.', 'error');
+      return;
+    }
     try {
       await updateCategoryAction(updatedCategory);
       router.refresh();
@@ -50,19 +55,20 @@ const UpdateCategory: React.FC<UpdateCategoryProps> = ({ category, regions }) =>
 
   return (
     <ModalGeneric
-      title={`Actualizar Categoría`}
-      triggerBtnTitle='Actualizar'
-      actionBtnText='Actualizar Cambios'
+      title="Actualizar Categoría"
+      triggerBtnTitle="Actualizar"
       triggerBtnContent={<FaEdit />}
-      cancelBtnText='Cancelar'
+      actionBtnText="Actualizar Cambios"
+      cancelBtnText="Cancelar"
       actionBtnFunction={handleSubmit}
       cancelBtnFunction={() => console.log('Cancelar')}
       fullScreen={false}
     >
       <CategoryForm
-        onValuesChange={handleValuesChange}
         initialData={updatedCategory}
+        onValuesChange={handleValuesChange}
         regions={regions}
+        onValidityChange={setIsFormValid}
       />
     </ModalGeneric>
   );

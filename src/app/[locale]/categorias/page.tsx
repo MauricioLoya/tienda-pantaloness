@@ -3,7 +3,7 @@ import HeroSection from '@/modules/category-list/components/HeroSection';
 import CategoryList from '@/modules/category-list/components/CategoryList';
 import CategoryListSkeleton from '@/modules/category-list/components/CategoryListSkeleton';
 
-async function CategoriasPage() {
+async function CategoriesPage() {
   return (
     <div className='min-h-screen'>
       <HeroSection />
@@ -14,4 +14,4 @@ async function CategoriasPage() {
   );
 }
 
-export default CategoriasPage;
+export default CategoriesPage;

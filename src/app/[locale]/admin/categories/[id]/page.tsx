@@ -33,7 +33,7 @@ export default async function CategoryDetailsPage({ params }: Props) {
   );
   return (
     <>
-      <HeaderContent title={`Detalle de ${category.name}`} href='./' action={actions} />
+      <HeaderContent title={`Detalles de ${category.name}`} href='./' action={actions} />
       <div className='flex flex-col gap-6 '>
         <CategoryDetail category={category} region={region} products={products} />
       </div>
