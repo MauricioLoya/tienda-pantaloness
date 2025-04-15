@@ -7,6 +7,7 @@ import FilterBar, { FilterCriteria, FilterOption, SearchColumn } from '@/lib/com
 import { RegionItem } from '@/modules/region/definitions';
 import GenericDataTable, { TableHeader } from '@/lib/components/GenericDataTable';
 
+
 type Props = {
   values: OrderAdminTableRow[];
   regions: RegionItem[];
@@ -41,17 +42,6 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
         { label: 'Pendiente', value: 'pending' },
         { label: 'Completado', value: 'completed' },
         { label: 'Cancelado', value: 'cancelled' },
-      ],
-    },
-    {
-      name: 'paymentMethod',
-      label: 'Método de Pago',
-      type: 'select',
-      defaultValue: 'Todos',
-      options: [
-        { label: 'Tarjeta de crédito', value: 'card' },
-        { label: 'Paypal', value: 'paypal' },
-        { label: 'Transferencia', value: 'transfer' },
       ],
     },
     {
@@ -115,7 +105,8 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
       'Order #': order.orderNumber,
       Cliente: (
         <div className="flex flex-col">
-          <span>{order.client.name}</span>
+          <span>{order.client.name}
+          </span>
           <span className="text-xs text-gray-500">{order.client.email}</span>
           <span className="text-xs text-gray-500">{order.client.phone}</span>
         </div>

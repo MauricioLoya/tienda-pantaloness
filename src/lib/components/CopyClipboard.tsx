@@ -11,10 +11,10 @@ interface CopyClipboardProps {
 
 const CopyClipboard: React.FC<CopyClipboardProps> = ({
     text,
-    label = 'Copiar',
+    label = '',
     className = '',
-    buttonSize = 'btn-sm',
-    buttonColor = 'btn-success'
+    buttonSize = 'btn-xs',
+    buttonColor = 'btn-primary',
 }) => {
     const [copied, setCopied] = useState(false);
 
