@@ -1,10 +1,9 @@
 'use client';
 
 import ModalGeneric from '@/lib/components/ModalGeneric';
-import React, { useState } from 'react';
+import React from 'react';
 import UserForm from './UserForm';
 import { useRouter } from 'next/navigation';
-import { FaEdit } from 'react-icons/fa';
 import { useToast } from '@/lib/components/ToastContext';
 import { UserInput, UserItem } from '../definitions';
 import { updateUserAction } from '../actions/updateUserAction';
