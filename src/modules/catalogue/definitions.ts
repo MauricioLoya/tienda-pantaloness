@@ -79,15 +79,29 @@ export class ProductRepository {
       };
     });
   }
-  async getAvailableProducts(regionId: string): Promise<HighlightProductItem[]> {
-    const products = await prisma.product.findMany({
-      where: { active: true, regionId },
-      include: {
-        ProductImage: true,
-        ProductVariant: true,
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+  async getAvailableProducts(regionId?: string): Promise<HighlightProductItem[]> {
+    let products = [];
+
+    if (regionId) {
+      products = await prisma.product.findMany({
+        where: { active: true, regionId },
+        include: {
+          ProductImage: true,
+          ProductVariant: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+    } else {
+      products = await prisma.product.findMany({
+        where: { active: true },
+        include: {
+          ProductImage: true,
+          ProductVariant: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+    }
+
     return products.map(prod => ({
       id: prod.id,
       name: prod.name,
