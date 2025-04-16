@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Formik, Form, Field, ErrorMessage, useFormikContext } from 'formik';
+import React, { useState } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { CategoryInput } from '../definitions';
 import { RegionItem } from '@/modules/region/definitions';
@@ -10,8 +10,7 @@ import Loader from '@/lib/components/Loader';
 type CategoryFormProps = {
   initialData?: Partial<CategoryInput>;
   regions: RegionItem[];
-  onValuesChange: (values: CategoryInput) => void;
-  onValidityChange?: (isValid: boolean) => void;
+  onSuccess: (values: CategoryInput) => void;
 };
 
 const CategoryForm: React.FC<CategoryFormProps> = ({
@@ -22,36 +21,22 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
     backgroundUrl: '',
   },
   regions,
-  onValuesChange,
-  onValidityChange,
+  onSuccess,
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [previewError, setPreviewError] = useState(false);
-  const [prevValues, setPrevValues] = useState<CategoryInput | null>(null);
 
-  const validationSchema = Yup.object().shape({
-    name: Yup.string().required('El nombre es requerido'),
-    description: Yup.string().required('La descripción es requerida'),
-    regionId: Yup.string().required('La región es requerida'),
-    backgroundUrl: Yup.string().url('Debe ser una URL válida').notRequired(),
-  });
 
-  const FormObserver: React.FC<{ onChange: (values: CategoryInput) => void }> = ({ onChange }) => {
-    const { values, isValid } = useFormikContext<CategoryInput>();
-    useEffect(() => {
-      if (values && values !== prevValues) {
-        onChange(values);
-        setPrevValues(values);
-      }
-    }, [values, onChange]);
-    useEffect(() => {
-      if (onValidityChange) {
-        onValidityChange(isValid);
-      }
-    }, [isValid, onValidityChange]);
-    return null;
-  };
+  const validationSchema = Yup.object(
+    {
+      name: Yup.string().required('El nombre es requerido'),
+      description: Yup.string().required('La descripción es requerida'),
+      regionId: Yup.string().required('La región es requerida'),
+      backgroundUrl: Yup.string().url('Debe ser una URL válida').required('La URL es requerida'),
+    }
+  );
+
 
   const handlePreview = (url: string) => {
     if (url) {
@@ -79,10 +64,8 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
       <Formik
         initialValues={initialData as CategoryInput}
         validationSchema={validationSchema}
-        validateOnMount
-        onSubmit={(values, actions) => {
-          onValuesChange(values);
-          actions.setSubmitting(false);
+        onSubmit={(values) => {
+          onSuccess(values);
         }}
       >
         {() => (
@@ -137,7 +120,11 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
                 </div>
               )}
             </div>
-            <FormObserver onChange={onValuesChange} />
+            <div className="flex justify-end mt-4">
+              <button type="submit" className="btn btn-primary">
+                Guardar
+              </button>
+            </div>
           </Form>
         )}
       </Formik>

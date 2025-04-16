@@ -5,11 +5,6 @@ export interface ModalCreateProps {
   triggerBtnTitle: string;
   triggerBtnContent?: React.ReactNode;
   children: React.ReactNode;
-  actionBtnText: string;
-  cancelBtnText: string;
-  btnColor?: string;
-  actionBtnFunction: (close: () => void) => void;
-  cancelBtnFunction?: () => void;
   fullScreen?: boolean;
 }
 
@@ -19,11 +14,6 @@ const ModalGeneric: React.FC<ModalCreateProps> = props => {
     triggerBtnTitle,
     triggerBtnContent,
     children,
-    actionBtnText,
-    cancelBtnText,
-    btnColor = 'btn-primary',
-    actionBtnFunction,
-    cancelBtnFunction,
     fullScreen,
   } = props;
 
@@ -33,12 +23,6 @@ const ModalGeneric: React.FC<ModalCreateProps> = props => {
     modalRef.current?.close();
   };
 
-  const cancel = () => {
-    if (cancelBtnFunction) {
-      cancelBtnFunction();
-    }
-    close();
-  };
 
   const modalBoxClasses = fullScreen
     ? 'modal-box w-full h-full max-w-full p-6'
@@ -47,7 +31,7 @@ const ModalGeneric: React.FC<ModalCreateProps> = props => {
   return (
     <>
       <button
-        className={`btn btn-active ${btnColor}`}
+        className={`btn btn-active btn-primary btn-sm`}
         data-backdrop='static'
         onClick={() => modalRef?.current?.showModal()}
       >
@@ -58,16 +42,30 @@ const ModalGeneric: React.FC<ModalCreateProps> = props => {
       </button>
       <dialog id='my_modal_4' ref={modalRef} className='modal'>
         <div className={modalBoxClasses}>
-          <h1 className='font-bold text-xl mb-6'>{title}</h1>
-          {children}
-          <div className='modal-action'>
-            <button className='btn mr-4' onClick={() => cancel()}>
-              {cancelBtnText}
-            </button>
-            <button className='btn btn-primary' onClick={() => actionBtnFunction(close)}>
-              {actionBtnText}
+          <div className='flex items-center justify-between relative'>
+            <h1 className='font-bold text-xl mb-6'>{title}</h1>
+            <button
+              className='btn btn-sm btn-circle absolute right-2 top-2'
+              onClick={close}
+            >
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                className='h-5 w-5'
+                fill='none'
+                viewBox='0 0 24 24'
+                stroke='currentColor'
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  d='M6 18L18 6M6 6l12 12'
+                />
+              </svg>
             </button>
           </div>
+
+          {children}
         </div>
       </dialog>
     </>

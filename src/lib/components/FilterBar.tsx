@@ -72,7 +72,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, filtersOptions = 
 
   return (
     <div className="max-w-12xl mx-auto collapse collapse-arrow bg-base-200 rounded-lg shadow mb-6">
-      <input type="checkbox" className="collapse-checkbox" />
+      <input defaultChecked type="checkbox" className="collapse-checkbox" />
       <div className="collapse-title text-xl font-medium flex items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
