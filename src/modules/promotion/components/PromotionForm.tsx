@@ -1,15 +1,15 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { Formik, Form, Field, ErrorMessage, useFormikContext } from 'formik';
+import React from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { RegionItem } from '@/modules/region/definitions';
 import { PromotionInput } from '../definitions';
 
+
 type PromotionFormProps = {
   initialData?: Partial<PromotionInput>;
   regions: RegionItem[];
-  onValuesChange: (values: PromotionInput) => void;
-  onValidityChange?: (isValid: boolean) => void;
+  onSuccess: (values: PromotionInput) => void;
 };
 
 const PromotionForm: React.FC<PromotionFormProps> = ({
@@ -23,11 +23,11 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
     active: false,
     regionId: '',
   },
-  onValuesChange,
+  onSuccess,
   regions,
-  onValidityChange,
+
 }) => {
-  const [prevValues, setPrevValues] = useState<PromotionInput | null>(null);
+
 
   const PromotionSchema = Yup.object().shape({
     code: Yup.string()
@@ -39,6 +39,7 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
     description: Yup.string().required('La descripción es requerida'),
     discount: Yup.number()
       .min(0, 'El descuento debe ser mayor o igual a 0')
+      .max(100, 'El descuento debe ser menor o igual a 100')
       .required('El descuento es requerido'),
     startDate: Yup.date().required('La fecha de inicio es requerida'),
     endDate: Yup.date()
@@ -48,34 +49,15 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
     regionId: Yup.string().required('La región es requerida'),
   });
 
-  const FormObserver: React.FC<{ onChange: (values: PromotionInput) => void }> = ({ onChange }) => {
-    const { values, isValid } = useFormikContext<PromotionInput>();
 
-    useEffect(() => {
-      if (values && values !== prevValues) {
-        onChange(values);
-        setPrevValues(values);
-      }
-    }, [values, onChange]);
-
-    useEffect(() => {
-      if (onValidityChange) {
-        onValidityChange(isValid);
-      }
-    }, [isValid, onValidityChange]);
-
-    return null;
-  };
 
   return (
     <div className=''>
       <Formik
         initialValues={initialData as PromotionInput}
         validationSchema={PromotionSchema}
-        validateOnMount
-        onSubmit={(values, actions) => {
-          onValuesChange(values);
-          actions.setSubmitting(false);
+        onSubmit={values => {
+          onSuccess(values);
         }}
       >
         {() => (
@@ -155,7 +137,15 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
               </Field>
               <ErrorMessage name='regionId' component='div' className='text-red-500 text-sm' />
             </div>
-            <FormObserver onChange={onValuesChange} />
+
+            <div className='flex justify-end'>
+              <button
+                type='submit'
+                className='btn btn-primary'
+              >
+                Guardar
+              </button>
+            </div>
           </Form>
         )}
       </Formik>
