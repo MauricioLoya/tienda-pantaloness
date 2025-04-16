@@ -1,9 +1,10 @@
 'use client';
 import CartButton from '@/modules/landing/cart/CartButton';
-import Link from 'next/link';
+
 import React, { useState } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 
 const NavBar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
