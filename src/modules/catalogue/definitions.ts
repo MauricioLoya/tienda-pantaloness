@@ -79,9 +79,9 @@ export class ProductRepository {
       };
     });
   }
-  async getAvailableProducts(): Promise<HighlightProductItem[]> {
+  async getAvailableProducts(regionId: string): Promise<HighlightProductItem[]> {
     const products = await prisma.product.findMany({
-      where: { active: true },
+      where: { active: true, regionId },
       include: {
         ProductImage: true,
         ProductVariant: true,
