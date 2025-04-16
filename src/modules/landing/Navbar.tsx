@@ -14,7 +14,7 @@ const NavBar: React.FC = () => {
       <div className='navbar max-w-7xl mx-auto'>
         <div className='flex-1'>
           <Link href={'/'} className='btn btn-ghost text-xl text-primary'>
-            {t('brand_name')}
+            <img className='h-12' src="./logo.png" alt="logo" />
           </Link>
         </div>
 
