@@ -11,7 +11,6 @@ const orderStatusOptions = [
   'Entregado',
   'Cancelado',
   'Reembolsado',
-  'Preparando envío',
 ];
 
 const validationSchema = Yup.object().shape({

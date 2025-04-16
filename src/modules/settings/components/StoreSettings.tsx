@@ -19,7 +19,7 @@ const validationSchema = Yup.object({
   logoUrl: Yup.string()
     .url("Debe ser una URL válida")
     .required("El logo es obligatorio"),
-  freeShippingByRegion: Yup.array()
+  freeShippingByRegion: Yup.array().required("Debes agregar al menos una región")
     .of(
       Yup.object({
         regionCode: Yup.string().required("Región requerida"),
@@ -32,7 +32,7 @@ const validationSchema = Yup.object({
         enabled: Yup.boolean(),
       })
     )
-    .min(1, "Debes definir al menos una región"),
+    .min(2, "Debes todas las  regiones"),
 });
 interface Props {
   regions: RegionItem[];
@@ -69,9 +69,12 @@ const StoreSettings: React.FC<Props> = ({ initialValues, regions }) => {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
-        enableReinitialize
+      // validateOnChange={true}
+      // validateOnBlur={true}
+      // enableReinitialize={true}
       >
-        {({ values }) => (
+        {({ values, errors }) => (
+
           <Form className="space-y-8">
             {/* Información básica de la tienda */}
             <div className="bg-white p-6 rounded-lg shadow-sm border">
@@ -212,7 +215,7 @@ const StoreSettings: React.FC<Props> = ({ initialValues, regions }) => {
                 )}
               </FieldArray>
             </div>
-
+            {JSON.stringify(errors.freeShippingByRegion)}
             <div className="flex justify-end">
               <button type="submit" className="btn btn-primary px-6">
                 Guardar configuración
@@ -221,7 +224,7 @@ const StoreSettings: React.FC<Props> = ({ initialValues, regions }) => {
           </Form>
         )}
       </Formik>
-    </div>
+    </div >
   );
 };
 
