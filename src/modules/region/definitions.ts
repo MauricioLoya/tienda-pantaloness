@@ -10,7 +10,10 @@ export type RegionItem = {
   code: string;
   name: string;
   flag: string;
+  amountForFreeShipping?: number;
+  isFreeShipping?: boolean;
   currencyCode?: string;
+  shippingPrice?: number;
   taxRate?: number;
 };
 
@@ -21,7 +24,10 @@ export class RegionRepository {
       code: region.code,
       name: region.name,
       flag: region.flag,
+      isFreeShipping: region.isFreeShipping || undefined,
+      amountForFreeShipping: region.amountForFreeShipping || undefined,
       currencyCode: region.currencyCode || undefined,
+      shippingPrice: region.shippingPrice || undefined,
       taxRate: region.taxRate || undefined,
     }));
   }
@@ -35,6 +41,9 @@ export class RegionRepository {
       code: region.code,
       name: region.name,
       flag: region.flag,
+      isFreeShipping: region.isFreeShipping || undefined,
+      shippingPrice: region.shippingPrice || undefined,
+      amountForFreeShipping: region.amountForFreeShipping || undefined,
       currencyCode: region.currencyCode || undefined,
       taxRate: region.taxRate || undefined,
     };
