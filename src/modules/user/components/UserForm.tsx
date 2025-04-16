@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { Formik, Form, Field, ErrorMessage, useFormikContext } from 'formik';
+import React from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { UserInput } from '../definitions';
 
 
 type UserFormProps = {
   initialData?: Partial<UserInput>;
-  onValuesChange: (values: UserInput) => void;
+  onSuccess: (values: UserInput) => void;
 }
 
 const UserForm: React.FC<UserFormProps> = ({
@@ -18,7 +18,7 @@ const UserForm: React.FC<UserFormProps> = ({
     password: '',
     superAdmin: false
   },
-  onValuesChange,
+  onSuccess,
 }) => {
 
   const validationSchema = Yup.object().shape({
@@ -28,22 +28,13 @@ const UserForm: React.FC<UserFormProps> = ({
     superAdmin: Yup.boolean(),
   });
 
-
-  const FormObserver: React.FC<{
-    onChange: (values: UserInput) => void;
-  }> = ({ onChange }) => {
-    const { values } = useFormikContext<UserInput>();
-    useEffect(() => {
-      onChange(values);
-    }, [values, onChange]);
-    return null;
-  };
-
   return (
     <Formik
       initialValues={initialData as UserInput}
       validationSchema={validationSchema}
-      onSubmit={() => { }}
+      onSubmit={values => {
+        onSuccess(values);
+      }}
     >
       {() => (
         <Form>
@@ -79,7 +70,14 @@ const UserForm: React.FC<UserFormProps> = ({
             <label className='text-gray-700'>Super Admin</label>
           </div>
 
-          <FormObserver onChange={onValuesChange} />
+          <div className='flex justify-end'>
+            <button
+              type='submit'
+              className='btn btn-primary'
+            >
+              Guardar
+            </button>
+          </div>
         </Form>
       )}
     </Formik>

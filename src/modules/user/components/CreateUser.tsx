@@ -1,46 +1,26 @@
 'use client';
 import ModalGeneric from '@/lib/components/ModalGeneric';
-import React, { useState } from 'react';
+import React from 'react';
 import UserForm from './UserForm';
 import { useRouter } from 'next/navigation';
 import { createUserAction } from '../actions/createUserAction';
-import { UserInput } from '../definitions';
+import { useToast } from '@/lib/components/ToastContext';
 
 const CreateUser = () => {
   const router = useRouter();
-
-  const [formState, setFormState] = useState<UserInput>({
-    email: '',
-    name: '',
-    password: '',
-    superAdmin: false,
-  });
-
-  const handleValuesChange = (values: UserInput) => {
-    setFormState(values);
-  };
-
-  const handleSubmit = async (close: () => void) => {
-    try {
-      await createUserAction(formState);
-      close();
-      router.refresh();
-    } catch (error) {
-      alert('Por favor, corrige los errores en el formulario.');
-      console.log(error);
-    }
-  };
-
+  const { showToast } = useToast();
   return (
     <ModalGeneric
       title='Crear Usuario'
       triggerBtnTitle='Crear'
-      actionBtnText='Guardar'
-      actionBtnFunction={handleSubmit}
-      cancelBtnText='Cancelar'
-      cancelBtnFunction={() => console.log('Cancelar')}
     >
-      <UserForm initialData={formState} onValuesChange={handleValuesChange} />
+      <UserForm
+        onSuccess={async (values) => {
+          await createUserAction(values);
+          showToast('Usuario agregado correctamente', 'success');
+          router.refresh();
+        }}
+      />
     </ModalGeneric>
   );
 };
