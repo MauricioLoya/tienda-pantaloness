@@ -31,7 +31,7 @@ const ModalGeneric: React.FC<ModalCreateProps> = props => {
   return (
     <>
       <button
-        className={`btn btn-active btn-primary btn-sm`}
+        className={`btn btn-active btn-primary`}
         data-backdrop='static'
         onClick={() => modalRef?.current?.showModal()}
       >

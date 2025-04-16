@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { Formik, Form, Field, ErrorMessage, useFormikContext } from 'formik';
+import React from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { OrderStatusInput } from '../definitions';
 
@@ -19,26 +19,22 @@ const validationSchema = Yup.object().shape({
     .required('El estado es requerido'),
 });
 
-const FormObserver: React.FC<{ onChange: (values: OrderStatusInput) => void }> = ({ onChange }) => {
-  const { values } = useFormikContext<OrderStatusInput>();
-  useEffect(() => {
-    onChange(values);
-  }, [values, onChange]);
-  return null;
-};
+
 
 interface OrderFormProps {
   initialData?: Partial<OrderStatusInput>;
-  onValuesChange: (values: OrderStatusInput) => void;
+  onSuccess: (values: OrderStatusInput) => void;
 }
 
-const OrderForm: React.FC<OrderFormProps> = ({ initialData = { status: 'Pendiente' }, onValuesChange }) => {
+const OrderForm: React.FC<OrderFormProps> = ({ initialData = { status: 'Pendiente' }, onSuccess }) => {
   return (
     <div className="card shadow p-6 mb-6">
       <Formik
         initialValues={initialData as OrderStatusInput}
         validationSchema={validationSchema}
-        onSubmit={() => { }}
+        onSubmit={(values) => {
+          onSuccess(values);
+        }}
       >
         {() => (
           <Form className="flex flex-col gap-4">
@@ -54,7 +50,16 @@ const OrderForm: React.FC<OrderFormProps> = ({ initialData = { status: 'Pendient
               </Field>
               <ErrorMessage name="status" component="div" className="text-red-500 text-sm" />
             </div>
-            <FormObserver onChange={onValuesChange} />
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+
+                className="btn btn-primary"
+              >
+                Guardar Cambios
+              </button>
+            </div>
           </Form>
         )}
       </Formik>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import ModalGeneric from '@/lib/components/ModalGeneric';
 import CategoryForm from './CategoryForm';
 import { CategoryInput, CategoryItem } from '../definitions';
@@ -18,60 +18,32 @@ interface UpdateCategoryProps {
 const UpdateCategory: React.FC<UpdateCategoryProps> = ({ category, regions }) => {
   const router = useRouter();
   const { showToast } = useToast();
-  const [updatedCategory, setUpdatedCategory] = useState<CategoryItem>({
-    id: category.id,
-    name: category.name || '',
-    description: category.description || '',
-    regionId: category.regionId || '',
-    backgroundUrl: category.backgroundUrl || '',
-  });
-  const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
-  const handleValuesChange = (values: CategoryInput) => {
-    setUpdatedCategory(prev => ({
-      ...prev,
-      name: values.name,
-      description: values.description,
-      regionId: values.regionId,
-      backgroundUrl: values.backgroundUrl
-    }));
-  };
-
-  const handleSubmit = async (close: () => void) => {
-    if (!isFormValid) {
-      showToast('Por favor, corrige los errores en el formulario.', 'error');
-      return;
-    }
-    try {
-      await updateCategoryAction(updatedCategory);
-      router.refresh();
-      showToast('Categoría actualizada correctamente', 'success');
-      close();
-    } catch (error: unknown) {
-      showToast(
-        error instanceof Error ? error.message : 'Error al actualizar la categoría',
-        'error'
-      );
-      console.error(error);
-    }
-  };
 
   return (
     <ModalGeneric
       title="Actualizar Categoría"
       triggerBtnTitle="Actualizar"
       triggerBtnContent={<FaEdit />}
-      actionBtnText="Actualizar Cambios"
-      cancelBtnText="Cancelar"
-      actionBtnFunction={handleSubmit}
-      cancelBtnFunction={() => console.log('Cancelar')}
       fullScreen={false}
     >
       <CategoryForm
-        initialData={updatedCategory}
-        onValuesChange={handleValuesChange}
+        initialData={{
+          name: category.name,
+          description: category.description,
+          regionId: category.regionId,
+          backgroundUrl: category.backgroundUrl,
+        }}
         regions={regions}
-        onValidityChange={setIsFormValid}
+        onSuccess={async (values: CategoryInput) => {
+          await updateCategoryAction({
+            id: category.id,
+            ...values,
+          });
+          showToast('Categoría actualizada correctamente', 'success');
+          router.refresh();
+        }}
+
       />
     </ModalGeneric>
   );
