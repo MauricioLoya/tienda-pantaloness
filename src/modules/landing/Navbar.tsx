@@ -1,6 +1,5 @@
 'use client';
 import CartButton from '@/modules/landing/cart/CartButton';
-
 import React, { useState } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslations } from 'next-intl';

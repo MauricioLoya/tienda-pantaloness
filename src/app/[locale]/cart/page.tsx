@@ -1,7 +1,6 @@
 'use client';
 
 import { useCart } from '@/context/CartContext';
-import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { formatPrice } from '@/lib/utils';
@@ -12,6 +11,7 @@ import {
 } from '@/modules/checkout/actions/createCheckoutSessionAction';
 import { CheckoutInput } from '@/modules/checkout/validations';
 import { useLocale, useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 
 export default function CartPage() {
   const locale = useLocale();

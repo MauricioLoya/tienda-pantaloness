@@ -1,6 +1,7 @@
 import React from 'react';
-import Link from 'next/link';
+
 import { formatPrice } from '@/lib/utils';
+import { Link } from '@/i18n/navigation';
 
 type Props = {
   slug: string;
