@@ -11,6 +11,7 @@ type CategoryFormProps = {
   initialData?: Partial<CategoryInput>;
   regions: RegionItem[];
   onSuccess: (values: CategoryInput) => void;
+  onClose: () => void;
 };
 
 const CategoryForm: React.FC<CategoryFormProps> = ({
@@ -22,6 +23,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   },
   regions,
   onSuccess,
+  onClose,
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,6 +68,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
         validationSchema={validationSchema}
         onSubmit={(values) => {
           onSuccess(values);
+          onClose();
         }}
       >
         {() => (
@@ -120,7 +123,14 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
                 </div>
               )}
             </div>
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="btn btn-ghost"
+              >
+                Cancelar
+              </button>
               <button type="submit" className="btn btn-primary">
                 Guardar
               </button>

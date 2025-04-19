@@ -14,10 +14,17 @@ const CreateCategory = ({ regions }: { regions: RegionItem[] }) => {
       title='Agregar categoria'
       triggerBtnTitle='Agregar'
     >
-      <CategoryForm regions={regions} onSuccess={async (values) => {
-        await createCategoryAction(values);
-        router.refresh();
-      }} />
+
+      {(closeModal) => (
+        <CategoryForm
+          regions={regions}
+          onSuccess={async (values) => {
+            await createCategoryAction(values);
+            router.refresh();
+          }}
+          onClose={closeModal}
+        />
+      )}
     </ModalGeneric>
   );
 };

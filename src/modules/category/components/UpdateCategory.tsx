@@ -27,24 +27,28 @@ const UpdateCategory: React.FC<UpdateCategoryProps> = ({ category, regions }) =>
       triggerBtnContent={<FaEdit />}
       fullScreen={false}
     >
-      <CategoryForm
-        initialData={{
-          name: category.name,
-          description: category.description,
-          regionId: category.regionId,
-          backgroundUrl: category.backgroundUrl,
-        }}
-        regions={regions}
-        onSuccess={async (values: CategoryInput) => {
-          await updateCategoryAction({
-            id: category.id,
-            ...values,
-          });
-          showToast('Categoría actualizada correctamente', 'success');
-          router.refresh();
-        }}
+      {(closeModal) => (
+        <CategoryForm
+          initialData={{
+            name: category.name,
+            description: category.description,
+            regionId: category.regionId,
+            backgroundUrl: category.backgroundUrl,
+          }}
+          regions={regions}
+          onSuccess={async (values: CategoryInput) => {
+            await updateCategoryAction({
+              id: category.id,
+              ...values,
+            });
+            showToast('Categoría actualizada correctamente', 'success');
+            router.refresh();
+          }}
+          onClose={closeModal}
 
-      />
+        />
+      )}
+
     </ModalGeneric>
   );
 };
