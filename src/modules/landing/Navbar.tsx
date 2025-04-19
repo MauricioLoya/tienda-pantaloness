@@ -1,9 +1,9 @@
 'use client';
 import CartButton from '@/modules/landing/cart/CartButton';
-import Link from 'next/link';
 import React, { useState } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 
 const NavBar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,7 +14,7 @@ const NavBar: React.FC = () => {
       <div className='navbar max-w-7xl mx-auto'>
         <div className='flex-1'>
           <Link href={'/'} className='btn btn-ghost text-xl text-primary'>
-            {t('brand_name')}
+            <img className='h-12' src="/logo.png" alt="logo" />
           </Link>
         </div>
 

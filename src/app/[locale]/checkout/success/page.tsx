@@ -1,9 +1,10 @@
 'use client';
 
-import Link from 'next/link';
+
 import { useTranslations } from 'next-intl';
 import { useCart } from '@/context/CartContext';
 import { useEffect } from 'react';
+import { Link } from '@/i18n/navigation';
 
 export default function CheckoutSuccessPage() {
   const t = useTranslations('CheckoutSuccessPage');

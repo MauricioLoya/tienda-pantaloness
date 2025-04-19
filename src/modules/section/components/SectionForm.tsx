@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Formik, Form, Field, ErrorMessage, useFormikContext } from 'formik';
+import React, { useState } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { RegionItem } from '@/modules/region/definitions';
 import Loader from '@/lib/components/Loader';
 import { SectionType } from '@prisma/client';
 import HighlightProductSelector from './HighlightProductSelector';
 import { HighlightProductItem, SectionInput, UsedOrdersByRegion } from '../definitions';
+
 
 const buttonColorOptions = [
   'btn-primary',
@@ -23,9 +24,9 @@ type SectionFormProps = {
   initialData?: Partial<SectionInput>;
   regions: RegionItem[];
   availableProducts?: HighlightProductItem[];
-  onValuesChange: (values: SectionInput) => void;
   usedOrdersByRegion?: UsedOrdersByRegion;
-  onValidityChange?: (isValid: boolean) => void
+
+  onSuccess: (values: SectionInput) => void;
 };
 
 const SectionForm: React.FC<SectionFormProps> = ({
@@ -42,14 +43,13 @@ const SectionForm: React.FC<SectionFormProps> = ({
   },
   regions,
   availableProducts = [],
-  onValuesChange,
   usedOrdersByRegion = {},
-  onValidityChange
+  onSuccess
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [previewError, setPreviewError] = useState(false);
-  const [prevValues, setPrevValues] = useState<SectionInput | null>(null);
+
 
   const validationSchema = Yup.object().shape({
     type: Yup.mixed<SectionType>().oneOf(Object.values(SectionType)).required(),
@@ -86,28 +86,7 @@ const SectionForm: React.FC<SectionFormProps> = ({
       }),
   });
 
-  const FormObserver: React.FC<{ onChange: (values: SectionInput) => void }> = ({ onChange }) => {
-    const { values, isValid } = useFormikContext<SectionInput>();
 
-    useEffect(() => {
-      if (values && values !== prevValues) {
-        onChange(values);
-        setPrevValues(values);
-      }
-    }, [values]);
-
-    useEffect(() => {
-      if (onValidityChange) {
-        onValidityChange(isValid);
-      }
-    }, [isValid]);
-
-    useEffect(() => {
-      handlePreview(values.backgroundUrl);
-    }, [values.backgroundUrl]);
-
-    return null;
-  };
 
   const handlePreview = (url: string) => {
     if (url) {
@@ -135,9 +114,8 @@ const SectionForm: React.FC<SectionFormProps> = ({
       <Formik
         initialValues={initialData as SectionInput}
         validationSchema={validationSchema}
-        onSubmit={(values, actions) => {
-          onValuesChange(values);
-          actions.setSubmitting(false);
+        onSubmit={values => {
+          onSuccess(values);
         }}
       >
         {({ values, setFieldValue }) => (
@@ -284,7 +262,11 @@ const SectionForm: React.FC<SectionFormProps> = ({
               )}
             </div>
 
-            <FormObserver onChange={onValuesChange} />
+            <div className='flex justify-end mt-4'>
+              <button type='submit' className='btn btn-primary'>
+                Guardar Cambios
+              </button>
+            </div>
           </Form>
         )}
       </Formik>

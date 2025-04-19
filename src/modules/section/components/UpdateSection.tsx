@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import ModalGeneric from '@/lib/components/ModalGeneric';
 import SectionForm from './SectionForm';
 import { HighlightProductItem, SectionInput, SectionItem, UsedOrdersByRegion } from '../definitions';
@@ -23,67 +23,51 @@ const UpdateSection: React.FC<UpdateSectionProps> = ({
   availableProducts,
   usedOrdersByRegion,
 }) => {
-  console.log("usedOrdersByRegion", usedOrdersByRegion)
+
   const router = useRouter();
   const { showToast } = useToast();
-  const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  const [updatedSection, setUpdatedSection] = useState<SectionItem>({
-    ...section,
-  });
-
-  const DefaultColors = {
-    buttonText: '#063d79',
-    buttonColor: '#000000',
-  };
-
-  const handleValuesChange = (values: SectionInput) => {
-    setUpdatedSection(prev => ({
-      ...prev,
-      type: values.type,
-      title: values.title,
-      description: values.description,
-      regionId: values.regionId,
-      actionUrl: values.actionUrl,
-      order: values.order,
-      backgroundUrl: values.backgroundUrl,
-      backgroundColor: values.backgroundColor,
-      highlightProducts: values.highlightProducts ?? [],
-      buttonText: values.buttonText ?? DefaultColors.buttonText,
-      buttonColor: values.buttonColor ?? DefaultColors.buttonColor,
-    }));
-  };
-
-  const handleSubmit = async (close: () => void) => {
-    try {
-      if (!isFormValid) {
-        showToast('Por favor corrige los errores antes de enviar el formulario.', 'error');
-        return;
-      }
-      await updateSectionAction(updatedSection.id, updatedSection);
-      router.refresh();
-      showToast('Sección actualizada correctamente', 'success');
-      close();
-    } catch (error: unknown) {
-      showToast(error instanceof Error ? error.message : 'Error al actualizar la sección', 'error');
-      console.error(error);
-    }
-  };
 
   return (
     <ModalGeneric
       title='Actualizar Sección'
       triggerBtnTitle='Actualizar'
       triggerBtnContent={<FaEdit />}
-      actionBtnText='Actualizar Cambios'
-      cancelBtnText='Cancelar'
-      actionBtnFunction={handleSubmit}
-      cancelBtnFunction={() => console.log('Cancelar')}
+
       fullScreen={false}
     >
       <SectionForm
-        onValuesChange={handleValuesChange}
-        onValidityChange={setIsFormValid}
-        initialData={updatedSection}
+        initialData={
+          {
+            type: section.type,
+            title: section.title,
+            regionId: section.regionId,
+            description: section.description,
+            buttonText: section.buttonText,
+            buttonColor: section.buttonColor,
+            actionUrl: section.actionUrl,
+            backgroundColor: section.backgroundColor,
+            backgroundUrl: section.backgroundUrl,
+            highlightProducts: section.highlightProducts,
+            order: section.order,
+          }
+        }
+        onSuccess={async (values: SectionInput) => {
+          await updateSectionAction(section.id, {
+            type: values.type,
+            title: values.title,
+            regionId: values.regionId,
+            description: values.description,
+            buttonText: values.buttonText,
+            buttonColor: values.buttonColor,
+            actionUrl: values.actionUrl,
+            backgroundColor: values.backgroundColor,
+            backgroundUrl: values.backgroundUrl,
+            highlightProducts: values.highlightProducts,
+            order: section.order,
+          });
+          showToast('Sección actualizada correctamente', 'success');
+          router.refresh();
+        }}
         regions={regions}
         availableProducts={availableProducts}
         usedOrdersByRegion={usedOrdersByRegion}

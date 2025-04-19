@@ -1,7 +1,8 @@
 'use client';
 
 import { useCart } from '@/context/CartContext';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+
 
 const CartButton = () => {
   const { itemCount } = useCart();
