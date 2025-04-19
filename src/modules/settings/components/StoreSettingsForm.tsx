@@ -3,16 +3,12 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
-import { RegionFreeShipping, RegionItem } from "../../region/definitions";
-// import { saveSettingsAction } from "../actions/saveSettingsAction";
+import { saveSettingsAction } from "../actions/saveSettingsAction";
 import { useToast } from '@/lib/components/ToastContext';
 import { useRouter } from 'next/navigation';
+import { RegionItem } from "@/modules/region/definitions";
+import { SettingsFormValues } from "../definitions";
 
-interface SettingsFormValues {
-  storeName: string;
-  logoUrl: string;
-  freeShippingByRegion: (RegionFreeShipping & { regularShippingPrice: number })[];
-}
 
 const validationSchema = Yup.object({
   storeName: Yup.string().required("El nombre de la tienda es obligatorio"),
@@ -34,11 +30,12 @@ const validationSchema = Yup.object({
     )
     .min(2, "Debes todas las  regiones"),
 });
+
 interface Props {
   regions: RegionItem[];
   initialValues: SettingsFormValues;
 }
-const StoreSettings: React.FC<Props> = ({ initialValues, regions }) => {
+const StoreSettingsForm: React.FC<Props> = ({ initialValues, regions }) => {
   const { showToast } = useToast();
   const router = useRouter();
 
@@ -48,8 +45,8 @@ const StoreSettings: React.FC<Props> = ({ initialValues, regions }) => {
 
 
 
-      // await saveSettingsAction(values);
-      // saveSettingsAction
+      await saveSettingsAction(values);
+      // saveSettingsAction 
       router.refresh();
       showToast('Configuraciones actualizadas correctamente', 'success');
     } catch (error: unknown) {
@@ -69,14 +66,13 @@ const StoreSettings: React.FC<Props> = ({ initialValues, regions }) => {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
-      // validateOnChange={true}
-      // validateOnBlur={true}
-      // enableReinitialize={true}
+        validateOnChange={true}
+        validateOnBlur={true}
+        enableReinitialize={true}
       >
         {({ values, errors }) => (
 
           <Form className="space-y-8">
-            {/* Información básica de la tienda */}
             <div className="bg-white p-6 rounded-lg shadow-sm border">
               <h2 className="text-xl font-semibold mb-4">Información General</h2>
 
@@ -123,7 +119,6 @@ const StoreSettings: React.FC<Props> = ({ initialValues, regions }) => {
               </div>
             </div>
 
-            {/* Configuración de envíos por región */}
             <div className="bg-white p-6 rounded-lg shadow-sm border">
               <h2 className="text-xl font-semibold mb-4">Configuración de Envíos por Región</h2>
 
@@ -228,4 +223,4 @@ const StoreSettings: React.FC<Props> = ({ initialValues, regions }) => {
   );
 };
 
-export default StoreSettings;
+export default StoreSettingsForm;
