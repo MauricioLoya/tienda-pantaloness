@@ -3,17 +3,16 @@ import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { RegionItem } from '@/modules/region/definitions';
-import { PromotionInput } from '../definitions';
+import { PromotionFormValues, PromotionInput } from '../definitions';
 import { format } from 'date-fns';
 
 
 type PromotionFormProps = {
-  initialData?: Partial<PromotionInput>;
+  initialData?: Partial<PromotionFormValues>;
   regions: RegionItem[];
   onSuccess: (values: PromotionInput) => void;
   onClose: () => void;
 };
-
 
 const PromotionForm: React.FC<PromotionFormProps> = ({
   initialData = {
@@ -30,8 +29,29 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
   onSuccess,
   onClose,
 }) => {
-  console.log('initialData', initialData);
+  function formatDate(d?: string | Date): string {
+    if (!d) return '';
+    const iso = typeof d === 'string'
+      ? new Date(d).toISOString()
+      : d.toISOString();
+    return iso.slice(0, 10); // "YYYY-MM-DD"
+  }
 
+  const defaults: PromotionFormValues = {
+    code: '',
+    name: '',
+    description: '',
+    discount: 0,
+    startDate: formatDate(initialData?.startDate),
+    endDate: formatDate(initialData?.endDate),
+    active: initialData?.active ?? false,
+    regionId: initialData?.regionId ?? '',
+  };
+
+  const initialValues: PromotionFormValues = {
+    ...defaults,
+    ...initialData,
+  };
   const PromotionSchema = Yup.object().shape({
     code: Yup.string()
       .required('El código es requerido')
@@ -51,19 +71,20 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
     active: Yup.boolean(),
     regionId: Yup.string().required('La región es requerida'),
   });
-  const formatedData = {
-    ...initialData,
-    startDate: initialData.startDate ? new Date(initialData.startDate) : new Date(),
-    endDate: initialData.endDate ? new Date(initialData.endDate) : new Date(),
-  }
+
 
   return (
     <div className=''>
       <Formik
-        initialValues={formatedData as PromotionInput}
+        initialValues={initialValues}
         validationSchema={PromotionSchema}
         onSubmit={values => {
-          onSuccess(values);
+          const payload: PromotionInput = {
+            ...values,
+            startDate: new Date(values.startDate),
+            endDate: new Date(values.endDate),
+          };
+          onSuccess(payload);
           onClose();
         }}
       >
@@ -110,7 +131,6 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
               <label className='block text-gray-700'>Fecha de inicio:</label>
               <Field
                 name='startDate'
-                value={format(new Date(initialData.startDate || new Date()), 'yyyy-MM-dd')}
                 type='date'
                 className='mt-1 block w-full border border-gray-300 rounded p-2'
               />
@@ -120,7 +140,6 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
               <label className='block text-gray-700'>Fecha de fin:</label>
               <Field
                 name='endDate'
-                value={format(new Date(initialData.endDate || new Date()), 'yyyy-MM-dd')}
                 type='date'
                 className='mt-1 block w-full border border-gray-300 rounded p-2'
               />

@@ -8,6 +8,7 @@ import { UpdatePromotionAction } from '../actions/updatePromotionAction';
 import { FaEdit } from 'react-icons/fa';
 import { useToast } from '@/lib/components/ToastContext';
 import { RegionItem } from '@/modules/region/definitions';
+import { format } from 'date-fns';
 
 interface UpdatePromotionProps {
   promotion: PromotionItem;
@@ -31,8 +32,8 @@ const UpdatePromotion: React.FC<UpdatePromotionProps> = ({ promotion, regions })
               description: promotion.description,
               regionId: promotion.regionId,
               code: promotion.code,
-              startDate: promotion.startDate,
-              endDate: promotion.endDate,
+              startDate: format(promotion.startDate, 'yyyy-MM-dd'),
+              endDate: format(promotion.endDate, 'yyyy-MM-dd'),
               discount: promotion.discount,
               active: promotion.active,
             }

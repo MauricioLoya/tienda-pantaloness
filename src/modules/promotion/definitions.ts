@@ -26,6 +26,11 @@ export interface PromotionInput {
   active: boolean;
 }
 
+export type PromotionFormValues = Omit<PromotionInput, 'startDate' | 'endDate'> & {
+  startDate: string;
+  endDate: string;
+};
+
 export const fromDatabase = (prom: Promotion): PromotionItem => ({
   id: prom.id,
   code: prom.code,

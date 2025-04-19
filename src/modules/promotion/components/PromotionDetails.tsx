@@ -7,7 +7,6 @@ import CopyClipboard from '@/lib/components/CopyClipboard';
 type Props = {
   promotion: Promotion;
 };
-
 const PromotionDetails: React.FC<Props> = ({ promotion }) => {
   return (
     <div className='p-4'>
