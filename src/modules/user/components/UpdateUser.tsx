@@ -21,25 +21,29 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ user }) => {
       title="Actualizar Usuario"
       triggerBtnTitle="Actualizar"
     >
-      <UserForm
-        initialData={{
-          email: user.email,
-          name: user.name,
-          superAdmin: user.superAdmin,
-          password: user.password,
-        }}
-        onSuccess={async (values: UserInput) => {
-          await updateUserAction({
-            id: user.id,
-            ...values,
-            isDeleted: user.isDeleted,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
-          });
-          showToast('Usuario actualizado correctamente', 'success');
-          router.refresh();
-        }}
-      />
+
+      {(closeModal) => (
+        <UserForm
+          initialData={{
+            email: user.email,
+            name: user.name,
+            superAdmin: user.superAdmin,
+            password: user.password,
+          }}
+          onSuccess={async (values: UserInput) => {
+            await updateUserAction({
+              id: user.id,
+              ...values,
+              isDeleted: user.isDeleted,
+              createdAt: user.createdAt,
+              updatedAt: user.updatedAt,
+            });
+            showToast('Usuario actualizado correctamente', 'success');
+            router.refresh();
+          }}
+          onClose={closeModal}
+        />
+      )}
     </ModalGeneric>
   );
 };

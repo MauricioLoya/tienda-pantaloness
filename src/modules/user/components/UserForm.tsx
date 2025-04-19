@@ -9,6 +9,7 @@ import { UserInput } from '../definitions';
 type UserFormProps = {
   initialData?: Partial<UserInput>;
   onSuccess: (values: UserInput) => void;
+  onClose: () => void;
 }
 
 const UserForm: React.FC<UserFormProps> = ({
@@ -19,6 +20,7 @@ const UserForm: React.FC<UserFormProps> = ({
     superAdmin: false
   },
   onSuccess,
+  onClose,
 }) => {
 
   const validationSchema = Yup.object().shape({
@@ -34,6 +36,7 @@ const UserForm: React.FC<UserFormProps> = ({
       validationSchema={validationSchema}
       onSubmit={values => {
         onSuccess(values);
+        onClose();
       }}
     >
       {() => (
@@ -69,12 +72,15 @@ const UserForm: React.FC<UserFormProps> = ({
             <Field name='superAdmin' type='checkbox' className='mr-2' />
             <label className='text-gray-700'>Super Admin</label>
           </div>
-
-          <div className='flex justify-end'>
+          <div className="flex justify-end gap-2">
             <button
-              type='submit'
-              className='btn btn-primary'
+              type="button"
+              onClick={onClose}
+              className="btn btn-ghost"
             >
+              Cancelar
+            </button>
+            <button type="submit" className="btn btn-primary">
               Guardar
             </button>
           </div>

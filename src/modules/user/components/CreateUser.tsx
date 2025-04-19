@@ -14,13 +14,17 @@ const CreateUser = () => {
       title='Crear Usuario'
       triggerBtnTitle='Crear'
     >
-      <UserForm
-        onSuccess={async (values) => {
-          await createUserAction(values);
-          showToast('Usuario agregado correctamente', 'success');
-          router.refresh();
-        }}
-      />
+      {(closeModal) => (
+        <UserForm
+          onSuccess={async (values) => {
+            await createUserAction(values);
+            showToast('Usuario agregado correctamente', 'success');
+            router.refresh();
+          }}
+          onClose={closeModal}
+        />
+      )}
+
     </ModalGeneric>
   );
 };
