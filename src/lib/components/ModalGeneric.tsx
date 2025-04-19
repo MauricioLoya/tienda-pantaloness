@@ -4,7 +4,7 @@ export interface ModalCreateProps {
   title: string;
   triggerBtnTitle: string;
   triggerBtnContent?: React.ReactNode;
-  children: React.ReactNode;
+  children: React.ReactNode | ((closeModal: () => void) => React.ReactNode);
   fullScreen?: boolean;
 }
 
@@ -22,7 +22,6 @@ const ModalGeneric: React.FC<ModalCreateProps> = props => {
   const close = () => {
     modalRef.current?.close();
   };
-
 
   const modalBoxClasses = fullScreen
     ? 'modal-box w-full h-full max-w-full p-6'
@@ -65,7 +64,7 @@ const ModalGeneric: React.FC<ModalCreateProps> = props => {
             </button>
           </div>
 
-          {children}
+          {typeof children === 'function' ? children(close) : children}
         </div>
       </dialog>
     </>

@@ -1,6 +1,6 @@
 import Loader from '@/lib/components/Loader';
 import { RegionRepository } from '@/modules/region/definitions';
-import StoreSettings from '@/modules/settings/components/StoreSettings';
+import StoreSettingsForm from '@/modules/settings/components/StoreSettingsForm';
 import { SettingsRepository } from '@/modules/settings/definitions';
 import React, { Suspense } from 'react';
 
@@ -12,17 +12,11 @@ const SettingsPage: React.FC = async () => {
   return (
     <>
       <Suspense fallback={<Loader />}>
-        <StoreSettings initialValues={
+        <StoreSettingsForm initialValues={
           {
             logoUrl: initialValues.logoUrl,
             storeName: initialValues.storeName,
-            // inly for pass the npm run build process
-            freeShippingByRegion: initialValues.freeShippingByRegion.map(item => ({
-              regionCode: item.regionCode,
-              amount: item.amount,
-              enabled: item.enabled,
-              regularShippingPrice: 0,
-            })),
+            freeShippingByRegion: initialValues.freeShippingByRegion
           }
         } regions={regions} />
       </Suspense>

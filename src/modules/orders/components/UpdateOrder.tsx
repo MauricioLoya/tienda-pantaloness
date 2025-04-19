@@ -24,18 +24,25 @@ const UpdateOrder: React.FC<UpdateOrderProps> = ({ order }) => {
             triggerBtnContent={<FaEdit />}
             fullScreen={false}
         >
-            <OrderForm
-                initialData={{
-                    status: order.status || '',
-                }}
-                onSuccess={async (values) => {
-                    await updateOrderAction(order.id, {
-                        status: values.status,
-                    });
-                    showToast('Orden actualizada correctamente', 'success');
-                    router.refresh();
-                }}
-            />
+            {(closeModal) => (
+                <OrderForm
+                    initialData={{
+                        status: order.status || '',
+                    }}
+                    onClose={closeModal}
+                    onSuccess={async (values) => {
+                        try {
+                            await updateOrderAction(order.id, {
+                                status: values.status,
+                            });
+                            showToast('Orden actualizada correctamente', 'success');
+                            router.refresh();
+                        } catch (error) {
+                            showToast('Error al actualizar la orden', 'error');
+                        }
+                    }}
+                />
+            )}
         </ModalGeneric>
     );
 };
