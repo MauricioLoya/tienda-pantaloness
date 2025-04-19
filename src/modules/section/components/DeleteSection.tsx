@@ -19,7 +19,7 @@ const DeleteSection: React.FC<DeleteSectionProps> = ({ section }) => {
   const handleConfirmDelete = async () => {
     await deleteSectionAction(section.id);
     showToast('Sección eliminada correctamente', 'success');
-    router.refresh();
+    router.back();
   };
 
   return (

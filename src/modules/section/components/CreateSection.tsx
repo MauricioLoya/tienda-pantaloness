@@ -6,6 +6,7 @@ import SectionForm from './SectionForm';
 import { RegionItem } from '@/modules/region/definitions';
 import { useRouter } from 'next/navigation';
 import { createSectionAction } from '../actions/createSectionAction';
+import { useToast } from '@/lib/components/ToastContext';
 
 import { HighlightProductItem, UsedOrdersByRegion } from '../definitions';
 
@@ -22,28 +23,28 @@ const CreateSection: React.FC<CreateSectionProps> = ({
   usedOrdersByRegion,
 }) => {
   const router = useRouter();
-
-
-
-
+  const { showToast } = useToast()
   return (
     <ModalGeneric
       title='Crear Sección'
       triggerBtnTitle='Agregar Sección'
       fullScreen={false}
     >
-      <SectionForm
-
-        regions={regions}
-        onSuccess={async (values) => {
-          await createSectionAction({
-            ...values,
-          });
-          router.refresh();
-        }}
-        availableProducts={availableProducts}
-        usedOrdersByRegion={usedOrdersByRegion}
-      />
+      {(closeModal) => (
+        <SectionForm
+          regions={regions}
+          availableProducts={availableProducts}
+          usedOrdersByRegion={usedOrdersByRegion}
+          onSuccess={async (values) => {
+            await createSectionAction({
+              ...values,
+            });
+            showToast('Sección agregado correctamente', 'success');
+            router.refresh();
+          }}
+          onClose={closeModal}
+        />
+      )}
     </ModalGeneric>
   );
 };

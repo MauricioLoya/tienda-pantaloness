@@ -27,6 +27,7 @@ type SectionFormProps = {
   usedOrdersByRegion?: UsedOrdersByRegion;
 
   onSuccess: (values: SectionInput) => void;
+  onClose: () => void;
 };
 
 const SectionForm: React.FC<SectionFormProps> = ({
@@ -39,12 +40,15 @@ const SectionForm: React.FC<SectionFormProps> = ({
     order: 1,
     backgroundUrl: '',
     backgroundColor: '#063d79',
+    buttonText: '',
+    buttonColor: '',
     highlightProducts: [],
   },
   regions,
   availableProducts = [],
   usedOrdersByRegion = {},
-  onSuccess
+  onSuccess,
+  onClose,
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -116,6 +120,7 @@ const SectionForm: React.FC<SectionFormProps> = ({
         validationSchema={validationSchema}
         onSubmit={values => {
           onSuccess(values);
+          onClose();
         }}
       >
         {({ values, setFieldValue }) => (
@@ -211,26 +216,26 @@ const SectionForm: React.FC<SectionFormProps> = ({
               <Field name='order' type='number' className='input input-bordered w-full' />
               <ErrorMessage name='order' component='div' className='text-red-500 text-sm' />
             </div>
-
-            <div>
-              <label className='block text-sm font-medium text-gray-700'>Color de Fondo</label>
-              <Field name='backgroundColor' type='color' className='input input-bordered w-16' />
-              <ErrorMessage
-                name='backgroundColor'
-                component='div'
-                className='text-red-500 text-sm'
-              />
-            </div>
-
             {values.type === SectionType.highlight && (
-              <HighlightProductSelector
-                selected={values.highlightProducts ?? []}
-                availableProducts={availableProducts}
-                onChange={selected => {
-                  console.log('CURRENT', selected);
-                  setFieldValue('highlightProducts', selected);
-                }}
-              />
+              <>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>Color de Fondo</label>
+                  <Field name='backgroundColor' type='color' className='input input-bordered w-16' />
+                  <ErrorMessage
+                    name='backgroundColor'
+                    component='div'
+                    className='text-red-500 text-sm'
+                  />
+                </div>
+                <HighlightProductSelector
+                  selected={values.highlightProducts ?? []}
+                  availableProducts={availableProducts}
+                  onChange={selected => {
+                    console.log('CURRENT', selected);
+                    setFieldValue('highlightProducts', selected);
+                  }}
+                />
+              </>
             )}
 
             <div>
@@ -262,9 +267,16 @@ const SectionForm: React.FC<SectionFormProps> = ({
               )}
             </div>
 
-            <div className='flex justify-end mt-4'>
-              <button type='submit' className='btn btn-primary'>
-                Guardar Cambios
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="btn btn-ghost"
+              >
+                Cancelar
+              </button>
+              <button type="submit" className="btn btn-primary">
+                Guardar
               </button>
             </div>
           </Form>

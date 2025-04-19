@@ -55,6 +55,8 @@ export class SectionRepository {
         regionId: data.regionId,
         actionUrl: data.actionUrl,
         order: data.order,
+        buttonText: data.buttonText,
+        buttonColor: data.buttonColor,
         backgroundUrl: data.backgroundUrl,
         backgroundColor: data.backgroundColor,
       },
@@ -77,7 +79,12 @@ export class SectionRepository {
   }
 
   async getById(id: number): Promise<SectionItem | null> {
-    return this.toSectionItem(id);
+    try {
+      return await this.toSectionItem(id);
+    } catch (error) {
+      console.error(`Error fetching section with ID ${id}:`, error);
+      return null;
+    }
   }
 
   async updateSection(id: number, data: Partial<SectionInput>): Promise<SectionItem> {
@@ -114,6 +121,9 @@ export class SectionRepository {
   }
 
   async deleteSection(id: number): Promise<void> {
+    await prisma.highlightProduct.deleteMany({
+      where: { sectionId: id },
+    });
     await prisma.section.delete({ where: { id } });
   }
 
@@ -142,7 +152,7 @@ export class SectionRepository {
   }
 
   private async toSectionItem(sectionId: number): Promise<SectionItem> {
-    const section = await prisma.section.findUniqueOrThrow({
+    const section = await prisma.section.findFirst({
       where: { id: sectionId },
       include: {
         HighlightProduct: {
@@ -157,7 +167,9 @@ export class SectionRepository {
         },
       },
     });
-
+    if (!section) {
+      throw new Error(`Section with ID ${sectionId} not found`);
+    }
     return {
       id: section.id,
       type: section.type,
