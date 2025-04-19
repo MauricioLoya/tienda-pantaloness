@@ -17,10 +17,6 @@ interface UpdatePromotionProps {
 const UpdatePromotion: React.FC<UpdatePromotionProps> = ({ promotion, regions }) => {
   const router = useRouter();
   const { showToast } = useToast();
-
-
-
-
   return (
     <ModalGeneric
       title='Actualizar Promoción'

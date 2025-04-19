@@ -4,6 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { RegionItem } from '@/modules/region/definitions';
 import { PromotionInput } from '../definitions';
+import { format } from 'date-fns';
 
 
 type PromotionFormProps = {
@@ -12,6 +13,7 @@ type PromotionFormProps = {
   onSuccess: (values: PromotionInput) => void;
   onClose: () => void;
 };
+
 
 const PromotionForm: React.FC<PromotionFormProps> = ({
   initialData = {
@@ -28,7 +30,7 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
   onSuccess,
   onClose,
 }) => {
-
+  console.log('initialData', initialData);
 
   const PromotionSchema = Yup.object().shape({
     code: Yup.string()
@@ -49,13 +51,16 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
     active: Yup.boolean(),
     regionId: Yup.string().required('La región es requerida'),
   });
-
-
+  const formatedData = {
+    ...initialData,
+    startDate: initialData.startDate ? new Date(initialData.startDate) : new Date(),
+    endDate: initialData.endDate ? new Date(initialData.endDate) : new Date(),
+  }
 
   return (
     <div className=''>
       <Formik
-        initialValues={initialData as PromotionInput}
+        initialValues={formatedData as PromotionInput}
         validationSchema={PromotionSchema}
         onSubmit={values => {
           onSuccess(values);
@@ -105,6 +110,7 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
               <label className='block text-gray-700'>Fecha de inicio:</label>
               <Field
                 name='startDate'
+                value={format(new Date(initialData.startDate || new Date()), 'yyyy-MM-dd')}
                 type='date'
                 className='mt-1 block w-full border border-gray-300 rounded p-2'
               />
@@ -114,6 +120,7 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
               <label className='block text-gray-700'>Fecha de fin:</label>
               <Field
                 name='endDate'
+                value={format(new Date(initialData.endDate || new Date()), 'yyyy-MM-dd')}
                 type='date'
                 className='mt-1 block w-full border border-gray-300 rounded p-2'
               />
