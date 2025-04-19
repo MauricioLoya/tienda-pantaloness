@@ -10,23 +10,23 @@ import { CreatePromotionAction } from '../actions/createPromotionAction';
 const CreatePromotion = ({ regions }: { regions: RegionItem[] }) => {
   const router = useRouter();
 
-
-
-
-
   return (
     <>
       <ModalGeneric
         title='Agregar promoción'
         triggerBtnTitle='Agregar'
       >
-        <PromotionForm
-          onSuccess={async (values) => {
-            await CreatePromotionAction(values);
-            router.refresh();
-          }}
-          regions={regions}
-        />
+        {(closeModal) => (
+          <PromotionForm
+            regions={regions}
+            onSuccess={async (values) => {
+              await CreatePromotionAction(values);
+              router.refresh();
+            }}
+            onClose={closeModal}
+          />
+        )}
+
       </ModalGeneric>
     </>
   );

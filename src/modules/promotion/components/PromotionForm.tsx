@@ -10,6 +10,7 @@ type PromotionFormProps = {
   initialData?: Partial<PromotionInput>;
   regions: RegionItem[];
   onSuccess: (values: PromotionInput) => void;
+  onClose: () => void;
 };
 
 const PromotionForm: React.FC<PromotionFormProps> = ({
@@ -23,9 +24,9 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
     active: false,
     regionId: '',
   },
-  onSuccess,
   regions,
-
+  onSuccess,
+  onClose,
 }) => {
 
 
@@ -58,6 +59,7 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
         validationSchema={PromotionSchema}
         onSubmit={values => {
           onSuccess(values);
+          onClose();
         }}
       >
         {() => (
@@ -138,11 +140,15 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
               <ErrorMessage name='regionId' component='div' className='text-red-500 text-sm' />
             </div>
 
-            <div className='flex justify-end'>
+            <div className="flex justify-end gap-2">
               <button
-                type='submit'
-                className='btn btn-primary'
+                type="button"
+                onClick={onClose}
+                className="btn btn-ghost"
               >
+                Cancelar
+              </button>
+              <button type="submit" className="btn btn-primary">
                 Guardar
               </button>
             </div>

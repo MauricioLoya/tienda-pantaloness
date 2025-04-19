@@ -27,39 +27,41 @@ const UpdatePromotion: React.FC<UpdatePromotionProps> = ({ promotion, regions })
       triggerBtnTitle='Actualizar'
       triggerBtnContent={<FaEdit />}
     >
-      <PromotionForm
-        initialData={
-          {
-            name: promotion.name,
-            description: promotion.description,
-            regionId: promotion.regionId,
-            code: promotion.code,
-            startDate: promotion.startDate,
-            endDate: promotion.endDate,
-            discount: promotion.discount,
-            active: promotion.active,
+      {(closeModal) => (
+        <PromotionForm
+          initialData={
+            {
+              name: promotion.name,
+              description: promotion.description,
+              regionId: promotion.regionId,
+              code: promotion.code,
+              startDate: promotion.startDate,
+              endDate: promotion.endDate,
+              discount: promotion.discount,
+              active: promotion.active,
+            }
           }
-        }
-        regions={regions}
-        onSuccess={async (values: PromotionInput) => {
-          await UpdatePromotionAction({
-            id: promotion.id,
-            name: values.name,
-            description: values.description,
-            regionId: values.regionId,
-            code: values.code,
-            startDate: values.startDate,
-            endDate: values.endDate,
-            discount: values.discount,
-            active: values.active,
-            createdAt: promotion.createdAt,
-            isDeleted: promotion.isDeleted,
-          });
-          showToast('Promoción actualizada correctamente', 'success');
-          router.refresh();
-        }}
-
-      />
+          regions={regions}
+          onSuccess={async (values: PromotionInput) => {
+            await UpdatePromotionAction({
+              id: promotion.id,
+              name: values.name,
+              description: values.description,
+              regionId: values.regionId,
+              code: values.code,
+              startDate: values.startDate,
+              endDate: values.endDate,
+              discount: values.discount,
+              active: values.active,
+              createdAt: promotion.createdAt,
+              isDeleted: promotion.isDeleted,
+            });
+            showToast('Promoción actualizada correctamente', 'success');
+            router.refresh();
+          }}
+          onClose={closeModal}
+        />
+      )}
     </ModalGeneric>
   );
 };
