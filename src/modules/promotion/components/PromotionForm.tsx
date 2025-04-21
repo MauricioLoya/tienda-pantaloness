@@ -4,7 +4,6 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { RegionItem } from '@/modules/region/definitions';
 import { PromotionFormValues, PromotionInput } from '../definitions';
-import { format } from 'date-fns';
 
 
 type PromotionFormProps = {
