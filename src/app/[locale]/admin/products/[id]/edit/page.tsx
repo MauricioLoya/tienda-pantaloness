@@ -105,6 +105,13 @@ const ProductEditContainer = async ({ id }: { id: string }) => {
   const productRepo = new ProductRepository();
 
   const productDetail = await productRepo.getProductById(productId);
+  const regions = await new RegionRepository().getAll();
+  console.log('product region:', productDetail.product.regionId);
+
+  const categories = await new CategoryRepository().getAllByRegion(
+    productDetail.product.regionId
+  );
+
   const basicData = {
     name: productDetail.product.name,
     description: productDetail.product.description,
@@ -112,6 +119,8 @@ const ProductEditContainer = async ({ id }: { id: string }) => {
     regionId: productDetail.product.regionId ?? undefined,
     slug: productDetail.product.slug ?? undefined,
   };
+
+
 
   return (
     <>
@@ -121,14 +130,14 @@ const ProductEditContainer = async ({ id }: { id: string }) => {
         <BasicForm
           initialData={basicData}
           productId={productId}
-          regions={await new RegionRepository().getAll()}
+          regions={regions}
         />
 
         <ImagesForm productId={productId} images={productDetail.images} />
         <CategoriesForm
           productId={productId}
           categories={productDetail.categories}
-          allCategories={await new CategoryRepository().getAll()}
+          allCategories={categories}
         />
         <TagsForm productId={productId} initialTags={productDetail.product.searchWords} />
         <VariantsForm productId={productId} variants={productDetail.variants} />

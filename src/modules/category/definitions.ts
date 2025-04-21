@@ -91,6 +91,23 @@ export class CategoryRepository implements ICategoryRepository {
     }
   }
 
+  async getAllByRegion(regionId: string): Promise<CategoryItem[]> {
+    try {
+      const categories = await prisma.category.findMany({
+        where: { regionId, isDeleted: false },
+      });
+      return categories.map(cat => ({
+        id: cat.id,
+        name: cat.name,
+        description: cat.description,
+        isDeleted: cat.isDeleted,
+        regionId: cat.regionId ?? undefined,
+      }));
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getAllActive(): Promise<CategoryItem[]> {
     try {
       const categories = await prisma.category.findMany({
