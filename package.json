@@ -11,6 +11,8 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@casl/ability": "^6.7.3",
+    "@casl/react": "^5.0.0",
     "@prisma/client": "^6.4.0",
     "bcrypt": "^5.1.1",
     "date-fns": "^4.1.0",
