@@ -9,7 +9,13 @@ declare module 'next-auth' {
       isDeleted: boolean;
     };
   }
+
   interface JWT {
+    superAdmin?: boolean;
+    isDeleted?: boolean;
+  }
+
+  interface User {
     superAdmin?: boolean;
     isDeleted?: boolean;
   }
@@ -23,10 +29,42 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         username: { label: 'Username', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials) {
+      // async authorize(credentials) {
+      //   if (
+      //     !credentials.username ||
+      //     !credentials.password ||
+      //     typeof credentials.password !== 'string' ||
+      //     typeof credentials.username !== 'string'
+      //   ) {
+      //     return null;
+      //   }
+
+      //   const authRepository = new AuthRepository();
+      //   try {
+      //     const user = await authRepository.loginAdmin(credentials.username, credentials.password);
+      //     if (!user) {
+      //       return null;
+      //     }
+      //     const userFound = await authRepository.getUserByEmail(user.email);
+
+      //     const session = {
+      //       id: userFound.id.toString(),
+      //       email: userFound.email,
+      //       name: userFound.name,
+      //       superAdmin: userFound.superAdmin,
+      //       isDeleted: userFound.isDeleted,
+      //     } as DefaultSession['user'];
+
+      //     return session;
+      //   } catch (error) {
+      //     console.error(error);
+      //     return null;
+      //   }
+      // },
+      async authorize(credentials, request) {
         if (
-          !credentials.username ||
-          !credentials.password ||
+          !credentials?.username ||
+          !credentials?.password ||
           typeof credentials.password !== 'string' ||
           typeof credentials.username !== 'string'
         ) {
@@ -41,15 +79,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
           const userFound = await authRepository.getUserByEmail(user.email);
 
-          const session = {
+          return {
             id: userFound.id.toString(),
             email: userFound.email,
             name: userFound.name,
             superAdmin: userFound.superAdmin,
             isDeleted: userFound.isDeleted,
-          } as DefaultSession['user'];
-
-          return session;
+          };
         } catch (error) {
           console.error(error);
           return null;
@@ -65,8 +101,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async redirect({ url, baseUrl }) {
       return `${baseUrl}/mx/admin`;
     },
+
     async session({ session, token }) {
-      // This is where we need to pass the custom properties from token to session
       if (token && session.user) {
         session.user.superAdmin = token.superAdmin as boolean;
         session.user.isDeleted = token.isDeleted as boolean;
@@ -74,7 +110,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
     async jwt({ token, user }) {
-      // When signing in, pass user properties to the token
       if (user) {
         token.superAdmin = user.superAdmin;
         token.isDeleted = user.isDeleted;
