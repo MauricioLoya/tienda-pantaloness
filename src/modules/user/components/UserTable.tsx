@@ -31,7 +31,6 @@ const UserTable: React.FC<Props> = ({ values }) => {
       type: 'select',
       defaultValue: 'Todos',
       options: [
-        { label: 'Todos', value: 'Todos' },
         { label: 'Sí', value: 'true' },
         { label: 'No', value: 'false' },
       ],

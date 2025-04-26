@@ -4,9 +4,14 @@ import Credentials from 'next-auth/providers/credentials';
 
 declare module 'next-auth' {
   interface Session {
-    user: {
-      address: string;
-    } & DefaultSession['user'];
+    user: DefaultSession['user'] & {
+      superAdmin: boolean;
+      isDeleted: boolean;
+    };
+  }
+  interface JWT {
+    superAdmin?: boolean;
+    isDeleted?: boolean;
   }
 }
 
@@ -30,12 +35,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const authRepository = new AuthRepository();
         try {
-          const user = authRepository.loginAdmin(credentials.username, credentials.password);
+          const user = await authRepository.loginAdmin(credentials.username, credentials.password);
           if (!user) {
             return null;
           }
+          const userFound = await authRepository.getUserByEmail(user.email);
 
-          return user;
+          const session = {
+            id: userFound.id.toString(),
+            email: userFound.email,
+            name: userFound.name,
+            superAdmin: userFound.superAdmin,
+            isDeleted: userFound.isDeleted,
+          } as DefaultSession['user'];
+
+          return session;
         } catch (error) {
           console.error(error);
           return null;
@@ -50,6 +64,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async redirect({ url, baseUrl }) {
       return `${baseUrl}/mx/admin`;
+    },
+    async session({ session, token }) {
+      // This is where we need to pass the custom properties from token to session
+      if (token && session.user) {
+        session.user.superAdmin = token.superAdmin as boolean;
+        session.user.isDeleted = token.isDeleted as boolean;
+      }
+      return session;
+    },
+    async jwt({ token, user }) {
+      // When signing in, pass user properties to the token
+      if (user) {
+        token.superAdmin = user.superAdmin;
+        token.isDeleted = user.isDeleted;
+      }
+      return token;
     },
   },
 });

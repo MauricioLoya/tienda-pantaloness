@@ -47,7 +47,6 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
       type: 'select',
       defaultValue: 'Todos',
       options: [
-        { label: 'Todos', value: 'Todos' },
         { label: 'Sí', value: 'true' },
         { label: 'No', value: 'false' },
       ],

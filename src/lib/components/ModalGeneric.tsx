@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { HiLockClosed } from 'react-icons/hi';
 
 export interface ModalCreateProps {
   title: string;
@@ -6,6 +7,7 @@ export interface ModalCreateProps {
   triggerBtnContent?: React.ReactNode;
   children: React.ReactNode | ((closeModal: () => void) => React.ReactNode);
   fullScreen?: boolean;
+  disabled?: boolean;
 }
 
 const ModalGeneric: React.FC<ModalCreateProps> = props => {
@@ -15,6 +17,7 @@ const ModalGeneric: React.FC<ModalCreateProps> = props => {
     triggerBtnContent,
     children,
     fullScreen,
+    disabled = false,
   } = props;
 
   const modalRef = useRef<HTMLDialogElement>(null);
@@ -30,11 +33,14 @@ const ModalGeneric: React.FC<ModalCreateProps> = props => {
   return (
     <>
       <button
-        className={`btn btn-active btn-primary`}
+        className={`btn btn-active btn-primary flex items-center gap-2 ${disabled ? 'btn-disabled cursor-not-allowed' : ''
+          }`}
         data-backdrop='static'
-        onClick={() => modalRef?.current?.showModal()}
+        onClick={() => !disabled && modalRef?.current?.showModal()}
+        disabled={disabled}
       >
         <div className='flex items-center gap-2'>
+          {disabled && <HiLockClosed className="h-5 w-5" />} {/* Ícono de candado */}
           {triggerBtnContent}
           {triggerBtnTitle}
         </div>

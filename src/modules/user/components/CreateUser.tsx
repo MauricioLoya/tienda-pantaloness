@@ -6,13 +6,18 @@ import { useRouter } from 'next/navigation';
 import { createUserAction } from '../actions/createUserAction';
 import { useToast } from '@/lib/components/ToastContext';
 
-const CreateUser = () => {
+interface CreateUserProps {
+  disabled?: boolean;
+}
+
+const CreateUser: React.FC<CreateUserProps> = ({ disabled = false }) => {
   const router = useRouter();
   const { showToast } = useToast();
   return (
     <ModalGeneric
       title='Crear Usuario'
       triggerBtnTitle='Crear'
+      disabled={disabled}
     >
       {(closeModal) => (
         <UserForm
