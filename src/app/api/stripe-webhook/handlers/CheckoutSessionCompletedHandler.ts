@@ -14,6 +14,19 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
     this.emailService = emailService;
   }
 
+  private mapStripePaymentStatusToOrderStatus(paymentStatus: string): OrderStatus {
+    switch (paymentStatus) {
+      case 'paid':
+        return OrderStatus.COMPLETED;
+      case 'unpaid':
+        return OrderStatus.PENDING;
+      case 'no_payment_required':
+        return OrderStatus.COMPLETED;
+      default:
+        return OrderStatus.PENDING;
+    }
+  }
+
   async handle(event: Stripe.Event): Promise<void> {
     const session = event.data.object as Stripe.Checkout.Session;
     if (session.payment_status !== 'paid') {
@@ -59,6 +72,9 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
         throw new Error('No se encontraron detalles de envío.');
       }
       const totalAmount = session.amount_total ? session.amount_total / 100 : 0;
+
+      const orderStatus = this.mapStripePaymentStatusToOrderStatus(session.payment_status || '');
+
       const order = await tx.order.create({
         data: {
           orderNumber: orderNumber,
@@ -66,7 +82,7 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
           orderDate: new Date(),
           totalAmount: totalAmount,
           checkoutId: session.id,
-          status: OrderStatus.PROCESSING,
+          status: orderStatus,
           shipping_line1: shippingDetails.line1 || '',
           shipping_line2: shippingDetails.line2 || '',
           city: shippingDetails.city || '',
