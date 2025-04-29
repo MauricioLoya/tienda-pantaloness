@@ -52,3 +52,23 @@ export function generateOrderNumber(): string {
 export function generateShortId(): string {
   return short.generate();
 }
+
+export function generateRandomPassword(length = 10): string {
+  const getRandomChar = (min: number, max: number) =>
+    String.fromCharCode(Math.floor(Math.random() * (max - min + 1)) + min);
+
+  let password = '';
+
+  for (let i = 0; i < length; i++) {
+    const charType = Math.floor(Math.random() * 3);
+    if (charType === 0) {
+      password += getRandomChar(65, 90);
+    } else if (charType === 1) {
+      password += getRandomChar(97, 122);
+    } else {
+      password += getRandomChar(48, 57);
+    }
+  }
+
+  return password;
+}

@@ -68,6 +68,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           typeof credentials.password !== 'string' ||
           typeof credentials.username !== 'string'
         ) {
+          console.error('Invalid credentials');
+          console.error('request', request);
+
           return null;
         }
 
@@ -98,7 +101,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
 
   callbacks: {
-    async redirect({ url, baseUrl }) {
+    async redirect({ baseUrl }) {
       return `${baseUrl}/mx/admin`;
     },
 

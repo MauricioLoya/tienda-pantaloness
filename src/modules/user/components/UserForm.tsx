@@ -3,84 +3,122 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { UserInput } from '../definitions';
 
+export interface UserFormInput {
+  email: string;
+  name: string;
+  superAdmin: boolean;
+}
 
 type UserFormProps = {
-  initialData?: Partial<UserInput>;
-  onSuccess: (values: UserInput) => void;
+  initialData?: Partial<UserFormInput>;
+  onSuccess: (values: UserFormInput) => void;
   onClose: () => void;
+  isEdit?: boolean;
+  onPasswordReset?: (userId: number) => void;
+  userId?: number;
 }
 
 const UserForm: React.FC<UserFormProps> = ({
   initialData = {
     email: '',
     name: '',
-    password: '',
     superAdmin: false
   },
   onSuccess,
   onClose,
+  isEdit = false,
+  onPasswordReset,
+  userId
 }) => {
-
-  const validationSchema = Yup.object().shape({
+  // Schema simplificado - sin campos de contraseña
+  const userSchema = Yup.object().shape({
     email: Yup.string().email('Email inválido').required('El email es requerido'),
     name: Yup.string().required('El nombre es requerido'),
-    password: Yup.string().required('La contraseña es requerida'),
     superAdmin: Yup.boolean(),
   });
 
+  // Aseguramos que initialData tiene todos los campos requeridos
+  const formInitialValues: UserFormInput = {
+    email: initialData.email || '',
+    name: initialData.name || '',
+    superAdmin: initialData.superAdmin || false
+  };
+
   return (
     <Formik
-      initialValues={initialData as UserInput}
-      validationSchema={validationSchema}
-      onSubmit={values => {
+      initialValues={formInitialValues}
+      validationSchema={userSchema}
+      onSubmit={(values) => {
         onSuccess(values);
         onClose();
       }}
     >
-      {() => (
-        <Form>
-          <div className='mb-4'>
-            <label className='block text-gray-700'>Email:</label>
+      {({ errors, touched }) => (
+        <Form className="space-y-4">
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-gray-700">
+              Email:
+            </label>
             <Field
-              name='email'
-              type='email'
-              className='mt-1 block w-full border border-gray-300 rounded p-2'
+              type="email"
+              name="email"
+              id="email"
+              className={`input input-bordered w-full ${errors.email && touched.email ? 'input-error' : ''}`}
             />
-            <ErrorMessage name='email' component='div' className='text-red-500 text-sm' />
+            <ErrorMessage name="email" component="div" className="text-error" />
           </div>
-          <div className='mb-4'>
-            <label className='block text-gray-700'>Nombre:</label>
+
+          <div className="mb-4">
+            <label htmlFor="name" className="block text-gray-700">
+              Nombre:
+            </label>
             <Field
-              name='name'
-              type='text'
-              className='mt-1 block w-full border border-gray-300 rounded p-2'
+              type="text"
+              name="name"
+              id="name"
+              className={`input input-bordered w-full ${errors.name && touched.name ? 'input-error' : ''}`}
             />
-            <ErrorMessage name='name' component='div' className='text-red-500 text-sm' />
+            <ErrorMessage name="name" component="div" className="text-error" />
           </div>
-          <div className='mb-4'>
-            <label className='block text-gray-700'>Contraseña:</label>
+
+          <div className="mb-4 flex items-center">
             <Field
-              name='password'
-              type='password'
-              className='mt-1 block w-full border border-gray-300 rounded p-2'
+              type="checkbox"
+              name="superAdmin"
+              id="superAdmin"
+              className="checkbox checkbox-primary"
             />
-            <ErrorMessage name='password' component='div' className='text-red-500 text-sm' />
+            <label htmlFor="superAdmin" className="ml-2 block text-sm text-gray-700">
+              Super Admin
+            </label>
           </div>
-          <div className='mb-4 flex items-center'>
-            <Field name='superAdmin' type='checkbox' className='mr-2' />
-            <label className='text-gray-700'>Super Admin</label>
-          </div>
-          <div className="flex justify-end gap-2">
+
+          {isEdit && onPasswordReset && userId && (
+            <div className="mb-4">
+              <button
+                type="button"
+                onClick={() => onPasswordReset(userId)}
+                className="btn btn-sm btn-outline"
+              >
+                Gestionar contraseña
+              </button>
+            </div>
+          )}
+
+          <div className="flex justify-end space-x-2">
             <button
               type="button"
               onClick={onClose}
-              className="btn btn-ghost"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
             >
               Cancelar
             </button>
-            <button type="submit" className="btn btn-primary">
+
+            <button
+              type="submit"
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+            >
               Guardar
             </button>
           </div>

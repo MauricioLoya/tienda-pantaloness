@@ -5,8 +5,8 @@ import React from 'react';
 import UserForm from './UserForm';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/lib/components/ToastContext';
-import { UserInput, UserItem } from '../definitions';
 import { updateUserAction } from '../actions/updateUserAction';
+import { UserItem } from '../definitions';
 
 interface UpdateUserProps {
   user: UserItem;
@@ -28,9 +28,9 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ user }) => {
             email: user.email,
             name: user.name,
             superAdmin: user.superAdmin,
-            password: user.password,
           }}
-          onSuccess={async (values: UserInput) => {
+          isEdit={true}
+          onSuccess={async (values) => {
             await updateUserAction({
               id: user.id,
               ...values,

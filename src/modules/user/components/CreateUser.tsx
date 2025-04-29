@@ -5,6 +5,7 @@ import UserForm from './UserForm';
 import { useRouter } from 'next/navigation';
 import { createUserAction } from '../actions/createUserAction';
 import { useToast } from '@/lib/components/ToastContext';
+import { UserInput } from '../definitions';
 
 interface CreateUserProps {
   disabled?: boolean;
@@ -22,7 +23,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ disabled = false }) => {
       {(closeModal) => (
         <UserForm
           onSuccess={async (values) => {
-            await createUserAction(values);
+            await createUserAction(values as UserInput);
             showToast('Usuario agregado correctamente', 'success');
             router.refresh();
           }}

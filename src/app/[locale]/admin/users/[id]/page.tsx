@@ -6,6 +6,7 @@ import UpdateUser from '@/modules/user/components/UpdateUser';
 import ActivateUser from '@/modules/user/components/ActivateUser';
 import DeleteUser from '@/modules/user/components/DeleteUser';
 import { Can } from '@/lib/Can';
+import UpdatePassword from '@/modules/token/components/UpdatePassword';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -20,6 +21,7 @@ const UserDetailsPage: React.FC<Props> = async ({ params }) => {
   const actions = (
     <>
       <Can I="update" a="User">
+        <UpdatePassword userId={user.id} />
         <UpdateUser user={user} />
         {user.isDeleted ? <ActivateUser user={user} /> : <DeleteUser user={user} />}
       </Can>
