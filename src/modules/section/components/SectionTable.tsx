@@ -6,7 +6,7 @@ import { RegionItem } from '@/modules/region/definitions';
 import { SectionItem } from '../definitions';
 import GenericDataTable, { TableHeader } from '@/lib/components/GenericDataTable';
 import Link from 'next/link';
-
+import { DetailsEntity } from '@/lib/components/ButtonComponents';
 interface Props {
   values: SectionItem[];
   regions: RegionItem[];
@@ -77,9 +77,9 @@ const SectionTable: React.FC<Props> = ({ values, regions }) => {
     })(),
     order: section.order,
     options: (
-      <Link className="btn btn-xs btn-primary" href={`/admin/sections/${section.id}`}>
-        Detalles
-      </Link>
+      <div className="flex flex-col items-center gap-2">
+        <DetailsEntity href={`/admin/sections/${section.id}`} />
+      </div>
     ),
   }));
 

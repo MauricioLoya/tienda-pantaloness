@@ -158,13 +158,10 @@ const ProductTable: React.FC<Props> = ({ values, regions, categories }) => {
 
   const tableHeaders = [
     { label: 'ID', field: 'ID', sortable: true },
-    // { label: 'Slug', field: 'Slug', sortable: true },
     { label: 'Nombre', field: 'Nombre', sortable: true },
     { label: 'Estado', field: 'Estado', sortable: false },
     { label: 'Fecha de Creación', field: 'Fecha de Creación', sortable: true },
     { label: 'Región', field: 'Región', sortable: false },
-    { label: 'Eliminado', field: 'Eliminado', sortable: false },
-    // { label: 'Categorías', field: 'Categorías', sortable: false },
     { label: 'Opciones', field: 'Opciones', sortable: false },
   ] as TableHeader[];
 

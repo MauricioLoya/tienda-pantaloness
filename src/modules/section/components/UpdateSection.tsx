@@ -31,8 +31,6 @@ const UpdateSection: React.FC<UpdateSectionProps> = ({
     <ModalGeneric
       title='Actualizar Sección'
       triggerBtnTitle='Actualizar'
-      triggerBtnContent={<FaEdit />}
-
       fullScreen={false}
     >
 

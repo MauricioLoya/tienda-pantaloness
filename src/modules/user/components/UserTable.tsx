@@ -75,7 +75,6 @@ const UserTable: React.FC<Props> = ({ values }) => {
     { label: 'Nombre', field: 'name', sortable: true },
     { label: 'Fecha de Creación', field: 'createdAt', sortable: true },
     { label: 'Super Admin', field: 'superAdmin', sortable: true },
-    { label: 'Eliminado', field: 'isDeleted', sortable: true },
     { label: 'Opciones', field: 'options', sortable: false },
   ];
 

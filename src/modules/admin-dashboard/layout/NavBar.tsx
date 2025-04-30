@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { SignOut } from "../components/signout-button";
+import { FaStore } from "react-icons/fa";
 
 interface Props {
   logoUrl: string | null;
@@ -47,6 +48,16 @@ const NavBar: React.FC<Props> = ({ logoUrl, storeName }) => {
           </h4>
         </div>
       )}
+
+      <div className="mb-4 flex justify-center">
+        <Link
+          href="/"
+          className="flex items-center gap-2 rounded-md px-3 py-2 hover:bg-sky-100"
+        >
+          <FaStore className="text-primary text-3xl" />
+        </Link>
+      </div>
+
 
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         {links.map((link) => {

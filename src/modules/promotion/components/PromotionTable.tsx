@@ -29,7 +29,6 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
       type: 'select',
       defaultValue: 'Todas',
       options: [
-        { label: 'Todas', value: 'Todas' },
         ...regions.map((r) => ({
           label: r.flag ? `${r.flag} ${r.name}` : r.name,
           value: r.code,
@@ -114,7 +113,7 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
     { label: 'Fecha Fin', field: 'endDate', sortable: true },
     { label: 'Descuento', field: 'discount', sortable: true },
     { label: 'Activo', field: 'active', sortable: true },
-    { label: 'Eliminado', field: 'isDeleted', sortable: true },
+    // { label: 'Eliminado', field: 'isDeleted', sortable: true },
     { label: 'Opciones', field: 'options', sortable: false },
   ];
 

@@ -27,7 +27,6 @@ const CategoryTable: React.FC<Props> = ({ values, regions }) => {
       type: 'select',
       defaultValue: 'Todas',
       options: [
-        { label: 'Todas', value: 'Todas' },
         ...regions.map(r => ({
           label: r.flag ? `${r.flag} ${r.name}` : r.name,
           value: r.code,
@@ -90,8 +89,11 @@ const CategoryTable: React.FC<Props> = ({ values, regions }) => {
     })(),
     status: category.isDeleted ? 'Eliminado' : 'Activo',
     options: (
-      <DetailsEntity href={`/admin/categories/${category.id}`} color="primary" />
+      <div className="flex flex-col items-center gap-2">
+        <DetailsEntity href={`/admin/categories/${category.id}`} color="primary" />
+      </div>
     ),
+
   }));
 
   return (
