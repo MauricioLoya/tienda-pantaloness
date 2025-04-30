@@ -1,10 +1,10 @@
 'use client';
 import React, { useState, useMemo } from 'react';
-import Link from 'next/link';
 import GenericDataTable, { TableHeader } from '@/lib/components/GenericDataTable';
 import FilterBar, { FilterCriteria, FilterOption, SearchColumn } from '@/lib/components/FilterBar';
 import { User } from '@prisma/client';
 import CopyClipboard from '@/lib/components/CopyClipboard';
+import { DetailsEntity } from '@/lib/components/ButtonComponents';
 
 type Props = {
   values: User[];
@@ -88,9 +88,7 @@ const UserTable: React.FC<Props> = ({ values }) => {
     isDeleted: user.isDeleted ? 'Sí' : 'No',
     options: (
       <div className="flex flex-col items-center gap-2">
-        <Link className="btn btn-xs btn-primary" href={`/admin/users/${user.id}`}>
-          Detalles
-        </Link>
+        <DetailsEntity href={`/admin/users/${user.id}`} color="primary" />
         <CopyClipboard
           text={user.email}
           label="Copiar email"

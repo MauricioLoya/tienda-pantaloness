@@ -17,8 +17,6 @@ const CreateProductPage: React.FC = async () => {
         <BasicForm regions={regions} />
         <ImagesForm />
         <CategoriesForm allCategories={await new CategoryRepository().getAll()} />
-
-        <VariantsForm />
       </div>
       <TagsForm />
 

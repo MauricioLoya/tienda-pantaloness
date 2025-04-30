@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/lib/components/ToastContext';
 import { updateUserAction } from '../actions/updateUserAction';
 import { UserItem } from '../definitions';
+import { FaEdit } from 'react-icons/fa';
 
 interface UpdateUserProps {
   user: UserItem;
@@ -20,6 +21,8 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ user }) => {
     <ModalGeneric
       title="Actualizar Usuario"
       triggerBtnTitle="Actualizar"
+      triggerBtnContent={<FaEdit />}
+
     >
 
       {(closeModal) => (

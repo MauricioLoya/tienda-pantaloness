@@ -4,7 +4,7 @@ import GenericDataTable, { TableHeader } from '@/lib/components/GenericDataTable
 import FilterBar, { FilterCriteria, FilterOption, SearchColumn } from '@/lib/components/FilterBar';
 import { CategoryItem } from '../definitions';
 import { RegionItem } from '@/modules/region/definitions';
-import Link from 'next/link';
+import { DetailsEntity } from '@/lib/components/ButtonComponents';
 
 interface Props {
   values: CategoryItem[];
@@ -90,12 +90,7 @@ const CategoryTable: React.FC<Props> = ({ values, regions }) => {
     })(),
     status: category.isDeleted ? 'Eliminado' : 'Activo',
     options: (
-      <Link
-        className="btn btn-xs btn-primary"
-        href={`/admin/categories/${category.id}`}
-      >
-        Detalles
-      </Link>
+      <DetailsEntity href={`/admin/categories/${category.id}`} color="primary" />
     ),
   }));
 

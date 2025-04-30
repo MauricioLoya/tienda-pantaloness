@@ -1,5 +1,7 @@
 import React, { useRef } from 'react';
 import { HiLockClosed } from 'react-icons/hi';
+import { AddEntity } from './ButtonComponents';
+import { FaPlus } from 'react-icons/fa';
 
 export interface ModalCreateProps {
   title: string;
@@ -40,14 +42,17 @@ const ModalGeneric: React.FC<ModalCreateProps> = props => {
         disabled={disabled}
       >
         <div className='flex items-center gap-2'>
-          {disabled && <HiLockClosed className="h-5 w-5" />} {/* Ícono de candado */}
+          {disabled && <HiLockClosed className="h-5 w-5" />}
+          <FaPlus />
           {triggerBtnContent}
           {triggerBtnTitle}
+
         </div>
       </button>
       <dialog id='my_modal_4' ref={modalRef} className='modal'>
         <div className={modalBoxClasses}>
           <div className='flex items-center justify-between relative'>
+
             <h1 className='font-bold text-xl mb-6'>{title}</h1>
             <button
               className='btn btn-sm btn-circle absolute right-2 top-2'

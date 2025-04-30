@@ -1,12 +1,12 @@
 'use client';
 import React, { useState, useMemo } from 'react';
-import Link from 'next/link';
 import { ProductAdminTableRow } from '../definitions';
 import FilterBar, { FilterCriteria, FilterOption, SearchColumn } from '@/lib/components/FilterBar';
 import { RegionItem } from '@/modules/region/definitions';
 import { CategoryItem } from '@/modules/category/definitions';
 import GenericDataTable, { TableHeader } from '@/lib/components/GenericDataTable';
 import CopyClipboard from '@/lib/components/CopyClipboard';
+import { DetailsEntity } from '@/lib/components/ButtonComponents';
 
 type Props = {
   values: ProductAdminTableRow[];
@@ -142,12 +142,8 @@ const ProductTable: React.FC<Props> = ({ values, regions, categories }) => {
         'Fecha de Creación': product.createdAt.toISOString().split('T')[0],
         Opciones: (
           <div className="flex flex-col items-center gap-2">
-            <Link
-              className="btn btn-xs btn-primary"
-              href={`/admin/products/${product.id}`}
-            >
-              Detalles
-            </Link>
+            <DetailsEntity href={`/admin/products/${product.id}`} color="primary" />
+
             <CopyClipboard
               text={product.slug}
               label="Copiar Slug"

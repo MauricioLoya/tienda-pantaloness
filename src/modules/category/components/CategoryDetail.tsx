@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { CategoryItem } from '../definitions';
 import { RegionItem } from '@/modules/region/definitions';
 import { ProductAdminTableRow } from '@/modules/catalogue/definitions';
-import Link from 'next/link';
 import { removeProductFromCategoryAction } from '../action/removeProductFromCategoryAction';
 import { useToast } from '@/lib/components/ToastContext';
+import { DetailsEntity, RemoveItem } from '@/lib/components/ButtonComponents';
 
 interface CategoryDetailProps {
   category: CategoryItem;
@@ -71,15 +71,8 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ category, region, produ
                 <h2 className='card-title'>{product.name}</h2>
                 <p className='text-sm text-gray-600'>{product.slug}</p>
                 <div className='card-actions justify-end'>
-                  <Link href={`/admin/products/${product.id}`} className='btn btn-sm btn-info'>
-                    Ver detalles
-                  </Link>
-                  <button
-                    onClick={() => handleRemoveProduct(product.id)}
-                    className='btn btn-sm btn-error'
-                  >
-                    Remover
-                  </button>
+                  <DetailsEntity href={`/admin/products/${product.id}`} color="primary" />
+                  <RemoveItem onClick={() => handleRemoveProduct(product.id)} />
                 </div>
               </div>
             </div>

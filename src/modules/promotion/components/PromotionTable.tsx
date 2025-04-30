@@ -1,12 +1,12 @@
 'use client';
 import React, { useState, useMemo } from 'react';
-import Link from 'next/link';
 import GenericDataTable, { TableHeader } from '@/lib/components/GenericDataTable';
 import FilterBar, { FilterCriteria, FilterOption, SearchColumn } from '@/lib/components/FilterBar';
 import { Promotion } from '@prisma/client';
 import { RegionItem } from '@/modules/region/definitions';
 import dayjs from 'dayjs';
 import CopyClipboard from '@/lib/components/CopyClipboard';
+import { DetailsEntity } from '@/lib/components/ButtonComponents';
 
 interface Props {
   values: Promotion[];
@@ -132,12 +132,7 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
     isDeleted: promotion.isDeleted ? 'Sí' : 'No',
     options: (
       <div className="flex flex-col items-center gap-2">
-        <Link
-          className="btn btn-xs btn-primary"
-          href={`/admin/promotions/${promotion.id}`}
-        >
-          Detalles
-        </Link>
+        <DetailsEntity href={`/admin/promotions/${promotion.id}`} color="primary" />
         <CopyClipboard
           text={promotion.code}
           label="Copiar código"

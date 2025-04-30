@@ -2,10 +2,10 @@
 'use client';
 import React, { useMemo, useState } from 'react';
 import { OrderAdminTableRow } from '../definitions';
-import Link from 'next/link';
 import FilterBar, { FilterCriteria, FilterOption, SearchColumn } from '@/lib/components/FilterBar';
 import { RegionItem } from '@/modules/region/definitions';
 import GenericDataTable, { TableHeader } from '@/lib/components/GenericDataTable';
+import { DetailsEntity } from '@/lib/components/ButtonComponents';
 
 
 type Props = {
@@ -119,9 +119,7 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
         return r ? `${r.flag} ${r.name}` : 'No asignada';
       })(),
       Acciones: (
-        <Link className="btn btn-xs btn-primary" href={`/admin/orders/${order.id}`}>
-          Detalles
-        </Link>
+        <DetailsEntity href={`/admin/orders/${order.id}`} color="primary" />
       ),
     }));
   }, [filteredOrders]);

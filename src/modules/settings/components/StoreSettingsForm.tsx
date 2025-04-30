@@ -60,8 +60,6 @@ const StoreSettingsForm: React.FC<Props> = ({ initialValues, regions }) => {
 
   return (
     <div className="space-y-6 p-4 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Configuración de la Tienda</h1>
-
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
