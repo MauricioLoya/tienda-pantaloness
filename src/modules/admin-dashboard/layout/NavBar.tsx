@@ -11,86 +11,81 @@ interface Props {
 }
 
 const NavBar: React.FC<Props> = ({ logoUrl, storeName }) => {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
+
+  // >>> ahora sólo miramos si la ruta termina con el href
+  const isActive = (href: string) => {
+    return pathname.endsWith(href);
+  };
+
   const links = [
     { name: "Dashboard", href: "/admin", emoji: "📈" },
-    {
-      name: "Ordenes",
-      href: "/admin/orders",
-      emoji: "📦",
-    },
-    {
-      name: "Categorias",
-      href: "/admin/categories",
-      emoji: "📝",
-    },
-    {
-      name: "Productos",
-      href: "/admin/products",
-      emoji: "👖",
-    },
-    {
-      name: "Promociones",
-      href: "/admin/promotions",
-      emoji: "🎉",
-    },
-    {
-      name: "Usuarios",
-      href: "/admin/users",
-      emoji: "👥",
-    },
-    {
-      name: "Secciones",
-      href: "/admin/sections",
-      emoji: "🌟",
-    },
-    {
-      name: "Configuracion",
-      href: "/admin/settings",
-      emoji: "⚙️",
-    },
+    { name: "Ordenes", href: "/admin/orders", emoji: "📦" },
+    { name: "Categorias", href: "/admin/categories", emoji: "📝" },
+    { name: "Productos", href: "/admin/products", emoji: "👖" },
+    { name: "Promociones", href: "/admin/promotions", emoji: "🎉" },
+    { name: "Usuarios", href: "/admin/users", emoji: "👥" },
+    { name: "Secciones", href: "/admin/sections", emoji: "🌟" },
+    { name: "Configuración", href: "/admin/settings", emoji: "⚙️" },
   ];
+
   return (
-    <div className='flex h-full flex-col px-3 py-4 md:px-2'>
+    <div className="flex h-full flex-col px-3 py-4 md:px-2">
       <Link
-        className='bg-white mb-2 flex h-20 md:h-32 items-center justify-center rounded-md p-4 shadow-sm hover:shadow transition-all duration-200'
-        href='/admin'
+        href="/admin"
+        className="mb-2 flex h-20 items-center justify-center rounded-md bg-white p-4 shadow-sm hover:shadow transition-all"
       >
         {logoUrl && (
-          <img
-            src={logoUrl}
-            alt='Logo'
-            className='h-full max-h-16 md:max-h-24 object-contain'
-          />
+          <img src={logoUrl} alt="Logo" className="h-full object-contain" />
         )}
       </Link>
 
       {storeName && (
-        <div className='mb-4 text-center'>
-          <h4 className='text-base font-semibold text-gray-700 truncate'>{storeName}</h4>
+        <div className="mb-4 text-center">
+          <h4 className="text-base font-semibold text-gray-700 truncate">
+            {storeName}
+          </h4>
         </div>
       )}
 
-      <div className="text-black flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
+      <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         {links.map((link) => {
+          const active = isActive(link.href);
           return (
             <Link
-              key={link.name}
+              key={link.href}
               href={link.href}
-              className={`flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3 ${pathname === link.href ? "bg-sky-100 text-blue-600" : ""
-                }`}
+              className={`
+                relative flex h-[48px] items-center gap-2 rounded-md p-3 text-sm font-medium transition-all
+                ${active
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-gray-50 hover:bg-sky-100 hover:text-blue-600"
+                }
+              `}
             >
-              <span>{link.emoji}</span>
-              <p className='hidden md:block'>{link.name}</p>
+              <span className={`${active ? "scale-110" : ""}`}>
+                {link.emoji}
+              </span>
+              <p className={`hidden md:block ${active ? "font-semibold" : ""}`}>
+                {link.name}
+              </p>
+
+              {active && (
+                <span
+                  className="
+                    absolute left-0 top-0 h-full w-1 
+                    bg-white rounded-r-md
+                  "
+                />
+              )}
             </Link>
           );
         })}
 
-        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
-
+        <div className="hidden grow rounded-md bg-gray-50 md:block" />
         <SignOut />
       </div>
-    </div >
+    </div>
   );
 };
 
