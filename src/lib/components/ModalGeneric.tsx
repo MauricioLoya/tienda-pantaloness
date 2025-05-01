@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
 import { HiLockClosed } from 'react-icons/hi';
 import { AddEntity } from './ButtonComponents';
-import { FaPlus } from 'react-icons/fa';
 
 export interface ModalCreateProps {
   title: string;
@@ -43,7 +42,6 @@ const ModalGeneric: React.FC<ModalCreateProps> = props => {
       >
         <div className='flex items-center gap-2'>
           {disabled && <HiLockClosed className="h-5 w-5" />}
-          <FaPlus />
           {triggerBtnContent}
           {triggerBtnTitle}
 

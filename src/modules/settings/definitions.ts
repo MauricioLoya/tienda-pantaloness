@@ -1,16 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from '@/lib/prima/client';
 import { RegionItem } from '../region/definitions';
+
 export type SettingKey =
   | 'storeName'
   | 'logoUrl'
+  | 'contactAddress'
+  | 'contactCity'
+  | 'contactZipCode'
+  | 'contactPhone'
+  | 'contactEmail'
+  | 'businessHours'
   | `freeShipping_${string}`
   | `shippingFree_${string}`;
 
-export interface SettingsFormValues {
-  storeName: string;
-  logoUrl: string;
-  freeShippingByRegion: RegionFreeShipping[];
+export interface BusinessHour {
+  day: string;
+  isOpen: boolean;
+  openTime: string;
+  closeTime: string;
+}
+
+export interface ContactInfo {
+  address: string;
+  city: string;
+  zipCode: string;
+  phone: string;
+  email: string;
+  businessHours?: BusinessHour[];
 }
 
 export interface RegionFreeShipping {
@@ -18,6 +35,13 @@ export interface RegionFreeShipping {
   amount: number;
   regularShippingPrice: number;
   enabled: boolean;
+}
+
+export interface SettingsFormValues {
+  storeName: string;
+  logoUrl: string;
+  contactInfo: ContactInfo;
+  freeShippingByRegion: RegionFreeShipping[];
 }
 
 export class SettingsRepository {
@@ -30,12 +54,12 @@ export class SettingsRepository {
     return mapped;
   }
 
-  async get(key: string): Promise<any | null> {
+  async get(key: SettingKey): Promise<any | null> {
     const setting = await prisma.setting.findUnique({ where: { key } });
     return setting?.value ?? null;
   }
 
-  async update(key: string, value: any): Promise<void> {
+  async update(key: SettingKey, value: any): Promise<void> {
     await prisma.setting.upsert({
       where: { key },
       create: { key, value },
@@ -43,7 +67,7 @@ export class SettingsRepository {
     });
   }
 
-  async updateMany(settings: { key: string; value: any }[]): Promise<void> {
+  async updateMany(settings: { key: SettingKey; value: any }[]): Promise<void> {
     const ops = settings.map(({ key, value }) =>
       prisma.setting.upsert({
         where: { key },
@@ -55,18 +79,31 @@ export class SettingsRepository {
   }
 
   async getSettingsInitialValues(regions: RegionItem[]): Promise<SettingsFormValues> {
-    // 1. Get settings from the Settings table
     const allSettings = await this.getAll();
-    const storeName = allSettings['storeName'] || '';
-    const logoUrl = allSettings['logoUrl'] || '';
+    const storeName = allSettings['storeName'] ?? '';
+    const logoUrl = allSettings['logoUrl'] ?? '';
 
-    // 2. Get shipping information from the Region table
+    // Parse business hours JSON
+    const businessHoursJson = allSettings['businessHours'];
+    let businessHours: BusinessHour[] = [];
+    try {
+      businessHours = businessHoursJson ? JSON.parse(businessHoursJson) : [];
+    } catch {
+      businessHours = [];
+    }
+
+    const contactInfo: ContactInfo = {
+      address: allSettings['contactAddress'] ?? '',
+      city: allSettings['contactCity'] ?? '',
+      zipCode: allSettings['contactZipCode'] ?? '',
+      phone: allSettings['contactPhone'] ?? '',
+      email: allSettings['contactEmail'] ?? '',
+      businessHours,
+    };
+
+    // Region shipping data
     const regionData = await prisma.region.findMany({
-      where: {
-        code: {
-          in: regions.map(region => region.code),
-        },
-      },
+      where: { code: { in: regions.map(r => r.code) } },
       select: {
         code: true,
         shippingPrice: true,
@@ -75,59 +112,83 @@ export class SettingsRepository {
       },
     });
 
-    // 3. Map region data to the expected structure
-    const freeShippingByRegion = regions.map(region => {
-      // Find corresponding region data
-      const regionInfo = regionData.find(r => r.code === region.code);
-
+    const freeShippingByRegion: RegionFreeShipping[] = regions.map(region => {
+      const info = regionData.find(r => r.code === region.code);
       return {
         regionCode: region.code,
-        amount: regionInfo?.amountForFreeShipping ?? 0,
-        regularShippingPrice: regionInfo?.shippingPrice ?? 0,
-        enabled: regionInfo?.isFreeShipping ?? false,
+        amount: info?.amountForFreeShipping ?? 0,
+        regularShippingPrice: info?.shippingPrice ?? 0,
+        enabled: info?.isFreeShipping ?? false,
       };
     });
-    console.log('freeShippingByRegion', freeShippingByRegion);
+
     return {
       storeName,
       logoUrl,
+      contactInfo,
       freeShippingByRegion,
     };
   }
 
   async saveAllSettings(values: SettingsFormValues) {
-    try {
-      console.log('saveAllSettings', values);
-      const settingsOps = [
-        prisma.setting.upsert({
-          where: { key: 'storeName' },
-          create: { key: 'storeName', value: values.storeName },
-          update: { value: values.storeName },
-        }),
-        prisma.setting.upsert({
-          where: { key: 'logoUrl' },
-          create: { key: 'logoUrl', value: values.logoUrl },
-          update: { value: values.logoUrl },
-        }),
-      ];
+    const settingsOps = [
+      prisma.setting.upsert({
+        where: { key: 'storeName' },
+        create: { key: 'storeName', value: values.storeName },
+        update: { value: values.storeName },
+      }),
+      prisma.setting.upsert({
+        where: { key: 'logoUrl' },
+        create: { key: 'logoUrl', value: values.logoUrl },
+        update: { value: values.logoUrl },
+      }),
+      prisma.setting.upsert({
+        where: { key: 'contactAddress' },
+        create: { key: 'contactAddress', value: values.contactInfo.address },
+        update: { value: values.contactInfo.address },
+      }),
+      prisma.setting.upsert({
+        where: { key: 'contactCity' },
+        create: { key: 'contactCity', value: values.contactInfo.city },
+        update: { value: values.contactInfo.city },
+      }),
+      prisma.setting.upsert({
+        where: { key: 'contactZipCode' },
+        create: { key: 'contactZipCode', value: values.contactInfo.zipCode },
+        update: { value: values.contactInfo.zipCode },
+      }),
+      prisma.setting.upsert({
+        where: { key: 'contactPhone' },
+        create: { key: 'contactPhone', value: values.contactInfo.phone },
+        update: { value: values.contactInfo.phone },
+      }),
+      prisma.setting.upsert({
+        where: { key: 'contactEmail' },
+        create: { key: 'contactEmail', value: values.contactInfo.email },
+        update: { value: values.contactInfo.email },
+      }),
+      prisma.setting.upsert({
+        where: { key: 'businessHours' },
+        create: {
+          key: 'businessHours',
+          value: JSON.stringify(values.contactInfo.businessHours ?? []),
+        },
+        update: { value: JSON.stringify(values.contactInfo.businessHours ?? []) },
+      }),
+    ];
 
-      const regionOps = values.freeShippingByRegion.map(region => {
-        return prisma.region.update({
-          where: { code: region.regionCode },
-          data: {
-            amountForFreeShipping: region.amount,
-            shippingPrice: region.regularShippingPrice,
-            isFreeShipping: region.enabled,
-          },
-        });
-      });
+    const regionOps = values.freeShippingByRegion.map(region =>
+      prisma.region.update({
+        where: { code: region.regionCode },
+        data: {
+          amountForFreeShipping: region.amount,
+          shippingPrice: region.regularShippingPrice,
+          isFreeShipping: region.enabled,
+        },
+      })
+    );
 
-      await prisma.$transaction([...settingsOps, ...regionOps]);
-
-      return { success: true };
-    } catch (error) {
-      console.error('Error saving settings:', error);
-      throw new Error('Failed to save settings');
-    }
+    await prisma.$transaction([...settingsOps, ...regionOps]);
+    return { success: true };
   }
 }

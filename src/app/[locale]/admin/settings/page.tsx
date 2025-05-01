@@ -16,7 +16,8 @@ const SettingsPage: React.FC = async () => {
           {
             logoUrl: initialValues.logoUrl,
             storeName: initialValues.storeName,
-            freeShippingByRegion: initialValues.freeShippingByRegion
+            freeShippingByRegion: initialValues.freeShippingByRegion,
+            contactInfo: initialValues.contactInfo,
           }
         } regions={regions} />
       </Suspense>
