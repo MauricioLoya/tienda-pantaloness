@@ -5,7 +5,6 @@ import FilterBar, { FilterCriteria, FilterOption, SearchColumn } from '@/lib/com
 import { RegionItem } from '@/modules/region/definitions';
 import { SectionItem } from '../definitions';
 import GenericDataTable, { TableHeader } from '@/lib/components/GenericDataTable';
-import Link from 'next/link';
 import { DetailsEntity } from '@/lib/components/ButtonComponents';
 interface Props {
   values: SectionItem[];

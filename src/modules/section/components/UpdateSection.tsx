@@ -7,7 +7,6 @@ import { HighlightProductItem, SectionInput, SectionItem, UsedOrdersByRegion } f
 import { RegionItem } from '@/modules/region/definitions';
 import { useRouter } from 'next/navigation';
 import { updateSectionAction } from '../actions/updateSectionAction';
-import { FaEdit } from 'react-icons/fa';
 import { useToast } from '@/lib/components/ToastContext';
 
 interface UpdateSectionProps {

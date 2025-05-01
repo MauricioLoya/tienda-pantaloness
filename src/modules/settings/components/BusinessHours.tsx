@@ -22,7 +22,7 @@ interface BusinessHour {
 
 interface BusinessHoursComponentProps {
   businessHours: BusinessHour[];
-  setFieldValue: (field: string, value: any) => void;
+  setFieldValue: (field: string, value: unknown) => void;
 }
 
 const BusinessHoursComponent: React.FC<BusinessHoursComponentProps> = ({

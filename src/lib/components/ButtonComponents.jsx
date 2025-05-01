@@ -3,21 +3,34 @@ import Link from 'next/link';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 
 export function GenericLink({ href, color = 'primary', icon: Icon, children, size = 'xs' }) {
-  const className = `btn btn-${size} btn-${color} flex items-center`;
+  const className = `btn btn-${size} btn-${color} flex items-center justify-center md:justify-start`;
   return (
     <Link href={href} className={className}>
-      {Icon && <Icon className='mr-1' />}
-      <span className='hidden md:inline'>{children}</span>{' '}
+      {Icon && (
+        <Icon
+          className={`
+            ${children ? 'mr-0 md:mr-1' : ''}
+          `}
+        />
+      )}
+      {/* ocultar texto en <md>, mostrar desde md en adelante */}
+      <span className='hidden md:inline'>{children}</span>
     </Link>
   );
 }
 
 export function GenericButton({ onClick, color = 'primary', icon: Icon, children, size = 'xs' }) {
-  const className = `btn btn-${size} btn-${color} flex items-center`;
+  const className = `btn btn-${size} btn-${color} flex items-center justify-center md:justify-start`;
   return (
     <button onClick={onClick} className={className}>
-      {Icon && <Icon className='mr-1' />}
-      <span className='hidden md:inline'>{children}</span>{' '}
+      {Icon && (
+        <Icon
+          className={`
+            ${children ? 'mr-0 md:mr-1' : ''}
+          `}
+        />
+      )}
+      <span className='hidden md:inline'>{children}</span>
     </button>
   );
 }

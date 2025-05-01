@@ -1,6 +1,6 @@
 'use server';
 
-import { SettingKey, SettingsFormValues } from '../definitions';
+import { SettingsFormValues } from '../definitions';
 import { SettingsRepository } from '../definitions';
 
 export async function saveSettingsAction(values: SettingsFormValues) {

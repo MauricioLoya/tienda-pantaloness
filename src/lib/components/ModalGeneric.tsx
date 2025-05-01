@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import { HiLockClosed } from 'react-icons/hi';
-import { AddEntity } from './ButtonComponents';
 
 export interface ModalCreateProps {
   title: string;

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import NavBar from '@/modules/admin-dashboard/layout/NavBar';
 import { SettingsRepository } from '@/modules/settings/definitions';
 import { AbilityProvider } from '@/lib/ability-context';
+import { SessionProvider } from 'next-auth/react';
 
 type Props = {
   children: React.ReactNode;
@@ -21,16 +22,18 @@ const AdminLayout: React.FC<Props> = async ({ children }) => {
     return <AbilityProvider isSuperAdmin={isSuperAdmin}>{children}</AbilityProvider>;
   };
   return (
-    <main>
-      <ClientAbilityProvider isSuperAdmin={isSuperAdmin}>
-        <div className='flex h-screen flex-col md:flex-row md:overflow-hidden bg-white'>
-          <div className='w-full flex-none md:w-64'>
-            <NavBar logoUrl={logoUrl} storeName={storeName} />
+    <SessionProvider session={session}>
+      <main>
+        <ClientAbilityProvider isSuperAdmin={isSuperAdmin} >
+          <div className='flex h-screen flex-col md:flex-row md:overflow-hidden bg-white'>
+            <div className='w-full flex-none md:w-64'>
+              <NavBar logoUrl={logoUrl ?? ''} storeName={storeName ?? ''} userName={session.user.name ?? ''} />
+            </div>
+            <section className='flex-grow md:p-4 md:overflow-y-auto md:px-12'>{children}</section>
           </div>
-          <section className='flex-grow md:p-4 md:overflow-y-auto md:px-12'>{children}</section>
-        </div>
-      </ClientAbilityProvider>
-    </main>
+        </ClientAbilityProvider>
+      </main>
+    </SessionProvider>
   );
 };
 

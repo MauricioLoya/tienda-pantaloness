@@ -182,7 +182,7 @@ const StoreSettingsForm: React.FC<Props> = ({ initialValues, regions }) => {
         validateOnBlur={true}
         enableReinitialize={true}
       >
-        {({ values, errors, touched, setFieldValue }) => (
+        {({ values, errors, setFieldValue }) => (
           <Form className="space-y-8">
             {/* General Information - Collapsible Section */}
             <div className="collapse collapse-arrow bg-white rounded-lg shadow-sm border">

@@ -77,10 +77,10 @@ const SectionForm: React.FC<SectionFormProps> = ({
           return true;
         }
       ),
-    backgroundUrl: Yup.string().url('Debe ser una URL válida').notRequired(),
-    backgroundColor: Yup.string().notRequired(),
-    buttonText: Yup.string().notRequired(),
-    buttonColor: Yup.string().notRequired(),
+    backgroundUrl: Yup.string().url('Debe ser una URL válida').required('La URL es requerida'),
+    backgroundColor: Yup.string().required("El color de fondo es requerido"),
+    buttonText: Yup.string().required('El texto del botón es requerido'),
+    buttonColor: Yup.string().required('El color del botón es requerido'),
     highlightProducts: Yup.array()
       .of(Yup.number())
       .when('type', {
