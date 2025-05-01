@@ -1,15 +1,31 @@
 'use client';
-import { signIn } from 'next-auth/react'
-import { useState } from 'react'
-
+import { signIn } from 'next-auth/react';
+import { useState, useEffect } from 'react';
 import { HiOutlineEye, HiOutlineEyeOff, HiOutlineUser, HiOutlineLockClosed } from 'react-icons/hi';
 
 export default function SignInPage() {
     const [form, setForm] = useState({ username: '', password: '' });
     const [error, setError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
+    const [logoUrl, setLogoUrl] = useState(null);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    // Cargar el logo de manera asíncrona usando useEffect
+    useEffect(() => {
+        const fetchLogoUrl = async () => {
+            try {
+                // Aquí realizamos la petición para obtener el logoUrl
+                const response = await fetch('/api/settings/logo');
+                const data = await response.json();
+                setLogoUrl(data.logoUrl);
+            } catch (error) {
+                console.error('Error fetching logo URL:', error);
+            }
+        };
+
+        fetchLogoUrl();
+    }, []);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         const res = await signIn('credentials', {
@@ -18,6 +34,7 @@ export default function SignInPage() {
             password: form.password,
             callbackUrl: '/mx/admin',
         });
+
         if (res?.error) setError('Usuario o contraseña inválidos');
         else if (res?.url) window.location.href = res.url;
     };
@@ -30,11 +47,7 @@ export default function SignInPage() {
                 <div className="card w-full max-w-sm shadow-2xl bg-white">
                     <div className="card-body">
                         <div className="flex justify-center mb-4">
-                            <img
-                                src="https://res.cloudinary.com/dbgyqo7qe/image/upload/f_auto,q_auto/v1/pantaloness/oyetrljmwnpzjqg5kq8h"
-                                alt="Logo de la Empresa"
-                                className="w-28 h-auto" // Tamaño ajustado para el logo (puedes cambiar w-24)
-                            />
+                            {logoUrl && <img src={logoUrl} alt="Logo" className="w-28 h-auto" />}
                         </div>
                         <p className="text-gray-600 mb-4 text-center">¡Hola de Nuevo!</p>
                         {error && (

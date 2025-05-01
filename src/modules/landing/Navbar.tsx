@@ -1,13 +1,30 @@
 'use client';
 import CartButton from '@/modules/landing/cart/CartButton';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 
 const NavBar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [logoUrl, setLogoUrl] = useState(null);
   const t = useTranslations('Navbar');
+
+  useEffect(() => {
+    const fetchLogoUrl = async () => {
+      try {
+        const response = await fetch('/api/settings/logo');
+        const data = await response.json();
+        if (data.logoUrl) {
+          setLogoUrl(data.logoUrl);
+        }
+      } catch (error) {
+        console.error('Error fetching logo URL:', error);
+      }
+    };
+
+    fetchLogoUrl();
+  }, []);
 
   return (
     <div className="sticky top-0 z-50 w-full">
@@ -15,7 +32,11 @@ const NavBar: React.FC = () => {
         <div className='navbar max-w-7xl mx-auto'>
           <div className='flex-1'>
             <Link href={'/'} className='btn btn-ghost text-xl text-primary'>
-              <img className='h-12' src="/logo.png" alt="logo" />
+              {logoUrl ? (
+                <img className="h-12" src={logoUrl} alt="logo" />
+              ) : (
+                <div className="h-12 w-32 bg-gray-200 animate-pulse rounded"></div>
+              )}
             </Link>
           </div>
 
