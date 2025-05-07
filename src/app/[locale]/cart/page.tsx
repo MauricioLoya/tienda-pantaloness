@@ -53,13 +53,6 @@ export default function CartPage() {
     }
   };
 
-  const handleApplyPromotion = () => {
-    // Here you can implement promotion code validation and application logic
-    console.log('Applying promotion code:', promotionCode);
-    // For now, we're just logging the code
-    // Later you can add validation and discount application
-  };
-
   if (items.length === 0) {
     return (
       <SectionBox>
@@ -159,9 +152,6 @@ export default function CartPage() {
               value={promotionCode || ''}
               onChange={e => setPromotionCode(e.target.value)}
             />
-            <button className='btn btn-white mt-4 py-3 w-1/3' onClick={handleApplyPromotion}>
-              {t('apply')}
-            </button>
           </div>
           <button
             onClick={handleCheckout}
