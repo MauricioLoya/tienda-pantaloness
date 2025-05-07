@@ -7,13 +7,11 @@ export default function SignInPage() {
     const [form, setForm] = useState({ username: '', password: '' });
     const [error, setError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
-    const [logoUrl, setLogoUrl] = useState(null);
+    const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
-    // Cargar el logo de manera asíncrona usando useEffect
     useEffect(() => {
         const fetchLogoUrl = async () => {
             try {
-                // Aquí realizamos la petición para obtener el logoUrl
                 const response = await fetch('/api/settings/logo');
                 const data = await response.json();
                 setLogoUrl(data.logoUrl);
@@ -25,7 +23,7 @@ export default function SignInPage() {
         fetchLogoUrl();
     }, []);
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
         const res = await signIn('credentials', {
