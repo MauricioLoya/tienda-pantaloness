@@ -77,5 +77,35 @@
       "saturday": "Saturday",
       "sunday": "Sunday"
     }
+  },
+  "ConfirmationEmailTemplate": {
+    "preview": "Your order has been confirmed! Order #{orderNumber}",
+    "title": "Thank You For Your Purchase!",
+    "order_number_label": "Order #{orderNumber}",
+    "greeting": "Hello,",
+    "confirmation_message": "We're excited to confirm that your order has been received and is being processed. You'll find all the details of your purchase below.",
+    "order_summary": "Order Summary",
+    "order_number": "Order Number:",
+    "order_date": "Order Date:",
+    "order_total": "Order Total:",
+    "items_ordered": "Items Ordered",
+    "product": "Product",
+    "price": "Price",
+    "quantity": "Qty",
+    "subtotal": "Subtotal",
+    "total": "Total:",
+    "shipping_information": "Shipping Information",
+    "track_order": "Track Your Order",
+    "thank_you_message": "Thank you for shopping with us! If you have any questions about your order, please contact our customer service team.",
+    "copyright": "© 2025 Your E-Commerce Store. All rights reserved.",
+    "store_address": "123 E-Commerce St., Azcapotzalco, MX",
+    "unsubscribe": "Unsubscribe",
+    "privacy_policy": "Privacy Policy",
+    "discount": "Discount:",
+    "discount_applied": "Discount Applied",
+    "discount_code": "Discount Code:",
+    "discount_amount": "Discount Amount:",
+    "subtotal_before_discount": "Subtotal Before Discount:",
+    "you_saved": "You saved {amount} with this order!"
   }
 }

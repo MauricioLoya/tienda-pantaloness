@@ -15,7 +15,7 @@ export class ResendEmailService implements EmailService {
       from: this.sender,
       to: payload.to,
       subject: payload.subject,
-      html: payload.html,
+      react: await payload.html,
     });
   }
 }

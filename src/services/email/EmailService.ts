@@ -1,7 +1,7 @@
 export interface EmailPayload {
   to: string;
   subject: string;
-  html: string;
+  html: string | React.ReactNode | Promise<React.ReactNode>;
 }
 
 export interface EmailService {
