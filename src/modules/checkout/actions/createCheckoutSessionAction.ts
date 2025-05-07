@@ -9,6 +9,7 @@ import {
   processPromoCode,
   validateAndProcessCartItems,
 } from '../validations';
+import { RegionRepository } from '@/modules/region/definitions';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -81,13 +82,25 @@ export async function createCheckoutSessionAction(
       promotionId: promotionId ? String(promotionId) : '',
     };
     const subtotal = lineItems.reduce((acc, item) => acc + item.price_data.unit_amount, 0);
-    const isFreeShipping = subtotal >= 300 * 100;
+    const regionItem = await new RegionRepository().getById(region);
+    if (!regionItem) {
+      return {
+        success: false,
+        message: 'Error al procesar la región.',
+        data: null,
+        error: 'Región no encontrada',
+        errorCode: CheckoutErrorCode.UNKNOWN_ERROR,
+      };
+    }
+
+    const freeThreshold = (regionItem.amountForFreeShipping ?? 0) * 100;
+    const isFreeShipping = regionItem.isFreeShipping && subtotal >= freeThreshold;
     const shippingOptions: Stripe.Checkout.SessionCreateParams.ShippingOption[] = [
       {
         shipping_rate_data: {
           type: 'fixed_amount',
           fixed_amount: {
-            amount: isFreeShipping ? 0 : 10000,
+            amount: isFreeShipping ? 0 : (regionItem.shippingPrice ?? 0) * 100,
             currency: region === 'mx' ? 'mxn' : 'usd',
           },
           display_name: 'Envío estándar',
