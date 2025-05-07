@@ -56,5 +56,26 @@
   "Categories": {
     "title": "Categories",
     "description": "Explore our product categories"
+  },
+  "ContactPage": {
+    "title": "Contact Us",
+    "description": "We are here to help you. Get in touch with us and we will respond as soon as possible.",
+    "contact_info_title": "Contact Information",
+    "address": "Address",
+    "zip_code": "ZIP Code",
+    "phone": "Phone",
+    "email": "Email",
+    "business_hours": "Business Hours",
+    "closed": "Closed",
+    "not_available": "Not available",
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    }
   }
 }

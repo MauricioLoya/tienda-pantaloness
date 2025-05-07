@@ -56,5 +56,26 @@
   "Categories": {
     "title": "Categorías",
     "description": "Explora nuestras categorías de productos"
+  },
+  "ContactPage": {
+    "title": "Contáctanos",
+    "description": "Estamos aquí para ayudarte. Ponte en contacto con nosotros y te responderemos lo antes posible.",
+    "contact_info_title": "Información de Contacto",
+    "address": "Dirección",
+    "zip_code": "Código Postal",
+    "phone": "Teléfono",
+    "email": "Correo Electrónico",
+    "business_hours": "Horario de Atención",
+    "closed": "Cerrado",
+    "not_available": "No disponible",
+    "days": {
+      "monday": "Lunes",
+      "tuesday": "Martes",
+      "wednesday": "Miércoles",
+      "thursday": "Jueves",
+      "friday": "Viernes",
+      "saturday": "Sábado",
+      "sunday": "Domingo"
+    }
   }
 }
