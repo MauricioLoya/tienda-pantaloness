@@ -1,5 +1,3 @@
-import short from 'short-uuid';
-
 export const formatPrice = (price: number): string => {
   return new Intl.NumberFormat('es-MX', {
     style: 'currency',
@@ -50,7 +48,9 @@ export function generateOrderNumber(): string {
 }
 
 export function generateShortId(): string {
-  return short.generate();
+  const number = generateRandomCharacters(7).toUpperCase();
+  const date = new Date().getMilliseconds();
+  return `${number}-${date}`;
 }
 
 export function generateRandomPassword(length = 10): string {
