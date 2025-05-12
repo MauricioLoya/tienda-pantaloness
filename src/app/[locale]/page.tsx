@@ -13,11 +13,6 @@ const HomePage: React.FC = async () => {
   return (
     <>
       <NavBar />
-
-
-      <div className='h-20'>
-
-      </div>
       {sections.map(section => {
         switch (section.type) {
           case SectionType.banner:
