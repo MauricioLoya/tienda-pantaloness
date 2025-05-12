@@ -36,9 +36,9 @@ const NavBar: React.FC = () => {
       <nav className="navbar bg-white shadow-lg">
         <div className="navbar max-w-7xl mx-auto">
           <div className="flex-1">
-            <Link href={'/'} className="btn btn-ghost text-xl text-primary">
+            <Link href={'/'} className="text-xl text-primary">
               {logoUrl ? (
-                <img className="h-12" src={logoUrl} alt="logo" />
+                <img className="h-12 md:h-20 " src={logoUrl} alt="logo" />
               ) : (
                 <div className="h-12 w-32 bg-gray-200 animate-pulse rounded"></div>
               )}
