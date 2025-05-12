@@ -13,9 +13,10 @@ import {
   Tailwind,
   Text,
 } from '@react-email/components';
-import { getTranslations } from 'next-intl/server';
+import { translateForRegion } from '@/lib/utils';
 
 interface Props {
+  region: string;
   orderNumber: string;
   items: { name: string, price: string, quantity: number, subtotal: string }[]
   orderDate: string;
@@ -27,9 +28,12 @@ interface Props {
     subtotalBeforeDiscount: string;
   };
 }
-const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ orderNumber, items, orderDate, orderTotal, shippingAddress, discount }) => {
 
-  const t = await getTranslations('ConfirmationEmailTemplate');
+
+
+const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ region, orderNumber, items, orderDate, orderTotal, shippingAddress, discount }) => {
+
+  const t = translateForRegion(region, 'ConfirmationEmailTemplate');
 
   return (
     <Html>
@@ -176,7 +180,7 @@ const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ orderNumber, 
                       <Text className="text-[#1d1d1b] font-bold m-0">{t('discount_amount')}</Text>
                     </Column>
                     <Column className="px-[16px] py-[12px]">
-                      <Text className="text-[#1d1d1b] m-0 text-right text-green-600">-{discount.amount}</Text>
+                      <Text className="m-0 text-right text-green-600">-{discount.amount}</Text>
                     </Column>
                   </Row>
 

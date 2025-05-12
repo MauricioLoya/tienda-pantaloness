@@ -1,3 +1,7 @@
+import { createTranslator } from 'next-intl';
+import mx from '../../messages/mx.json';
+import us from '../../messages/us.json';
+
 export const formatPrice = (price: number): string => {
   return new Intl.NumberFormat('es-MX', {
     style: 'currency',
@@ -71,4 +75,28 @@ export function generateRandomPassword(length = 10): string {
   }
 
   return password;
+}
+
+function getMessagesByRegion(region: string) {
+  switch (region.toLowerCase()) {
+    case 'mx':
+    case 'es':
+      return { locale: 'es', messages: mx };
+    case 'us':
+    case 'en':
+    default:
+      return { locale: 'en', messages: us };
+  }
+}
+
+export function translateForRegion(region: string, namespace: string) {
+  const { locale, messages } = getMessagesByRegion(region);
+
+  // Pasar el namespace específico para el contexto de correo de confirmación
+  return createTranslator({
+    locale,
+    messages,
+    // @ts-expect-error // This is a workaround for the type error
+    namespace,
+  });
 }

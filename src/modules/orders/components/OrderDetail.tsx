@@ -1,6 +1,8 @@
 import React from 'react';
 import { OrderRepository } from '../definitions';
 import DisplayInfo from '@/lib/components/DisplayInfo';
+import OrderDetailsActions from './OrderDetailActions';
+import { formatPrice } from '@/lib/utils';
 type Props = {
   id: number;
 };
@@ -17,6 +19,17 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
           <DisplayInfo
             info={[
               {
+                label: 'Acciones',
+                value: (
+                  <OrderDetailsActions orderId={id} />
+                ),
+              },
+
+            ]}
+          />
+          <DisplayInfo
+            info={[
+              {
                 label: 'Estado',
                 value: detail.order.status,
               },
@@ -29,6 +42,14 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
                 label: 'ID de Orden',
                 value: detail.order.id,
                 copyable: true,
+              },
+              {
+                label: 'Region',
+                value: (
+                  <div>
+                    {detail.order.regionId === 'mx' ? '🇲🇽 México ' : '🇺🇸 USA'}
+                  </div>
+                ),
               },
             ]}
           />
@@ -78,14 +99,20 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
                 label: 'País',
                 value: detail.order.country,
               },
+
             ]}
           />
 
           <DisplayInfo
             info={[
               {
+                label: 'Costo de Envío',
+                value: formatPrice(detail.order.shippingPrice!)
+                ,
+              },
+              {
                 label: 'Total',
-                value: detail.order.totalAmount,
+                value: formatPrice(detail.order.totalAmount),
               },
               {
                 label: 'Estado',
