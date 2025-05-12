@@ -155,6 +155,7 @@ model Order {
   Payment        Payment[]
   regionId       String?
   region         Region?     @relation(fields: [regionId], references: [code])
+  shippingPrice  Float? @default(0)
 }
 
 model OrderItem {
