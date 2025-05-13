@@ -103,7 +103,8 @@ export async function createCheckoutSessionAction(
             amount: isFreeShipping ? 0 : (regionItem.shippingPrice ?? 0) * 100,
             currency: region === 'mx' ? 'mxn' : 'usd',
           },
-          display_name: 'Envío estándar',
+          display_name: 'Envío',
+          // TODO: Preguntar
           delivery_estimate: {
             minimum: { unit: 'business_day', value: 3 },
             maximum: { unit: 'business_day', value: 5 },
