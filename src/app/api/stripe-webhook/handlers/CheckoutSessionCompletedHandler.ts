@@ -92,7 +92,7 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
           promotionId: session.metadata?.promotionId
             ? Number(session.metadata.promotionId)
             : undefined,
-          regionId: session.metadata?.regionId,
+          regionId: session.metadata?.region,
           shippingPrice: session.shipping_cost?.amount_total ?? 0,
         },
       });
