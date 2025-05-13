@@ -81,7 +81,10 @@ export async function createCheckoutSessionAction(
       region: region,
       promotionId: promotionId ? String(promotionId) : '',
     };
-    const subtotal = lineItems.reduce((acc, item) => acc + item.price_data.unit_amount, 0);
+    const subtotal = lineItems.reduce(
+      (acc, item) => acc + item.price_data.unit_amount * item.quantity,
+      0
+    );
     const regionItem = await new RegionRepository().getById(region);
     if (!regionItem) {
       return {
@@ -95,13 +98,18 @@ export async function createCheckoutSessionAction(
 
     const freeThreshold = (regionItem.amountForFreeShipping ?? 0) * 100;
     const isFreeShipping = regionItem.isFreeShipping && subtotal >= freeThreshold;
+    console.log('isFreeShipping', isFreeShipping);
+    console.log('subtotal', subtotal);
+    console.log('freeThreshold', freeThreshold);
+    console.log('regionItem', regionItem);
+
     const shippingOptions: Stripe.Checkout.SessionCreateParams.ShippingOption[] = [
       {
         shipping_rate_data: {
           type: 'fixed_amount',
           fixed_amount: {
-            amount: isFreeShipping ? 0 : (regionItem.shippingPrice ?? 0) * 100,
-            currency: region === 'mx' ? 'mxn' : 'usd',
+            amount: isFreeShipping ? 0 : regionItem.shippingPrice! * 100,
+            currency: regionItem.currencyCode!,
           },
           display_name: 'Envío',
           // TODO: Preguntar
