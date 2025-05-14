@@ -22,16 +22,16 @@ interface Props {
   orderDate: string;
   orderTotal: string;
   shippingAddress: string;
+  shippingPrice: string;
   discount?: {
     code?: string;
     amount: string;
-    subtotalBeforeDiscount: string;
   };
 }
 
 
 
-const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ region, orderNumber, items, orderDate, orderTotal, shippingAddress, discount }) => {
+const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ region, orderNumber, items, orderDate, orderTotal, shippingAddress, discount, shippingPrice }) => {
 
   const t = translateForRegion(region, 'ConfirmationEmailTemplate');
 
@@ -133,7 +133,15 @@ const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ region, order
                   </Row>
                 ))}
 
-                {/* Total */}
+                {/* shippingPrice */}
+                <Row className="border-b border-solid border-gray-200 last:border-b-0">
+                  <Column className="px-[12px] py-[12px]" colSpan={3}>
+                    <Text className="text-[#1d1d1b] m-0 text-left">{t('shippingPrice')}</Text>
+                  </Column>
+                  <Column className="px-[12px] py-[12px]">
+                    <Text className="text-[#1d1d1b] m-0 text-right">{shippingPrice}</Text>
+                  </Column>
+                </Row>
                 <Row className="bg-gray-100">
                   <Column className="px-[12px] py-[12px]" colSpan={3}>
                     <Text className="text-[#1d1d1b] font-bold m-0 text-right">{t('total')}</Text>
@@ -166,14 +174,7 @@ const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ region, order
                     </Row>
                   )}
 
-                  <Row className="border-b border-solid border-gray-200">
-                    <Column className="px-[16px] py-[12px]">
-                      <Text className="text-[#1d1d1b] font-bold m-0">{t('subtotal_before_discount')}</Text>
-                    </Column>
-                    <Column className="px-[16px] py-[12px]">
-                      <Text className="text-[#1d1d1b] m-0 text-right">{discount.subtotalBeforeDiscount}</Text>
-                    </Column>
-                  </Row>
+
 
                   <Row className="border-b border-solid border-gray-200">
                     <Column className="px-[16px] py-[12px]">

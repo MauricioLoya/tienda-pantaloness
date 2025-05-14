@@ -1,5 +1,6 @@
 import React from 'react';
 import dayjs from 'dayjs';
+import { Link } from '@/i18n/navigation';
 
 interface RecentOrdersTableProps {
     orders: {
@@ -81,7 +82,7 @@ const RecentOrdersTable: React.FC<RecentOrdersTableProps> = ({ orders }) => {
                                     </div>
                                 </td>
                                 <td>
-                                    <button className="btn btn-xs btn-ghost">Ver</button>
+                                    <Link href={`admin/orders/${order.orderId}`} className="btn btn-xs btn-ghost">Ver</Link>
                                 </td>
                             </tr>
                         ))}

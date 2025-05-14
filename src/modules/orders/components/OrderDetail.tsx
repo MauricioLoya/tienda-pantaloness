@@ -3,6 +3,7 @@ import { OrderRepository } from '../definitions';
 import DisplayInfo from '@/lib/components/DisplayInfo';
 import OrderDetailsActions from './OrderDetailActions';
 import { formatPrice } from '@/lib/utils';
+import dayjs from 'dayjs';
 type Props = {
   id: number;
 };
@@ -120,7 +121,7 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
               },
               {
                 label: 'Fecha',
-                value: detail.order.orderDate.toISOString(),
+                value: dayjs(detail.order.orderDate).format('DD/MM/YYYY hh:mm A'),
               },
             ]}
           />

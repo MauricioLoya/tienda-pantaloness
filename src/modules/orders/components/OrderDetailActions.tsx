@@ -11,8 +11,6 @@ const OrderDetailsActions: React.FC<Props> = ({ orderId }) => {
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
 
   const handleSendConfirmation = async () => {
-    console.log('Enviando correo de confirmación para la orden:', orderId);
-
     try {
       setIsSending(true);
       setMessage(null);

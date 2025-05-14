@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prima/client';
 import { formatPrice } from '@/lib/utils';
 import OrderConfirmationEmail from '@/services/email/templates/OrderConfirmation';
 import { Customer, Order, OrderItem, Payment, Promotion } from '@prisma/client';
+import dayjs from 'dayjs';
 
 export type OrderStatusInput = {
   status: string;
@@ -137,28 +138,59 @@ export class OrderRepository implements IOrderRepository {
       }
 
       const subject = `${order.regionId === 'mx' ? 'Confirmación de pedido' : 'Order Confirmation'} ${order.orderNumber}`;
-
-      const items = order.OrderItem.map(item => ({
-        name: item.productName,
-        quantity: item.quantity,
-        price: formatPrice(item.price),
-        subtotal: formatPrice(item.price * item.quantity),
-      }));
+      let totalItemsPrice = 0;
+      const items = order.OrderItem.map(item => {
+        totalItemsPrice += item.price * item.quantity;
+        return {
+          name: item.productName,
+          quantity: item.quantity,
+          price: formatPrice(item.price),
+          subtotal: formatPrice(item.price * item.quantity),
+        };
+      });
       const orderTotal = order.totalAmount;
 
       const shippingAddress = `${order.shipping_line1}, ${order.shipping_line2}, ${order.city}, ${order.state}, ${order.postalCode}, ${order.country}`;
       console.log('region', order.regionId);
 
+      let emailData: {
+        region: string;
+        orderNumber: string;
+        items: typeof items;
+        orderDate: string;
+        orderTotal: string;
+        shippingAddress: string;
+        shippingPrice: string;
+        discount?: {
+          code: string;
+          amount: string;
+        };
+      } = {
+        region: order.regionId!.toLowerCase(),
+        orderNumber: order.orderNumber!,
+        items,
+        orderDate: dayjs(order.orderDate).format('YYYY-MM-DD'),
+        orderTotal: formatPrice(orderTotal),
+        shippingAddress,
+        shippingPrice: formatPrice(order.shippingPrice!),
+      };
+
+      if (order.promotion) {
+        const discountAmount = totalItemsPrice * (order.promotion.discount / 100);
+        emailData = {
+          ...emailData,
+          discount: {
+            code: order.promotion.code,
+            amount: formatPrice(discountAmount),
+          },
+        };
+      }
+
       await emailService.sendEmail({
         to: order.customer.email,
         subject,
         html: OrderConfirmationEmail({
-          region: order.regionId!.toLowerCase(),
-          orderNumber: order.orderNumber!,
-          items,
-          orderDate: order.orderDate.toISOString(),
-          orderTotal: formatPrice(orderTotal),
-          shippingAddress,
+          ...emailData,
         }),
       });
     } catch (error) {
