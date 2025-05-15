@@ -145,7 +145,8 @@ export class OrderRepository implements IOrderRepository {
           name: item.productName,
           quantity: item.quantity,
           price: formatPrice(item.price),
-          subtotal: formatPrice(item.price * item.quantity),
+          paidPrice: formatPrice(item.paidPrice),
+          subtotal: formatPrice(item.paidPrice * item.quantity),
         };
       });
       const orderTotal = order.totalAmount;

@@ -18,7 +18,7 @@ import { translateForRegion } from '@/lib/utils';
 interface Props {
   region: string;
   orderNumber: string;
-  items: { name: string, price: string, quantity: number, subtotal: string, priceWithDiscount?: string }[]
+  items: { name: string, price: string, quantity: number, subtotal: string, paidPrice: string }[]
   orderDate: string;
   orderTotal: string;
   shippingAddress: string;
@@ -108,6 +108,9 @@ const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ region, order
                     <Text className="text-[#1d1d1b] font-bold m-0 text-right">{t('price')}</Text>
                   </Column>
                   <Column className="px-[12px] py-[12px]">
+                    <Text className="text-[#1d1d1b] font-bold m-0 text-right">{t('paidPrice')}</Text>
+                  </Column>
+                  <Column className="px-[12px] py-[12px]">
                     <Text className="text-[#1d1d1b] font-bold m-0 text-right">{t('quantity')}</Text>
                   </Column>
                   <Column className="px-[12px] py-[12px]">
@@ -123,6 +126,9 @@ const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ region, order
                     </Column>
                     <Column className="px-[12px] py-[12px]">
                       <Text className="text-[#1d1d1b] m-0 text-right">{item.price}</Text>
+                    </Column>
+                    <Column className="px-[12px] py-[12px]">
+                      <Text className="text-[#1d1d1b] m-0 text-right">{item.paidPrice}</Text>
                     </Column>
                     <Column className="px-[12px] py-[12px]">
                       <Text className="text-[#1d1d1b] m-0 text-right">{item.quantity}</Text>

@@ -91,6 +91,7 @@
     "items_ordered": "Items Ordered",
     "product": "Product",
     "price": "Price",
+    "paidPrice": "Paid Price",
     "quantity": "Qty",
     "subtotal": "Subtotal",
     "total": "Total:",

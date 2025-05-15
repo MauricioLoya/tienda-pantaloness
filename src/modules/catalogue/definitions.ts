@@ -58,6 +58,24 @@ export type ProductAdminTableRow = {
 };
 
 export class ProductRepository {
+  getsimpleProductById(id: number) {
+    return prisma.product.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        active: true,
+        regionId: true,
+        slug: true,
+        isDeleted: true,
+        searchWords: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
   async getProducts(): Promise<ProductAdminTableRow[]> {
     const products = await prisma.product.findMany({
       include: {

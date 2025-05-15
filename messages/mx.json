@@ -94,6 +94,7 @@
     "items_ordered": "Artículos Pedidos",
     "product": "Producto",
     "price": "Precio",
+    "paidPrice": "Precio Pagado",
     "quantity": "Cant.",
     "subtotal": "Subtotal",
     "total": "Total:",

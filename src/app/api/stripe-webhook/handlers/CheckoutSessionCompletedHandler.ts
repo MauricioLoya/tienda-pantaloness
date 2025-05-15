@@ -4,6 +4,7 @@ import { EmailService } from '@/services/email/EmailService';
 import { prisma } from '@/lib/prima/client';
 import { OrderStatus } from '@/lib/types';
 import { generateShortId } from '@/lib/utils';
+import { ProductRepository } from '@/modules/catalogue/definitions';
 
 export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
   private stripe: Stripe;
@@ -98,22 +99,54 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
       });
 
       for (const item of lineItems.data) {
+        const productIdFromMetadata = item.price?.metadata.productId;
+        const variantIdFromMetadata = item.price?.metadata.variantId;
+        if (!productIdFromMetadata) {
+          console.log(`Producto no encontrado: ${productIdFromMetadata}`);
+          continue;
+        }
+        if (!variantIdFromMetadata) {
+          console.log(`Variante no encontrada: ${variantIdFromMetadata}`);
+          continue;
+        }
+
+        const productRepo = new ProductRepository();
+
+        const productItem = await productRepo.getProductById(Number(productIdFromMetadata));
+
+        if (!productItem) {
+          console.log(`Producto no encontrado: ${productIdFromMetadata}`);
+          continue;
+        }
+
         const productName = item.description || 'Producto';
         const quantity = item.quantity || 1;
-        const price = item.amount_total ? item.amount_total / 100 : 0;
-
         // Este valor tiene que venir de nuestra base de datos
-        const productDescription = item.price?.product || 'Descripción no disponible';
+
         const productImage = item.price?.product ? '' : '';
+
+        const purchasedVariant = productItem.variants.find(
+          variant => variant.id === Number(variantIdFromMetadata)
+        );
+
+        if (!purchasedVariant) {
+          console.log(`Variante no encontrada: ${variantIdFromMetadata}`);
+          continue;
+        }
+
+        const paidPrice = purchasedVariant?.discountPrice
+          ? purchasedVariant.discountPrice
+          : purchasedVariant?.price;
 
         await tx.orderItem.create({
           data: {
             orderId: order.id,
             productName,
-            productDescription: productDescription.toString(),
+            productDescription: productItem.product.description,
             productImage,
             quantity,
-            price: price / quantity,
+            price: purchasedVariant?.price,
+            paidPrice,
           },
         });
         console.log(`✅ Producto agregado a la orden: ${productName} x${quantity}`);
