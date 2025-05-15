@@ -139,8 +139,10 @@ export class OrderRepository implements IOrderRepository {
 
       const subject = `${order.regionId === 'mx' ? 'Confirmación de pedido' : 'Order Confirmation'} ${order.orderNumber}`;
       let totalItemsPrice = 0;
+      let totalItemPaid = 0;
       const items = order.OrderItem.map(item => {
         totalItemsPrice += item.price * item.quantity;
+        totalItemPaid += item.paidPrice * item.quantity;
         return {
           name: item.productName,
           quantity: item.quantity,
@@ -152,7 +154,7 @@ export class OrderRepository implements IOrderRepository {
       const orderTotal = order.totalAmount;
 
       const shippingAddress = `${order.shipping_line1}, ${order.shipping_line2}, ${order.city}, ${order.state}, ${order.postalCode}, ${order.country}`;
-      console.log('region', order.regionId);
+      const totalSaved = totalItemsPrice - orderTotal;
 
       let emailData: {
         region: string;
@@ -162,6 +164,7 @@ export class OrderRepository implements IOrderRepository {
         orderTotal: string;
         shippingAddress: string;
         shippingPrice: string;
+        totalSaved: number;
         discount?: {
           code: string;
           amount: string;
@@ -174,10 +177,12 @@ export class OrderRepository implements IOrderRepository {
         orderTotal: formatPrice(orderTotal),
         shippingAddress,
         shippingPrice: formatPrice(order.shippingPrice!),
+        totalSaved,
       };
 
       if (order.promotion) {
-        const discountAmount = totalItemsPrice * (order.promotion.discount / 100);
+        const discountAmount = totalItemPaid - orderTotal;
+
         emailData = {
           ...emailData,
           discount: {

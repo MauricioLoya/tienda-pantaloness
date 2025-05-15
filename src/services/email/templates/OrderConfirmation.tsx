@@ -13,7 +13,7 @@ import {
   Tailwind,
   Text,
 } from '@react-email/components';
-import { translateForRegion } from '@/lib/utils';
+import { formatPrice, translateForRegion } from '@/lib/utils';
 
 interface Props {
   region: string;
@@ -23,6 +23,7 @@ interface Props {
   orderTotal: string;
   shippingAddress: string;
   shippingPrice: string;
+  totalSaved: number;
   discount?: {
     code?: string;
     amount: string;
@@ -31,7 +32,7 @@ interface Props {
 
 
 
-const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ region, orderNumber, items, orderDate, orderTotal, shippingAddress, discount, shippingPrice }) => {
+const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ region, orderNumber, items, orderDate, orderTotal, shippingAddress, discount, shippingPrice, totalSaved }) => {
 
   const t = translateForRegion(region, 'ConfirmationEmailTemplate');
 
@@ -139,6 +140,17 @@ const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ region, order
                   </Row>
                 ))}
 
+                {discount && (
+                  <Row className="border-b border-solid border-gray-200 last:border-b-0">
+                    <Column className="px-[12px] py-[12px]" colSpan={3}>
+                      <Text className="text-[#1d1d1b] m-0 text-left">{t('discount_code')} {discount.code}</Text>
+                    </Column>
+                    <Column className="px-[12px] py-[12px]">
+                      <Text className="text-[#1d1d1b] m-0 text-right">{discount.amount}</Text>
+                    </Column>
+                  </Row>
+                )}
+
                 {/* shippingPrice */}
                 <Row className="border-b border-solid border-gray-200 last:border-b-0">
                   <Column className="px-[12px] py-[12px]" colSpan={3}>
@@ -158,43 +170,13 @@ const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ region, order
                 </Row>
               </Section>
 
-              {/* Discount Section - Only shown if discount is provided */}
-              {discount && (
+
+              {(totalSaved > 0) && (
                 <Section className="border border-solid border-gray-200 rounded-[8px] overflow-hidden mb-[24px] bg-gray-50">
-                  <Row className="border-b border-solid border-gray-200">
-                    <Column className="px-[16px] py-[16px]" colSpan={2}>
-                      <Heading className="text-[16px] font-bold text-[#023d79] m-0">
-                        {t('discount_applied')}
-                      </Heading>
-                    </Column>
-                  </Row>
-
-                  {discount.code && (
-                    <Row className="border-b border-solid border-gray-200">
-                      <Column className="px-[16px] py-[12px]">
-                        <Text className="text-[#1d1d1b] font-bold m-0">{t('discount_code')}</Text>
-                      </Column>
-                      <Column className="px-[16px] py-[12px]">
-                        <Text className="text-[#1d1d1b] m-0 text-right">{discount.code}</Text>
-                      </Column>
-                    </Row>
-                  )}
-
-
-
-                  <Row className="border-b border-solid border-gray-200">
-                    <Column className="px-[16px] py-[12px]">
-                      <Text className="text-[#1d1d1b] font-bold m-0">{t('discount_amount')}</Text>
-                    </Column>
-                    <Column className="px-[16px] py-[12px]">
-                      <Text className="m-0 text-right text-green-600">-{discount.amount}</Text>
-                    </Column>
-                  </Row>
-
                   <Row>
                     <Column className="px-[16px] py-[12px]" colSpan={2}>
                       <Text className="text-green-600 font-medium text-center m-0">
-                        {t('you_saved', { amount: discount.amount })}
+                        {t('you_saved', { amount: formatPrice(totalSaved) })}
                       </Text>
                     </Column>
                   </Row>

@@ -136,7 +136,7 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
                 label: 'Listado de Productos',
                 value: detail.items.map(item => (
                   <div key={item.id}>
-                    {item.quantity} x {item.productName} - ${item.price} c/u
+                    {item.quantity} x {item.productName} - ${item.paidPrice} c/u
                   </div>
                 )),
               },
