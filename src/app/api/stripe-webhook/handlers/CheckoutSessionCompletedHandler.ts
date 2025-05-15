@@ -112,7 +112,7 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
             productDescription: productDescription.toString(),
             productImage,
             quantity,
-            price,
+            price: price / quantity,
           },
         });
         console.log(`✅ Producto agregado a la orden: ${productName} x${quantity}`);
