@@ -165,6 +165,7 @@ model OrderItem {
   productImage       String
   quantity           Int
   price              Float
+  paidPrice          Float @default(0)
   orderId            Int
   order              Order  @relation(fields: [orderId], references: [id])
 }
