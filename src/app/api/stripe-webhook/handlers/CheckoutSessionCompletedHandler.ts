@@ -99,6 +99,7 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
       });
 
       for (const item of lineItems.data) {
+        console.log('item', item);
         const productIdFromMetadata = item.price?.metadata.productId;
         const variantIdFromMetadata = item.price?.metadata.variantId;
         if (!productIdFromMetadata) {
