@@ -18,7 +18,7 @@ import { translateForRegion } from '@/lib/utils';
 interface Props {
   region: string;
   orderNumber: string;
-  items: { name: string, price: string, quantity: number, subtotal: string }[]
+  items: { name: string, price: string, quantity: number, subtotal: string, priceWithDiscount?: string }[]
   orderDate: string;
   orderTotal: string;
   shippingAddress: string;

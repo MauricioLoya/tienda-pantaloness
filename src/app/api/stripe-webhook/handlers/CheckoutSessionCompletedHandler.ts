@@ -102,6 +102,7 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
         const quantity = item.quantity || 1;
         const price = item.amount_total ? item.amount_total / 100 : 0;
 
+        // Este valor tiene que venir de nuestra base de datos
         const productDescription = item.price?.product || 'Descripción no disponible';
         const productImage = item.price?.product ? '' : '';
 
