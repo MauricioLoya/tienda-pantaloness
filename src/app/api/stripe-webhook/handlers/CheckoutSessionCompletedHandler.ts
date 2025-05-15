@@ -3,7 +3,7 @@ import { WebhookEventHandler } from './WebhookEventHandler';
 import { EmailService } from '@/services/email/EmailService';
 import { prisma } from '@/lib/prima/client';
 import { OrderStatus } from '@/lib/types';
-import { generateShortId } from '@/lib/utils';
+import { extractNumbersFromBrackets, generateShortId } from '@/lib/utils';
 import { ProductRepository } from '@/modules/catalogue/definitions';
 
 export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
@@ -100,23 +100,26 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
 
       for (const item of lineItems.data) {
         console.log('item', item);
-        const productIdFromMetadata = item.price?.metadata.productId;
-        const variantIdFromMetadata = item.price?.metadata.variantId;
-        if (!productIdFromMetadata) {
-          console.log(`Producto no encontrado: ${productIdFromMetadata}`);
+        // const productIdFromName = item.price?.metadata.productId;
+        // const variantIdFromName = item.price?.metadata.variantId;
+        const [variantIdFromName, productIdFromName] = extractNumbersFromBrackets(
+          item.description || ''
+        );
+        if (!productIdFromName) {
+          console.log(`Producto no encontrado: ${productIdFromName}`);
           continue;
         }
-        if (!variantIdFromMetadata) {
-          console.log(`Variante no encontrada: ${variantIdFromMetadata}`);
+        if (!variantIdFromName) {
+          console.log(`Variante no encontrada: ${variantIdFromName}`);
           continue;
         }
 
         const productRepo = new ProductRepository();
 
-        const productItem = await productRepo.getProductById(Number(productIdFromMetadata));
+        const productItem = await productRepo.getProductById(Number(productIdFromName));
 
         if (!productItem) {
-          console.log(`Producto no encontrado: ${productIdFromMetadata}`);
+          console.log(`Producto no encontrado: ${productIdFromName}`);
           continue;
         }
 
@@ -127,11 +130,11 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
         const productImage = item.price?.product ? '' : '';
 
         const purchasedVariant = productItem.variants.find(
-          variant => variant.id === Number(variantIdFromMetadata)
+          variant => variant.id === Number(variantIdFromName)
         );
 
         if (!purchasedVariant) {
-          console.log(`Variante no encontrada: ${variantIdFromMetadata}`);
+          console.log(`Variante no encontrada: ${variantIdFromName}`);
           continue;
         }
 

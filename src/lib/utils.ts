@@ -100,3 +100,20 @@ export function translateForRegion(region: string, namespace: string) {
     namespace,
   });
 }
+
+/**
+ * Extracts two numbers separated by a hyphen inside square brackets from a string.
+ * @param input - The input string, e.g. "Pants jogger gray sports – G [54-11]".
+ * @returns A tuple [firstNumber, secondNumber] or null if there's no match.
+ */
+export function extractNumbersFromBrackets(input: string): [number, number] | [null, null] {
+  const regex = /\[(\d+)-(\d+)\]/;
+  const match = input.match(regex);
+  if (!match) return [null, null];
+
+  // match[1] and match[2] are the captured number strings
+  const firstNumber = parseInt(match[1], 10);
+  const secondNumber = parseInt(match[2], 10);
+
+  return [firstNumber, secondNumber];
+}

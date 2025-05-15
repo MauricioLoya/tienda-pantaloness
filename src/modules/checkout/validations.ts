@@ -1,4 +1,3 @@
-import Stripe from 'stripe';
 import { prisma } from '@/lib/prima/client';
 
 // Helper function to round to 2 decimal places
@@ -24,7 +23,6 @@ export type LineItemsStripe = {
       name: string;
       description: string;
       images?: [string];
-      metadata: Stripe.MetadataParam;
     };
     unit_amount: number;
   };
@@ -175,14 +173,9 @@ export async function validateAndProcessCartItems(
       price_data: {
         currency: product?.region?.currencyCode ?? 'usd',
         product_data: {
-          name: `${product.name} - ${variant.size} [${variant.id}]`,
+          name: `${product.name} - ${variant.size} [${variant.id}-${product.id}]`,
           description: product.description,
           images: [product.ProductImage.map(img => img.url)[0]],
-          metadata: {
-            productId: String(product.id),
-            variantId: String(variant.id),
-            region: product.regionId,
-          },
         },
         unit_amount: Math.round(subtotal * 100), // Stripe requires amount in cents (whole numbers)
       },
