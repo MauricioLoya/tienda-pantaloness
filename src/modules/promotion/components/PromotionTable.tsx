@@ -113,7 +113,6 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
     { label: 'Fecha Fin', field: 'endDate', sortable: true },
     { label: 'Descuento', field: 'discount', sortable: true },
     { label: 'Activo', field: 'active', sortable: true },
-    // { label: 'Eliminado', field: 'isDeleted', sortable: true },
     { label: 'Opciones', field: 'options', sortable: false },
   ];
 
@@ -153,8 +152,8 @@ const PromotionTable: React.FC<Props> = ({ values, regions }) => {
         headers={tableHeaders}
         data={data}
         keyField="code"
-        defaultSortField="code"
-        defaultSortOrder="asc"
+        defaultSortField="startDate"
+        defaultSortOrder="desc"
         itemsPerPageOptions={[10, 25, 50, 100]}
         defaultItemsPerPage={10}
       />

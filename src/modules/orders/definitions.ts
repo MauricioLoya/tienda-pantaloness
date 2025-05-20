@@ -99,6 +99,7 @@ export class OrderRepository implements IOrderRepository {
             select: { paymentType: true },
           },
         },
+        orderBy: { orderDate: 'desc' },
       });
 
       return orders.map(order => ({

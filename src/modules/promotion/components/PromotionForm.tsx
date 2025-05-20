@@ -28,21 +28,18 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
   onSuccess,
   onClose,
 }) => {
-  function formatDate(d?: string | Date): string {
+  function formatDateForInput(d?: string | Date): string {
     if (!d) return '';
-    const iso = typeof d === 'string'
-      ? new Date(d).toISOString()
-      : d.toISOString();
-    return iso.slice(0, 10); // "YYYY-MM-DD"
+    const dateObj = typeof d === 'string' ? new Date(d) : d;
+    return dateObj.toISOString().slice(0, 10);
   }
-
   const defaults: PromotionFormValues = {
     code: '',
     name: '',
     description: '',
     discount: 0,
-    startDate: formatDate(initialData?.startDate),
-    endDate: formatDate(initialData?.endDate),
+    startDate: formatDateForInput(initialData?.startDate),
+    endDate: formatDateForInput(initialData?.endDate),
     active: initialData?.active ?? false,
     regionId: initialData?.regionId ?? '',
   };
@@ -78,10 +75,17 @@ const PromotionForm: React.FC<PromotionFormProps> = ({
         initialValues={initialValues}
         validationSchema={PromotionSchema}
         onSubmit={values => {
+          const localStartDate = new Date(values.startDate + 'T00:00:00');
+          const startDateUTC = new Date(localStartDate.getTime() - (localStartDate.getTimezoneOffset() * 60 * 1000));
+
+          const localEndDate = new Date(values.endDate + 'T23:59:59.999');
+          const endDateUTC = new Date(localEndDate.getTime() - (localEndDate.getTimezoneOffset() * 60 * 1000));
+
+
           const payload: PromotionInput = {
             ...values,
-            startDate: new Date(values.startDate),
-            endDate: new Date(values.endDate),
+            startDate: startDateUTC,
+            endDate: endDateUTC,
           };
           onSuccess(payload);
           onClose();

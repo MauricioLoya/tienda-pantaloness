@@ -18,6 +18,17 @@ interface UpdatePromotionProps {
 const UpdatePromotion: React.FC<UpdatePromotionProps> = ({ promotion, regions }) => {
   const router = useRouter();
   const { showToast } = useToast();
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  console.log('userTimeZone', userTimeZone);
+  console.log('original', promotion.startDate);
+  console.log('startDate', format(new Date(promotion.startDate + 'Z'), 'yyyy-MM-dd'));
+  console.log('original 2', promotion.endDate);
+  console.log('endDate', format(new Date(promotion.endDate + 'Z'), 'yyyy-MM-dd'));
+  function formatDateForInput(d?: string | Date): string {
+    if (!d) return '';
+    const dateObj = typeof d === 'string' ? new Date(d) : d;
+    return dateObj.toISOString().slice(0, 10); // "YYYY-MM-DD"
+  }
   return (
     <ModalGeneric
       title='Actualizar Promoción'
@@ -32,8 +43,8 @@ const UpdatePromotion: React.FC<UpdatePromotionProps> = ({ promotion, regions })
               description: promotion.description,
               regionId: promotion.regionId,
               code: promotion.code,
-              startDate: format(promotion.startDate, 'yyyy-MM-dd'),
-              endDate: format(promotion.endDate, 'yyyy-MM-dd'),
+              startDate: formatDateForInput(promotion.startDate),
+              endDate: formatDateForInput(promotion.endDate),
               discount: promotion.discount,
               active: promotion.active,
             }

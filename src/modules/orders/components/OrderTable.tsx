@@ -51,10 +51,12 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
     },
   ];
 
-  // Las columnas de búsqueda se aplican al filtro "search".
   const searchColumns: SearchColumn[] = [
-    // { label: 'Cliente', field: 'client' },
     { label: 'Order #', field: 'orderNumber' },
+    { label: 'Cliente', field: 'client.name' },
+    { label: 'ID', field: 'id' },
+    { label: 'Email', field: 'client.email' },
+    { label: 'Teléfono', field: 'client.phone' },
   ];
 
   const filteredOrders = useMemo(() => {
@@ -101,8 +103,8 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
 
   const data = useMemo(() => {
     return filteredOrders.map(order => ({
-      'Order #': order.orderNumber,
-      Cliente: (
+      order: order.orderNumber,
+      client: (
         <div className="flex flex-col">
           <span>{order.client.name}
           </span>
@@ -110,30 +112,32 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
           <span className="text-xs text-gray-500">{order.client.phone}</span>
         </div>
       ),
-      Total: `$${order.totalAmount.toFixed(2)}`,
-      Estado: order.status,
-      Fecha: order.createdAt.toISOString().split('T')[0],
-      Items: order.itemsCount,
-      Región: (() => {
+      clientName: order.client.name,
+      clientEmail: order.client.email,
+      clientPhone: order.client.phone,
+      total: `$${order.totalAmount.toFixed(2)}`,
+      state: order.status,
+      date: order.createdAt.toISOString().split('T')[0],
+      items: order.itemsCount,
+      region: (() => {
         const r = regions.find(r => r.code === order.regionId);
         return r ? `${r.flag} ${r.name}` : 'No asignada';
       })(),
-      Acciones: (
+      action: (
         <DetailsEntity href={`/admin/orders/${order.id}`} color="primary" />
       ),
     }));
   }, [filteredOrders]);
 
-  // Definición de las columnas de la tabla, indicando cuáles son ordenables.
   const tableHeaders = [
-    { label: 'Order #', field: 'Order #', sortable: true },
-    { label: 'Cliente', field: 'Cliente', sortable: true },
-    { label: 'Total', field: 'Total', sortable: true },
-    { label: 'Estado', field: 'Estado', sortable: true },
-    { label: 'Fecha', field: 'Fecha', sortable: true },
-    { label: 'Región', field: 'Región', sortable: false },
-    { label: 'Items', field: 'Items', sortable: true },
-    { label: 'Acciones', field: 'Acciones', sortable: false },
+    { label: 'Order #', field: 'order', sortable: true },
+    { label: 'Cliente', field: 'client', sortable: false },
+    { label: 'Total', field: 'total', sortable: true },
+    { label: 'Estado', field: 'state', sortable: true },
+    { label: 'Fecha', field: 'date', sortable: true },
+    { label: 'Región', field: 'region', sortable: false },
+    { label: 'Items', field: 'items', sortable: true },
+    { label: 'Acciones', field: 'action', sortable: false },
   ] as TableHeader[];
 
   return (
@@ -147,8 +151,8 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
         headers={tableHeaders}
         data={data}
         keyField="Order #"
-        defaultSortField="Order #"
-        defaultSortOrder="asc"
+        defaultSortField="Fecha"
+        defaultSortOrder="desc"
         itemsPerPageOptions={[10, 25, 50, 100]}
         defaultItemsPerPage={10}
       />
