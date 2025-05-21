@@ -12,13 +12,19 @@ export type SettingKey =
   | 'contactEmail'
   | 'businessHours'
   | `freeShipping_${string}`
-  | `shippingFree_${string}`;
+  | `shippingFree_${string}`
+  | 'socialLinks';
 
 export interface BusinessHour {
   day: string;
   isOpen: boolean;
   openTime: string;
   closeTime: string;
+}
+
+export interface SocialLink {
+  platform: string;
+  url: string;
 }
 
 export interface ContactInfo {
@@ -42,6 +48,7 @@ export interface SettingsFormValues {
   logoUrl: string;
   contactInfo: ContactInfo;
   freeShippingByRegion: RegionFreeShipping[];
+  socialLinks: SocialLink[];
 }
 
 export class SettingsRepository {
@@ -122,7 +129,16 @@ export class SettingsRepository {
       };
     });
 
+    const socialLinksJson = allSettings['socialLinks'];
+    let socialLinks: SocialLink[] = [];
+    try {
+      socialLinks = socialLinksJson ? JSON.parse(socialLinksJson) : [];
+    } catch {
+      socialLinks = [];
+    }
+
     return {
+      socialLinks,
       storeName,
       logoUrl,
       contactInfo,
@@ -174,6 +190,14 @@ export class SettingsRepository {
           value: JSON.stringify(values.contactInfo.businessHours ?? []),
         },
         update: { value: JSON.stringify(values.contactInfo.businessHours ?? []) },
+      }),
+      prisma.setting.upsert({
+        where: { key: 'socialLinks' },
+        create: {
+          key: 'socialLinks',
+          value: JSON.stringify(values.socialLinks),
+        },
+        update: { value: JSON.stringify(values.socialLinks) },
       }),
     ];
 

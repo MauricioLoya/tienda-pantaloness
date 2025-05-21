@@ -7,7 +7,7 @@ import { saveSettingsAction } from "../actions/saveSettingsAction";
 import { useToast } from '@/lib/components/ToastContext';
 import { useRouter } from 'next/navigation';
 import { RegionItem } from "@/modules/region/definitions";
-import { SettingsFormValues } from "../definitions";
+import { SettingsFormValues, SocialLink } from "../definitions";
 import BusinessHoursComponent from "./BusinessHours";
 
 // Days of the week in Spanish
@@ -63,6 +63,12 @@ const validationSchema = Yup.object({
       })
     )
     .min(2, "Debes agregar todas las regiones"),
+  socialLinks: Yup.array().of(
+    Yup.object().shape({
+      platform: Yup.string().required("La plataforma es obligatoria"),
+      url: Yup.string().url("Debe ser una URL válida").required("La URL es obligatoria"),
+    })
+  )
 });
 
 // Default initial values to ensure all fields are controlled from the start
@@ -82,7 +88,8 @@ const defaultInitialValues = {
       closeTime: "18:00"
     }))
   },
-  freeShippingByRegion: []
+  freeShippingByRegion: [],
+  socialLinks: [],
 };
 
 interface Props {
@@ -99,7 +106,8 @@ const StoreSettingsForm: React.FC<Props> = ({ initialValues, regions }) => {
     generalInfo: true,
     contactInfo: true,
     businessHours: true,
-    shippingConfig: true
+    shippingConfig: true,
+    socialLinks: true,
   });
 
   // Toggle section visibility
@@ -110,28 +118,23 @@ const StoreSettingsForm: React.FC<Props> = ({ initialValues, regions }) => {
     }));
   };
 
-  // Prepare initial values properly, ensuring the structure matches what we expect
   const prepareInitialValues = () => {
-    // Start with our defaults
     const prepared = {
       ...defaultInitialValues,
       ...initialValues
     };
 
-    // Ensure contactInfo exists and has all required properties
     prepared.contactInfo = {
       ...defaultInitialValues.contactInfo,
       ...(initialValues.contactInfo || {})
     };
 
-    // If the stored businessHours is in the old format or missing, create the new format
     if (!Array.isArray(prepared.contactInfo.businessHours) || prepared.contactInfo.businessHours.length === 0) {
-      // Create default business hours array
       prepared.contactInfo.businessHours = daysOfWeek.map(day => ({
         day: day.id,
-        isOpen: day.id !== "sunday", // Closed on Sunday by default
-        openTime: day.id === "saturday" ? "10:00" : "09:00", // Different hours for Saturday
-        closeTime: day.id === "saturday" ? "14:00" : "18:00" // Close earlier on Saturday
+        isOpen: day.id !== "sunday",
+        openTime: day.id === "saturday" ? "10:00" : "09:00",
+        closeTime: day.id === "saturday" ? "14:00" : "18:00"
       }));
     }
 
@@ -467,7 +470,79 @@ const StoreSettingsForm: React.FC<Props> = ({ initialValues, regions }) => {
                 )}
               </div>
             </div>
-
+            {/* Social Media Links - Collapsible Section */}
+            <div className="collapse collapse-arrow bg-white rounded-lg shadow-sm border">
+              <input
+                type="checkbox"
+                checked={openSections.socialLinks}
+                onChange={() => toggleSection('socialLinks')}
+                className="collapse-checkbox"
+              />
+              <div className="collapse-title text-xl font-semibold">
+                Redes Sociales
+              </div>
+              <div className="collapse-content">
+                <FieldArray name="socialLinks">
+                  {({ push, remove }) => (
+                    <div className="space-y-4 mt-4">
+                      {values.socialLinks.length > 0 ? (
+                        values.socialLinks.map((link, index) => (
+                          <div key={index} className="flex items-center gap-4 p-3 border rounded-md bg-gray-50">
+                            <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <label className="block font-medium mb-1">Plataforma</label>
+                                <Field
+                                  name={`socialLinks.${index}.platform`}
+                                  type="text"
+                                  className="input input-bordered w-full"
+                                  placeholder="Ej: Facebook, Instagram, TikTok"
+                                />
+                                <ErrorMessage
+                                  name={`socialLinks.${index}.platform`}
+                                  component="div"
+                                  className="text-red-500 text-sm mt-1"
+                                />
+                              </div>
+                              <div>
+                                <label className="block font-medium mb-1">URL</label>
+                                <Field
+                                  name={`socialLinks.${index}.url`}
+                                  type="text"
+                                  className="input input-bordered w-full"
+                                  placeholder="Ej: https://facebook.com/tienda"
+                                />
+                                <ErrorMessage
+                                  name={`socialLinks.${index}.url`}
+                                  component="div"
+                                  className="text-red-500 text-sm mt-1"
+                                />
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => remove(index)}
+                              className="btn btn-square btn-error btn-outline"
+                              title="Eliminar enlace"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-gray-600">No hay enlaces de redes sociales añadidos aún.</p>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => push({ platform: '', url: '' } as SocialLink)}
+                        className="btn btn-outline btn-primary mt-4"
+                      >
+                        Añadir Red Social
+                      </button>
+                    </div>
+                  )}
+                </FieldArray>
+              </div>
+            </div>
             <div className="flex justify-end">
               <button type="submit" className="btn btn-primary px-6">
                 Guardar configuración
