@@ -6,6 +6,6 @@ import { OrderStatusInput } from '../definitions';
 export async function updateOrderAction(id: number, data: OrderStatusInput) {
   await prisma.order.update({
     where: { id },
-    data: { status: data.status },
+    data: { status: data.status, shippingDetails: data.shippingDetails },
   });
 }

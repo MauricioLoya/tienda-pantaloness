@@ -34,6 +34,7 @@ const UpdateOrder: React.FC<UpdateOrderProps> = ({ order }) => {
                         try {
                             await updateOrderAction(order.id, {
                                 status: values.status,
+                                shippingDetails: values.shippingDetails,
                             });
                             showToast('Orden actualizada correctamente', 'success');
                             router.refresh();

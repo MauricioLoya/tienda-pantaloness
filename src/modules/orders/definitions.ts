@@ -7,11 +7,13 @@ import dayjs from 'dayjs';
 
 export type OrderStatusInput = {
   status: string;
+  shippingDetails?: string;
 };
 
 export type OrderStatusItem = {
   id: number;
   status: string;
+  shippingDetails?: string;
 };
 
 export type OrderAdminTableRow = {
@@ -31,7 +33,6 @@ export type OrderAdminTableRow = {
 };
 
 export type OrderDetail = {
-  order: Order;
   items: OrderItem[];
   payment: Payment;
   customer: Customer;

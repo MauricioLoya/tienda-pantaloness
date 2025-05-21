@@ -17,7 +17,9 @@ const validationSchema = Yup.object().shape({
   status: Yup.string()
     .oneOf(orderStatusOptions, 'Estado inválido')
     .required('El estado es requerido'),
+  shippingDetails: Yup.string().optional(),
 });
+
 
 interface OrderFormProps {
   initialData?: Partial<OrderStatusInput>;
@@ -26,7 +28,7 @@ interface OrderFormProps {
 }
 
 const OrderForm: React.FC<OrderFormProps> = ({
-  initialData = { status: 'Pendiente' },
+  initialData = { status: 'Pendiente', shippingDetails: '' },
   onSuccess,
   onClose
 }) => {
@@ -53,6 +55,16 @@ const OrderForm: React.FC<OrderFormProps> = ({
                 ))}
               </Field>
               <ErrorMessage name="status" component="div" className="text-red-500 text-sm" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Detalles de Envío (Opcional)</label>
+              <Field
+                as="textarea"
+                name="shippingDetails"
+                className="textarea textarea-bordered w-full"
+                placeholder="Ej: Dejar paquete en la puerta trasera, Contactar antes de la entrega."
+              />
+              <ErrorMessage name="shippingDetails" component="div" className="text-red-500 text-sm" />
             </div>
 
             <div className="flex justify-end gap-2">

@@ -10,6 +10,7 @@ type Props = {
 const OrderDetail: React.FC<Props> = async ({ id }) => {
   const orderRepo = new OrderRepository();
   const detail = await orderRepo.getOrderById(id);
+  console.log('detail', detail);
   if (!detail) {
     return <div>Orden no encontrada</div>;
   }
@@ -103,6 +104,16 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
 
             ]}
           />
+          {detail.order.shippingDetails && (
+            <DisplayInfo
+              info={[
+                {
+                  label: 'Detalles de Envío',
+                  value: detail.order.shippingDetails,
+                },
+              ]}
+            />
+          )}
 
           <DisplayInfo
             info={[
