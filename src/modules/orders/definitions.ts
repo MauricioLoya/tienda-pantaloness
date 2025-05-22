@@ -43,7 +43,7 @@ interface IOrderRepository {
   createOrder(order: Order): Promise<Order>;
   getOrderById(id: number): Promise<OrderDetail>;
   getOrders(): Promise<OrderAdminTableRow[]>;
-  resendEmailCorfirmation(orderId: number, emailService: EmailService): Promise<void>;
+  sendOrderConfirmationEmail(orderId: number, emailService: EmailService): Promise<void>;
 }
 
 export class OrderRepository implements IOrderRepository {
@@ -123,7 +123,7 @@ export class OrderRepository implements IOrderRepository {
       throw new Error('Error al obtener las órdenes');
     }
   }
-  async resendEmailCorfirmation(orderId: number, emailService: EmailService): Promise<void> {
+  async sendOrderConfirmationEmail(orderId: number, emailService: EmailService): Promise<void> {
     try {
       const order = await prisma.order.findUnique({
         where: { id: orderId },

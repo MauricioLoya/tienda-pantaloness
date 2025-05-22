@@ -13,7 +13,7 @@ export async function sendEmailConfirmation(orderId: number) {
 
   try {
     const orderRepository = new OrderRepository();
-    await orderRepository.resendEmailCorfirmation(orderId, emailService);
+    await orderRepository.sendOrderConfirmationEmail(orderId, emailService);
     console.log('Correo reenviado con éxito');
   } catch (error) {
     console.log('Error al reenviar el correo:', error);
