@@ -18,6 +18,7 @@ const SettingsPage: React.FC = async () => {
             storeName: initialValues.storeName,
             freeShippingByRegion: initialValues.freeShippingByRegion,
             contactInfo: initialValues.contactInfo,
+            socialLinks: initialValues.socialLinks,
           }
         } regions={regions} />
       </Suspense>

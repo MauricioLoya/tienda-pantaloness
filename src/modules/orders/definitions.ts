@@ -33,6 +33,7 @@ export type OrderAdminTableRow = {
 };
 
 export type OrderDetail = {
+  order: Order;
   items: OrderItem[];
   payment: Payment;
   customer: Customer;

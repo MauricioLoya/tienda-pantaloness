@@ -13,7 +13,11 @@ const OrderDetailPage: React.FC<Props> = async ({ params }) => {
   const detail = await new OrderRepository().getOrderById(Number(id));
   const actions = (
     <>
-      <UpdateOrder order={detail.order} />
+      <UpdateOrder order={{
+        id: detail.order.id,
+        status: detail.order.status,
+        shippingDetails: detail.order.shippingDetails ?? '',
+      }} />
     </>
   );
   return (
