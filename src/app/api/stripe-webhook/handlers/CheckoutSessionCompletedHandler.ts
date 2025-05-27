@@ -1,18 +1,17 @@
 import Stripe from 'stripe';
 import { WebhookEventHandler } from './WebhookEventHandler';
-import { EmailService } from '@/services/email/EmailService';
+
 import { prisma } from '@/lib/prima/client';
 import { OrderStatus } from '@/lib/types';
 import { extractNumbersFromBrackets, generateShortId } from '@/lib/utils';
 import { ProductRepository } from '@/modules/catalogue/definitions';
+import { OrderEventService } from '@/services/orders/OrderEventService';
 
 export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
   private stripe: Stripe;
-  private emailService: EmailService;
 
-  constructor(stripe: Stripe, emailService: EmailService) {
+  constructor(stripe: Stripe) {
     this.stripe = stripe;
-    this.emailService = emailService;
   }
 
   private mapStripePaymentStatusToOrderStatus(paymentStatus: string): OrderStatus {
@@ -166,6 +165,8 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
           paymentType: session.payment_method_types?.[0] || 'desconocido',
         },
       });
+
+      OrderEventService.getInstance().emit('order.completed', order.id);
 
       console.log(`✅ Pago creado para la orden: ${order.id}`);
     });
