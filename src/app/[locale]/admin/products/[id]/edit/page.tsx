@@ -9,6 +9,7 @@ import HeaderContent from '@/lib/components/HeaderContent';
 import TagsForm from '@/modules/catalogue/components/TagsForm';
 import VariantsForm from '@/modules/catalogue/components/VariantsForm';
 import { numericRouteGuard } from '@/lib/utils';
+import { notFound } from 'next/navigation';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -100,13 +101,17 @@ const VariantsFormSkeleton = () => {
   );
 };
 
-// Product edit form container with data fetching
 const ProductEditContainer = async ({ id }: { id: string }) => {
   const productId = numericRouteGuard(id);
-
+  console.log('productId:', productId);
   const productRepo = new ProductRepository();
 
-  const productDetail = await productRepo.getProductById(Number(productId));
+  let productDetail;
+  try {
+    productDetail = await productRepo.getProductById(Number(productId));
+  } catch (err) {
+    return notFound();
+  }
   const regions = await new RegionRepository().getAll();
   console.log('product region:', productDetail.product.regionId);
 

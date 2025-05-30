@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ActivateProduct from '@/modules/catalogue/components/ActivateProduct';
 import DeleteProduct from '@/modules/catalogue/components/DeleteProduct';
+import { numericRouteGuard } from '@/lib/utils';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -46,9 +47,15 @@ const ActionsSkeleton = () => {
 
 // Product detail container with data fetching
 const ProductDetailsContainer = async ({ id }: { id: string }) => {
-  const productId = Number(id);
+  const productId = numericRouteGuard(id);
+
   const productRepo = new ProductRepository();
-  const productDetail = await productRepo.getProductById(productId);
+  let productDetail;
+  try {
+    productDetail = await productRepo.getProductById(Number(productId));
+  } catch (err) {
+    return notFound();
+  }
 
   if (!productDetail) {
     return notFound();
@@ -76,7 +83,7 @@ const ProductDetailsContainer = async ({ id }: { id: string }) => {
 };
 
 export default async function UpdateProductPage({ params }: Props) {
-  const { id } = await params;
+  const id = numericRouteGuard((await params).id);
 
   return (
     <Suspense fallback={
@@ -85,7 +92,7 @@ export default async function UpdateProductPage({ params }: Props) {
         <ProductDetailsSkeleton />
       </>
     }>
-      <ProductDetailsContainer id={id} />
+      <ProductDetailsContainer id={String(id)} />
     </Suspense>
   );
 }

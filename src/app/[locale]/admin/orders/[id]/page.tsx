@@ -4,6 +4,7 @@ import { numericRouteGuard } from '@/lib/utils';
 import OrderDetail from '@/modules/orders/components/OrderDetail';
 import UpdateOrder from '@/modules/orders/components/UpdateOrder';
 import { OrderRepository } from '@/modules/orders/definitions';
+import { notFound } from 'next/navigation';
 import React, { Suspense } from 'react';
 
 type Props = {
@@ -11,10 +12,11 @@ type Props = {
 };
 const OrderDetailPage: React.FC<Props> = async ({ params }) => {
   const id = numericRouteGuard((await params).id);
-
-  const detail = await new OrderRepository().getOrderById(Number(id));
-  if (!detail) {
-    return <div>Orden no encontrada</div>;
+  let detail;
+  try {
+    detail = await new OrderRepository().getOrderById(id);
+  } catch (err) {
+    return notFound();
   }
   const actions = (
     <>
