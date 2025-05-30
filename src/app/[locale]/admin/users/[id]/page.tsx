@@ -7,13 +7,15 @@ import ActivateUser from '@/modules/user/components/ActivateUser';
 import DeleteUser from '@/modules/user/components/DeleteUser';
 import { Can } from '@/lib/Can';
 import UpdatePassword from '@/modules/token/components/UpdatePassword';
+import { numericRouteGuard } from '@/lib/utils';
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
 const UserDetailsPage: React.FC<Props> = async ({ params }) => {
-  const { id } = await params;
+  const id = numericRouteGuard((await params).id);
+
   const user = await new UserRepository().getById(Number(id));
   if (!user) {
     return <div>Usuario no encontrado</div>;

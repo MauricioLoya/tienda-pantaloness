@@ -6,12 +6,14 @@ import { RegionRepository } from '@/modules/region/definitions';
 import UpdatePromotion from '@/modules/promotion/components/UpdatePromotion';
 import ActivatePromotion from '@/modules/promotion/components/ActivatePromotion';
 import DeletePromotion from '@/modules/promotion/components/DeletePromotion';
+import { numericRouteGuard } from '@/lib/utils';
 type Props = {
   params: Promise<{ id: string }>;
 };
 
 const PromotionDetailsPage: React.FC<Props> = async ({ params }) => {
-  const { id } = await params;
+  const id = numericRouteGuard((await params).id);
+
   const promotionRepo = new PromotionRepository();
   const promotion = await promotionRepo.getById(Number(id));
   if (!promotion) {

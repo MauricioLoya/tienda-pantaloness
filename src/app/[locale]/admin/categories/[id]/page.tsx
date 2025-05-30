@@ -8,19 +8,20 @@ import { ProductRepository } from '@/modules/catalogue/definitions';
 import UpdateCategory from '@/modules/category/components/UpdateCategory';
 import DeleteCategory from '@/modules/category/components/DeleteCategory';
 import ActivateCategory from '@/modules/category/components/ActivateCategory';
+import { numericRouteGuard } from '@/lib/utils';
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
 export default async function CategoryDetailsPage({ params }: Props) {
-  const { id } = await params;
-  const categoryId = Number(id);
-  const category = await new CategoryRepository().finsById(categoryId);
+  const id = numericRouteGuard((await params).id);
+
+  const category = await new CategoryRepository().finsById(id);
   if (!category) return notFound();
   const region = category.regionId ? await new RegionRepository().getById(category.regionId) : null;
 
-  const products = await new ProductRepository().getProductsForCategory(categoryId);
+  const products = await new ProductRepository().getProductsForCategory(id);
   const actions = (
     <>
       <UpdateCategory category={category} regions={await new RegionRepository().getAll()} />
