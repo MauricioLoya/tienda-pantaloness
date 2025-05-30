@@ -1,6 +1,7 @@
 import { createTranslator } from 'next-intl';
 import mx from '../../messages/mx.json';
 import us from '../../messages/us.json';
+import { notFound } from 'next/navigation';
 
 export const formatPrice = (price: number): string => {
   return new Intl.NumberFormat('es-MX', {
@@ -116,4 +117,11 @@ export function extractNumbersFromBrackets(input: string): [number, number] | [n
   const secondNumber = parseInt(match[2], 10);
 
   return [firstNumber, secondNumber];
+}
+
+export function numericRouteGuard(rawId: string): number {
+  if (!/^[1-9]\d*$/.test(rawId)) {
+    notFound();
+  }
+  return parseInt(rawId, 10);
 }
