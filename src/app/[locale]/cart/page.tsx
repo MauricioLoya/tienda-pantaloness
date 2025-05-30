@@ -85,12 +85,14 @@ export default function CartPage() {
                 </p>
                 <div>
                   <p
-                    className={`${item.discountPrice ? 'line-through text-sm text-gray-500' : ''
+                    className={`${item.discountPrice && item.discountPrice < item.price
+                        ? 'line-through text-sm text-gray-500'
+                        : ''
                       } font-medium`}
                   >
                     {formatPrice(item.price)}
                   </p>
-                  {item.discountPrice && (
+                  {item.discountPrice && item.discountPrice < item.price && (
                     <p className='font-medium'>{formatPrice(item.discountPrice)}</p>
                   )}
                 </div>
