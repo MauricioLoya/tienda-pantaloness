@@ -17,7 +17,7 @@ export function DateRangePicker({
     const searchParams = useSearchParams();
 
     const handleApplyFilters = () => {
-        const params = new URLSearchParams(searchParams.toString());
+        const params = new URLSearchParams((searchParams?.toString() ?? ""));
         params.set('startDate', startDate);
         params.set('endDate', endDate);
 

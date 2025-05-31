@@ -54,6 +54,7 @@ const ProductDetailsContainer = async ({ id }: { id: string }) => {
   try {
     productDetail = await productRepo.getProductById(Number(productId));
   } catch (err) {
+    console.error('Error fetching product details:', err);
     return notFound();
   }
 

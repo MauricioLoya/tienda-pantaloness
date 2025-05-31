@@ -16,6 +16,7 @@ const OrderDetailPage: React.FC<Props> = async ({ params }) => {
   try {
     detail = await new OrderRepository().getOrderById(id);
   } catch (err) {
+    console.error('Error fetching order details:', err);
     return notFound();
   }
   const actions = (

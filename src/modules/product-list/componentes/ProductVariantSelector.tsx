@@ -42,7 +42,7 @@ const ProductVariantSelector = ({
     setSelectedVariant(variant);
 
     // Create new URLSearchParams
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams((searchParams?.toString() ?? ''));
     params.set('size', size);
 
     // Update URL with the selected size
@@ -56,7 +56,7 @@ const ProductVariantSelector = ({
     if (variants.length === 0) return;
 
     // First check URL parameters
-    const sizeFromUrl = searchParams.get('size');
+    const sizeFromUrl = searchParams?.get('size');
     if (sizeFromUrl) {
       const variant = variants.find(v => v.size === sizeFromUrl);
       if (variant) {

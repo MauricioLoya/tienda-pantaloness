@@ -32,14 +32,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
   // State for form fields - initialize from URL params if available
   const [formState, setFormState] = useState({
     searchQuery:
-      searchParams.get('searchQuery') || (typeof searchQuery === 'string' ? searchQuery : ''),
-    category: searchParams.get('category') || (typeof category === 'string' ? category : ''),
-    size: searchParams.get('size') || (typeof size === 'string' ? size : ''),
-    minPrice: searchParams.get('minPrice') || (typeof minPrice === 'string' ? minPrice : ''),
-    maxPrice: searchParams.get('maxPrice') || (typeof maxPrice === 'string' ? maxPrice : ''),
-    sortBy: searchParams.get('sortBy') || (typeof sortBy === 'string' ? sortBy : ''),
+      searchParams?.get('searchQuery') || (typeof searchQuery === 'string' ? searchQuery : ''),
+    category: searchParams?.get('category') || (typeof category === 'string' ? category : ''),
+    size: searchParams?.get('size') || (typeof size === 'string' ? size : ''),
+    minPrice: searchParams?.get('minPrice') || (typeof minPrice === 'string' ? minPrice : ''),
+    maxPrice: searchParams?.get('maxPrice') || (typeof maxPrice === 'string' ? maxPrice : ''),
+    sortBy: searchParams?.get('sortBy') || (typeof sortBy === 'string' ? sortBy : ''),
     sortDirection:
-      searchParams.get('sortDirection') ||
+      searchParams?.get('sortDirection') ||
       (typeof sortDirection === 'string' ? sortDirection : 'asc'),
   });
 

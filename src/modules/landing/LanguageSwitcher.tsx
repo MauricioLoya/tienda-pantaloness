@@ -14,7 +14,7 @@ const locales = [
 export default function LanguageSwitcher() {
   const pathname = usePathname();
   const currentLocale = useLocale();
-  const cleanPathname = removeLocalePrefix(pathname, currentLocale);
+  const cleanPathname = removeLocalePrefix(pathname ?? '', currentLocale);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedLocale, setSelectedLocale] = useState<string | null>(null);
 

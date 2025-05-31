@@ -24,7 +24,7 @@ export function RegionSelector({ initialRegionId, regions }: RegionSelectorProps
         setSelectedRegion(newRegionId);
 
         // Update URL search params
-        const params = new URLSearchParams(searchParams.toString());
+        const params = new URLSearchParams((searchParams?.toString() ?? ""));
         params.set('regionId', newRegionId);
 
         // Redirect to update the page with new params
