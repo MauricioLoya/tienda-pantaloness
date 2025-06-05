@@ -24,7 +24,10 @@
     "continue_shopping": "Continue shopping",
     "add_to_cart": "Add to cart",
     "apply": "Apply",
-    "coupon_code": "Coupon code"
+    "coupon_code": "Coupon code",
+    "coupon_valid": "Coupon valid",
+    "coupon_invalid": "Coupon {code} is not valid.",
+    "enter_coupon": "please enter a coupon code"
   },
   "CheckoutSuccessPage": {
     "thank_you": "Thank you for your purchase!",

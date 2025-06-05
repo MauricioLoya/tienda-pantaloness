@@ -10,7 +10,6 @@ import {
   validateAndProcessCartItems,
 } from '../validations';
 import { RegionRepository } from '@/modules/region/definitions';
-
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 // Define supported regions type
@@ -22,11 +21,6 @@ const StripeLocales: Record<SupportedRegion, string> = {
   us: 'en',
 };
 
-/**
- * Creates a checkout session for the provided cart items
- * @param input - Cart items and customer information
- * @returns Checkout session details or error information
- */
 export async function createCheckoutSessionAction(
   region: SupportedRegion,
   input: CheckoutInput
@@ -98,10 +92,6 @@ export async function createCheckoutSessionAction(
 
     const freeThreshold = (regionItem.amountForFreeShipping ?? 0) * 100;
     const isFreeShipping = regionItem.isFreeShipping && subtotal >= freeThreshold;
-    console.log('isFreeShipping', isFreeShipping);
-    console.log('subtotal', subtotal);
-    console.log('freeThreshold', freeThreshold);
-    console.log('regionItem', regionItem);
 
     const shippingOptions: Stripe.Checkout.SessionCreateParams.ShippingOption[] = [
       {

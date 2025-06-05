@@ -24,7 +24,10 @@
     "continue_shopping": "Seguir comprando",
     "add_to_cart": "Añadir al carrito",
     "apply": "Aplicar",
-    "coupon_code": "Código de cupón"
+    "coupon_code": "Código de cupón",
+    "coupon_valid": "Cupón válido",
+    "coupon_invalid": "El cupón {code} no es válido.",
+    "enter_coupon": "por favor ingresa un código"
   },
   "CheckoutSuccessPage": {
     "thank_you": "¡Gracias por tu compra!",

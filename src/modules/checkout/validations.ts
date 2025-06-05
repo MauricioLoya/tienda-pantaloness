@@ -221,7 +221,7 @@ export async function processPromoCode(
     });
 
     if (!promotion) {
-      errors.push(`El cupón ${couponCode} no es válido.`);
+      errors.push('INVALID_COUPON');
       return {
         isValidPromo: false,
         errors,
