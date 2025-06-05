@@ -1,19 +1,17 @@
 import Stripe from 'stripe';
 import { WebhookEventHandler } from './WebhookEventHandler';
-import { EmailService } from '@/services/email/EmailService';
+
 import { prisma } from '@/lib/prima/client';
 import { OrderStatus } from '@/lib/types';
 import { extractNumbersFromBrackets, generateShortId } from '@/lib/utils';
 import { ProductRepository } from '@/modules/catalogue/definitions';
-import { OrderRepository } from '@/modules/orders/definitions';
+import { OrderEventService } from '@/services/orders/OrderEventService';
 
 export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
   private stripe: Stripe;
-  private emailService: EmailService;
 
-  constructor(stripe: Stripe, emailService: EmailService) {
+  constructor(stripe: Stripe) {
     this.stripe = stripe;
-    this.emailService = emailService;
   }
 
   private mapStripePaymentStatusToOrderStatus(paymentStatus: string): OrderStatus {
@@ -39,9 +37,7 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
       limit: 100,
     });
 
-    let orderId: number | null = null;
-
-    prisma.$transaction(async tx => {
+    return prisma.$transaction(async tx => {
       const customerDetails: Stripe.Checkout.Session.CustomerDetails | null =
         session.customer_details;
       if (!customerDetails) {
@@ -170,19 +166,9 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
         },
       });
 
-      console.log(`✅ Pago creado para la orden: ${order.id}`);
-      orderId = order.id;
-    });
+      OrderEventService.getInstance().emit('order.completed', order.id);
 
-    try {
-      if (!orderId) {
-        console.log('No se pudo crear la orden.');
-        return;
-      }
-      const orderRepo = new OrderRepository();
-      await orderRepo.sendOrderConfirmationEmail(orderId, this.emailService);
-    } catch (error) {
-      console.log('Error al enviar el correo:', error);
-    }
+      console.log(`✅ Pago creado para la orden: ${order.id}`);
+    });
   }
 }
