@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prima/client';
+import { getTranslations } from 'next-intl/server';
 
 // Helper function to round to 2 decimal places
 const roundToTwoDecimals = (value: number): number => {
@@ -51,9 +52,6 @@ export type CheckoutSessionData = {
   checkoutUrl: string;
 };
 
-/**
- * Validates cart items and prepares line items for Stripe
- */
 export async function validateAndProcessCartItems(
   region: string,
   items: CartItem[],
@@ -105,37 +103,59 @@ export async function validateAndProcessCartItems(
     },
   });
 
-  // Create lookup maps for faster access
   const productMap = new Map(products.map(p => [p.id, p]));
   const variantMap = new Map(variants.map(v => [`${v.productId}-${v.id}`, v]));
 
   const areAllProductsFromSameRegion = products.every(p => p.regionId === region);
   if (!areAllProductsFromSameRegion) {
-    errors.push('Todos los productos deben ser de la misma región.');
+    const translatedError = await getCheckoutErrorMessage(
+      CheckoutErrorCode.ITEMS_NOT_BELONG_SAME_REGION,
+      region
+    );
+    errors.push(translatedError);
   }
 
   for (const item of items) {
     if (item.quantity <= 0) {
-      errors.push(`La cantidad para el item con variantId ${item.variantId} debe ser mayor que 0.`);
+      const translatedError = await getCheckoutErrorMessage(
+        CheckoutErrorCode.INVALID_QUANTITY,
+        region,
+        { variantId: item.variantId.toString() }
+      );
+      errors.push(translatedError);
       continue;
     }
 
     const product = productMap.get(item.productId);
     if (!product) {
-      errors.push(`El producto ${item.productId} no existe.`);
+      const translatedError = await getCheckoutErrorMessage(
+        CheckoutErrorCode.PRODUCT_NOT_FOUND,
+        region,
+        { productId: item.productId.toString() }
+      );
+      errors.push(translatedError);
+
       continue;
     }
 
     const variant = variantMap.get(`${item.productId}-${item.variantId}`);
     if (!variant) {
-      errors.push(`La variante ${item.variantId} del producto ${item.productId} no existe.`);
+      const translatedError = await getCheckoutErrorMessage(
+        CheckoutErrorCode.VARIANT_NOT_FOUND,
+        region,
+        { variantId: item.variantId.toString(), productId: item.productId.toString() }
+      );
+      errors.push(translatedError);
       continue;
     }
 
     if (variant.stock < item.quantity) {
-      errors.push(
-        `Stock insuficiente para la variante ${item.variantId} del producto ${item.productId}.`
+      const translatedError = await getCheckoutErrorMessage(
+        CheckoutErrorCode.INSUFFICIENT_STOCK,
+        region,
+        { variantId: item.variantId.toString(), productId: item.productId.toString() }
       );
+      errors.push(translatedError);
       continue;
     }
 
@@ -143,8 +163,6 @@ export async function validateAndProcessCartItems(
     let subtotal = roundToTwoDecimals(unitPrice);
 
     if (promotionId) {
-      console.log('Applying promotion:', promotionId);
-
       const now = new Date();
       const promotion = await prisma.promotion.findFirst({
         where: {
@@ -243,4 +261,38 @@ export async function validateRegions(region: string): Promise<boolean> {
     where: { name: region },
   });
   return regions ? true : false;
+}
+
+export async function getCheckoutErrorMessage(
+  errorCode: CheckoutErrorCode,
+  locale: string,
+  params?: Record<string, string | number>
+): Promise<string> {
+  const t = await getTranslations({ locale, namespace: 'CheckoutErrors' });
+
+  switch (errorCode) {
+    case CheckoutErrorCode.EMPTY_CART:
+      return t('empty_cart');
+    case CheckoutErrorCode.INVALID_QUANTITY:
+      return t('invalid_quantity', params);
+    case CheckoutErrorCode.INVALID_CART:
+      return t('invalid_cart');
+    case CheckoutErrorCode.PRODUCT_NOT_FOUND:
+      return t('product_not_found', params);
+    case CheckoutErrorCode.VARIANT_NOT_FOUND:
+      return t('variant_not_found', params);
+    case CheckoutErrorCode.INSUFFICIENT_STOCK:
+      return t('insufficient_stock', params);
+    case CheckoutErrorCode.INVALID_COUPON:
+      return t('invalid_coupon');
+    case CheckoutErrorCode.DISCOUNT_EXCEEDS_TOTAL:
+      return t('discount_exceeds_total');
+    case CheckoutErrorCode.STRIPE_ERROR:
+      return t('stripe_error');
+    case CheckoutErrorCode.ITEMS_NOT_BELONG_SAME_REGION:
+      return t('items_not_belong_same_region');
+    case CheckoutErrorCode.UNKNOWN_ERROR:
+    default:
+      return t('unknown_error');
+  }
 }

@@ -13,6 +13,7 @@ export interface CartItem {
   size: string;
   quantity: number;
   image: string;
+  region: string;
   variantId: number;
   maxQuantity: number;
 }

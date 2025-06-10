@@ -15,7 +15,7 @@ const ProductDetails = async ({ slug, selectedSize }: Props) => {
 
   try {
     const productDetail = await productRepository.productDetail(slug);
-
+    console.log('Product Detail:', productDetail);
     if (!productDetail) {
       notFound();
     }
@@ -47,6 +47,7 @@ const ProductDetails = async ({ slug, selectedSize }: Props) => {
               variants={productDetail.variants}
               selectedSize={selectedSize}
               productId={productDetail.product.id}
+              productRegionId={productDetail.product.regionId || ' NO has regionId'}
             />
           </div>
         </div>

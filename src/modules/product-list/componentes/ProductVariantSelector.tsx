@@ -15,6 +15,7 @@ interface ProductVariantSelectorProps {
   productSlug: string;
   productName: string;
   productImage: string;
+  productRegionId: string;
 }
 
 const ProductVariantSelector = ({
@@ -24,6 +25,7 @@ const ProductVariantSelector = ({
   productSlug,
   productName,
   productImage,
+  productRegionId,
 }: ProductVariantSelectorProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -194,6 +196,7 @@ const ProductVariantSelector = ({
         productId={productId}
         productName={productName}
         productImage={productImage}
+        productRegionId={productRegionId}
         variant={selectedVariant}
         disabled={!selectedVariant || selectedVariant.stock <= 0}
       />
