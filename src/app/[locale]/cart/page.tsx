@@ -87,13 +87,16 @@ export default function CartPage() {
 
       const data: {
         isValidPromo: boolean;
+        percentageDiscount?: number;
         promotionId?: number;
         errors: string[];
       } = await res.json();
 
       if (data.isValidPromo) {
         setCouponValid(true);
-        setCouponMessage(t('coupon_valid'));
+        setCouponMessage(
+          t('coupon_valid', { percentage: data.percentageDiscount ?? '' })
+        );
       } else {
         setCouponValid(false);
         const firstErrorCode = data.errors[0];

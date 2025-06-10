@@ -25,7 +25,7 @@
     "add_to_cart": "Añadir al carrito",
     "apply": "Aplicar",
     "coupon_code": "Código de cupón",
-    "coupon_valid": "Cupón válido",
+    "coupon_valid": "Cupón válido por {percentage}% de descuento",
     "coupon_invalid": "El cupón {code} no es válido.",
     "enter_coupon": "por favor ingresa un código"
   },
@@ -129,5 +129,26 @@
     "discount_amount": "Monto del Descuento:",
     "subtotal_before_discount": "Subtotal Antes del Descuento:",
     "you_saved": "¡Ahorraste {amount} con esta orden!"
+  },
+  "ContactForm": {
+    "title": "Envíanos un Mensaje",
+    "full_name": "Nombre completo",
+    "name_placeholder": "Tu nombre",
+    "email": "Email",
+    "email_placeholder": "tucorreo@ejemplo.com",
+    "subject": "Asunto",
+    "select_subject": "Selecciona un asunto",
+    "subjects": {
+      "product_info": "Información de productos",
+      "orders_delivery": "Pedidos y entregas",
+      "returns": "Devoluciones",
+      "customer_service": "Atención al cliente",
+      "other": "Otros"
+    },
+    "message": "Mensaje",
+    "message_placeholder": "Escribe tu mensaje aquí...",
+    "send_message": "Enviar Mensaje",
+    "validation_error": "Por favor completa todos los campos requeridos.",
+    "success_message": "¡Gracias por contactarnos! Te responderemos a la brevedad."
   }
 }

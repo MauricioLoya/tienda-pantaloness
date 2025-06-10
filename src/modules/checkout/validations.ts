@@ -217,15 +217,15 @@ export async function processPromoCode(
   region: string
 ): Promise<{
   isValidPromo: boolean;
+  percentageDiscount?: number;
   promotionId?: number;
   errors: string[];
 }> {
   const errors: string[] = [];
   let promotionId: number | undefined = undefined;
+  let percentageDiscount: number | undefined = undefined;
 
   if (couponCode) {
-    console.log('Validating promotion:', couponCode, region);
-
     const now = new Date();
     const promotion = await prisma.promotion.findFirst({
       where: {
@@ -247,11 +247,13 @@ export async function processPromoCode(
     }
 
     promotionId = promotion.id;
+    percentageDiscount = promotion.discount;
   }
 
   return {
     isValidPromo: errors.length === 0,
     promotionId,
+    percentageDiscount,
     errors,
   };
 }

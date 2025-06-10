@@ -1,11 +1,14 @@
 'use client';
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface ContactFormProps {
   className?: string;
 }
 
 const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
+  const t = useTranslations('ContactForm');
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -29,12 +32,11 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Form validation
     if (!formData.name || !formData.email || !formData.subject || !formData.message) {
       setFormStatus({
         submitted: false,
         error: true,
-        message: 'Por favor completa todos los campos requeridos.',
+        message: t('validation_error'),
       });
       return;
     }
@@ -46,7 +48,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
     setFormStatus({
       submitted: true,
       error: false,
-      message: '¡Gracias por contactarnos! Te responderemos a la brevedad.',
+      message: t('success_message'),
     });
 
     // Reset form after successful submission
@@ -61,7 +63,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
   return (
     <div className={`card bg-base-100 shadow-xl ${className}`}>
       <div className='card-body'>
-        <h2 className='card-title text-2xl mb-6'>Envíanos un Mensaje</h2>
+        <h2 className='card-title text-2xl mb-6'>{t('title')}</h2>
 
         {formStatus.submitted ? (
           <div className='alert alert-success mb-6'>
@@ -84,14 +86,14 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
           <form onSubmit={handleSubmit}>
             <div className='form-control mb-4'>
               <label className='label'>
-                <span className='label-text'>Nombre completo</span>
+                <span className='label-text'>{t('full_name')}</span>
               </label>
               <input
                 type='text'
                 name='name'
                 value={formData.name}
                 onChange={handleChange}
-                placeholder='Tu nombre'
+                placeholder={t('name_placeholder')}
                 className='input input-bordered w-full'
                 required
               />
@@ -99,14 +101,14 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
 
             <div className='form-control mb-4'>
               <label className='label'>
-                <span className='label-text'>Email</span>
+                <span className='label-text'>{t('email')}</span>
               </label>
               <input
                 type='email'
                 name='email'
                 value={formData.email}
                 onChange={handleChange}
-                placeholder='tucorreo@ejemplo.com'
+                placeholder={t('email_placeholder')}
                 className='input input-bordered w-full'
                 required
               />
@@ -114,7 +116,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
 
             <div className='form-control mb-4'>
               <label className='label'>
-                <span className='label-text'>Asunto</span>
+                <span className='label-text'>{t('subject')}</span>
               </label>
               <select
                 className='select select-bordered w-full'
@@ -124,26 +126,26 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
                 required
               >
                 <option value='' disabled>
-                  Selecciona un asunto
+                  {t('select_subject')}
                 </option>
-                <option value='info-productos'>Información de productos</option>
-                <option value='pedidos-entregas'>Pedidos y entregas</option>
-                <option value='devoluciones'>Devoluciones</option>
-                <option value='atencion-cliente'>Atención al cliente</option>
-                <option value='otros'>Otros</option>
+                <option value='info-productos'>{t('subjects.product_info')}</option>
+                <option value='pedidos-entregas'>{t('subjects.orders_delivery')}</option>
+                <option value='devoluciones'>{t('subjects.returns')}</option>
+                <option value='atencion-cliente'>{t('subjects.customer_service')}</option>
+                <option value='otros'>{t('subjects.other')}</option>
               </select>
             </div>
 
             <div className='form-control mb-6'>
               <label className='label'>
-                <span className='label-text'>Mensaje</span>
+                <span className='label-text'>{t('message')}</span>
               </label>
               <textarea
                 className='textarea textarea-bordered h-32'
                 name='message'
                 value={formData.message}
                 onChange={handleChange}
-                placeholder='Escribe tu mensaje aquí...'
+                placeholder={t('message_placeholder')}
                 required
               ></textarea>
             </div>
@@ -168,7 +170,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
             )}
 
             <button type='submit' className='btn btn-primary btn-block'>
-              Enviar Mensaje
+              {t('send_message')}
             </button>
           </form>
         )}
