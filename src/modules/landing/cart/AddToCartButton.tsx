@@ -12,6 +12,7 @@ interface AddToCartButtonProps {
   productId: number;
   productName: string;
   productImage: string;
+  productRegionId: string;
   quantity: number;
   disabled?: boolean;
 }
@@ -21,6 +22,7 @@ const AddToCartButton = ({
   productId,
   productName,
   productImage,
+  productRegionId,
   quantity = 1,
   disabled = false,
 }: AddToCartButtonProps) => {
@@ -39,6 +41,7 @@ const AddToCartButton = ({
       quantity: quantity,
       image: productImage,
       variantId: variant.id,
+      region: productRegionId,
       maxQuantity: variant.stock,
       discountPrice: variant.discountPrice ?? undefined,
     });

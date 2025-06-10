@@ -8,6 +8,7 @@ import {
   CheckoutSessionData,
   processPromoCode,
   validateAndProcessCartItems,
+  getCheckoutErrorMessage,
 } from '../validations';
 import { RegionRepository } from '@/modules/region/definitions';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -143,9 +144,10 @@ export async function createCheckoutSessionAction(
     console.error('Error en createCheckoutSessionAction:', error);
 
     if (error instanceof Stripe.errors.StripeError) {
+      const errorMessage = await getCheckoutErrorMessage(CheckoutErrorCode.STRIPE_ERROR, region);
       return {
         success: false,
-        message: 'Error en el procesador de pagos.',
+        message: errorMessage,
         data: null,
         error: error.message,
         errorCode: CheckoutErrorCode.STRIPE_ERROR,
@@ -153,20 +155,22 @@ export async function createCheckoutSessionAction(
     }
 
     if (error instanceof Error) {
+      const errorMessage = await getCheckoutErrorMessage(CheckoutErrorCode.UNKNOWN_ERROR, region);
+
       return {
         success: false,
-        message: 'Error interno al crear la sesión de checkout.',
+        message: errorMessage,
         data: null,
         error: error.message,
         errorCode: CheckoutErrorCode.UNKNOWN_ERROR,
       };
     }
-
+    const errorMessage = await getCheckoutErrorMessage(CheckoutErrorCode.UNKNOWN_ERROR, region);
     return {
       success: false,
-      message: 'Error interno al crear la sesión de checkout.',
+      message: errorMessage,
       data: null,
-      error: 'Error desconocido',
+      error: errorMessage,
       errorCode: CheckoutErrorCode.UNKNOWN_ERROR,
     };
   }

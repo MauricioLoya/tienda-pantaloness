@@ -1,4 +1,3 @@
-// src/app/[locale]/cart/page.tsx
 'use client';
 
 import { useCart } from '@/context/CartContext';
@@ -26,7 +25,6 @@ export default function CartPage() {
   const [couponMessage, setCouponMessage] = useState<string | null>(null);
   const [couponValid, setCouponValid] = useState<boolean | null>(null);
 
-  // Nuevo estado para saber cuándo estamos validando el cupón
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
 
   const handleCheckout = async () => {
@@ -98,8 +96,8 @@ export default function CartPage() {
         setCouponMessage(t('coupon_valid'));
       } else {
         setCouponValid(false);
-        const firstKey = data.errors[0];
-        if (firstKey === 'INVALID_COUPON') {
+        const firstErrorCode = data.errors[0];
+        if (firstErrorCode === 'INVALID_COUPON') {
           setCouponMessage(t('coupon_invalid', { code: promotionCode.trim() }));
         } else {
           setCouponMessage(t('coupon_error'));
@@ -144,7 +142,10 @@ export default function CartPage() {
                 />
               </div>
               <div className="ml-5 flex-grow">
-                <h3 className="font-medium">{item.name}</h3>
+                <div className='flex row-auto items-center'>
+                  <h3 className="font-medium">{item.name}</h3>
+                  <small className="text-gray-500 ml-3"> ({item.region})</small>
+                </div>
                 <p className="text-sm text-gray-600">
                   {t('size')}: {item.size}
                 </p>

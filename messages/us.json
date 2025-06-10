@@ -29,6 +29,20 @@
     "coupon_invalid": "Coupon {code} is not valid.",
     "enter_coupon": "please enter a coupon code"
   },
+  "CheckoutErrors": {
+    "empty_cart": "No products in cart.",
+    "invalid_quantity": "Quantity for item with variantId {variantId} must be greater than 0.",
+    "invalid_cart": "Error processing cart items.",
+    "product_not_found": "Product {productId} does not exist.",
+    "variant_not_found": "Variant {variantId} of product {productId} does not exist.",
+    "insufficient_stock": "Insufficient stock for variant {variantId} of product {productId}.",
+    "invalid_coupon": "Error processing promotion code.",
+    "discount_exceeds_total": "Discount exceeds total amount.",
+    "stripe_error": "Payment processor error.",
+    "unknown_error": "Internal error creating checkout session.",
+    "items_not_belong_same_region": "All products must be from the same region.",
+    "region_not_found": "Region not found."
+  },
   "CheckoutSuccessPage": {
     "thank_you": "Thank you for your purchase!",
     "order_success_message": "Your order has been successfully processed. We have sent you an email with the details of your purchase.",

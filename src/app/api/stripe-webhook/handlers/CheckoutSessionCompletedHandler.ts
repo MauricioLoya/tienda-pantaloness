@@ -30,7 +30,6 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
   async handle(event: Stripe.Event): Promise<void> {
     const session = event.data.object as Stripe.Checkout.Session;
     if (session.payment_status !== 'paid') {
-      console.log('La sesión de pago no fue exitosa.');
       return;
     }
     const lineItems = await this.stripe.checkout.sessions.listLineItems(session.id, {
@@ -59,9 +58,7 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
             phone: customerDetails.phone || '',
           },
         });
-        console.log(`Nuevo cliente creado: ${customer.id}`);
       } else {
-        console.log(`Cliente existente encontrado: ${customer.id}`);
       }
 
       const orderNumber = generateShortId();
@@ -105,11 +102,9 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
           item.description || ''
         );
         if (!productIdFromName) {
-          console.log(`Producto no encontrado: ${productIdFromName}`);
           continue;
         }
         if (!variantIdFromName) {
-          console.log(`Variante no encontrada: ${variantIdFromName}`);
           continue;
         }
 
@@ -118,13 +113,11 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
         const productItem = await productRepo.getProductById(Number(productIdFromName));
 
         if (!productItem) {
-          console.log(`Producto no encontrado: ${productIdFromName}`);
           continue;
         }
 
         const productName = item.description || 'Producto';
         const quantity = item.quantity || 1;
-        // Este valor tiene que venir de nuestra base de datos
 
         const productImage = item.price?.product ? '' : '';
 
@@ -152,7 +145,15 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
             paidPrice,
           },
         });
-        console.log(`✅ Producto agregado a la orden: ${productName} x${quantity}`);
+
+        await tx.productVariant.update({
+          where: { id: purchasedVariant.id },
+          data: {
+            stock: {
+              decrement: quantity,
+            },
+          },
+        });
       }
 
       await tx.payment.create({
