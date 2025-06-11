@@ -168,5 +168,24 @@
     "minPricePlaceholder": "0",
     "maxPricePlaceholder": "10000",
     "clean_filters": "Clear filters"
+  },
+  "footer": {
+    "description": "The best online pants store",
+    "contact": {
+      "title": "Contact"
+    },
+    "links": {
+      "title": "Links",
+      "aboutUs": "About us",
+      "shippingPolicies": "Shipping policies",
+      "returnPolicy": "Return policy",
+      "termsAndConditions": "Terms and conditions",
+      "privacy": "Privacy"
+    },
+    "social": {
+      "title": "Follow us",
+      "followUsOn": "Follow us on"
+    },
+    "copyright": "All rights reserved"
   }
 }

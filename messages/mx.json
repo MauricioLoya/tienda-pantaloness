@@ -171,5 +171,24 @@
     "minPricePlaceholder": "0",
     "maxPricePlaceholder": "10000",
     "clean_filters": "Limpiar filtros"
+  },
+  "footer": {
+    "description": "La mejor tienda de pantalones en línea",
+    "contact": {
+      "title": "Contacto"
+    },
+    "links": {
+      "title": "Enlaces",
+      "aboutUs": "Sobre nosotros",
+      "shippingPolicies": "Políticas de envío",
+      "returnPolicy": "Política de devoluciones",
+      "termsAndConditions": "Términos y condiciones",
+      "privacy": "Privacidad"
+    },
+    "social": {
+      "title": "Síguenos",
+      "followUsOn": "Síguenos en"
+    },
+    "copyright": "Todos los derechos reservados"
   }
 }
