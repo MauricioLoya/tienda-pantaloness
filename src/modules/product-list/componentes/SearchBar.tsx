@@ -2,6 +2,10 @@
 import { useState, FormEvent, ChangeEvent, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
+import mxTranslations from '../../../../messages/mx.json';
+import usTranslations from '../../../../messages/us.json';
+import { FaBroom } from 'react-icons/fa';
+
 interface SearchBarProps {
   sizeList?: string[];
   categoryList?: { label: string; value: number }[];
@@ -25,11 +29,15 @@ const SearchBar: React.FC<SearchBarProps> = ({
   sortDirection = 'asc',
   sizeList = [],
   categoryList = [],
+  regionCode,
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // State for form fields - initialize from URL params if available
+  // Obtener traducciones basadas en la región
+  const translations = regionCode === 'us' ? usTranslations : mxTranslations;
+  const t = translations.searchBar;
+
   const [formState, setFormState] = useState({
     searchQuery:
       searchParams?.get('searchQuery') || (typeof searchQuery === 'string' ? searchQuery : ''),
@@ -81,6 +89,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
       }
     });
 
+    // Mantener la región en la URL
+    if (regionCode) {
+      params.set('region', regionCode);
+    }
+
     // Redirect to the same page with the merged query parameters
     router.push(`?${params.toString()}`);
 
@@ -111,8 +124,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState]); // React to all form state changes
 
-  // No need for initial load effect since the page will load with parameters if they exist
-
   return (
     <div className='max-w-7xl mx-auto collapse collapse-arrow bg-base-200 rounded-lg shadow mb-6'>
       <input type='checkbox' className='collapse-checkbox' />
@@ -133,11 +144,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
         </svg>
         {loading ? (
           <span className='flex items-center'>
-            Filtros y Ordenamiento
+            {t.title}
             <span className='loading loading-spinner loading-xs ml-2'></span>
           </span>
         ) : (
-          'Filtros y Ordenamiento'
+          t.title
         )}
       </div>
 
@@ -148,14 +159,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
             <div className='flex flex-col md:flex-row gap-4 mb-4'>
               <div className='form-control w-full'>
                 <label className='label'>
-                  <span className='label-text'>Buscar</span>
+                  <span className='label-text'>{t.search}</span>
                 </label>
                 <input
                   type='text'
                   name='searchQuery'
                   value={formState.searchQuery}
                   onChange={handleInputChange}
-                  placeholder='Buscar productos...'
+                  placeholder={t.searchPlaceholder}
                   className='input input-bordered w-full'
                 />
               </div>
@@ -163,7 +174,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               {/* Category Filter */}
               <div className='form-control w-full'>
                 <label className='label'>
-                  <span className='label-text'>Categoría</span>
+                  <span className='label-text'>{t.category}</span>
                 </label>
                 <select
                   name='category'
@@ -171,7 +182,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   onChange={handleInputChange}
                   className='select select-bordered w-full'
                 >
-                  <option value=''>Todas las categorías</option>
+                  <option value=''>{t.allCategories}</option>
                   {categoryList.map(cat => (
                     <option key={cat.value} value={cat.value}>
                       {cat.label}
@@ -185,7 +196,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               {/* Size Filter */}
               <div className='form-control w-full'>
                 <label className='label'>
-                  <span className='label-text'>Talla</span>
+                  <span className='label-text'>{t.size}</span>
                 </label>
                 <select
                   name='size'
@@ -193,7 +204,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   onChange={handleInputChange}
                   className='select select-bordered w-full'
                 >
-                  <option value=''>Todas las tallas</option>
+                  <option value=''>{t.allSizes}</option>
                   {sizeList.map(size => (
                     <option key={size} value={size}>
                       {size}
@@ -205,14 +216,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
               {/* Min Price */}
               <div className='form-control w-full'>
                 <label className='label'>
-                  <span className='label-text'>Precio mínimo</span>
+                  <span className='label-text'>{t.minPrice}</span>
                 </label>
                 <input
                   type='number'
                   name='minPrice'
                   value={formState.minPrice}
                   onChange={handleInputChange}
-                  placeholder='0'
+                  placeholder={t.minPricePlaceholder}
                   className='input input-bordered w-full'
                 />
               </div>
@@ -220,14 +231,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
               {/* Max Price */}
               <div className='form-control w-full'>
                 <label className='label'>
-                  <span className='label-text'>Precio máximo</span>
+                  <span className='label-text'>{t.maxPrice}</span>
                 </label>
                 <input
                   type='number'
                   name='maxPrice'
                   value={formState.maxPrice}
                   onChange={handleInputChange}
-                  placeholder='10000'
+                  placeholder={t.maxPricePlaceholder}
                   className='input input-bordered w-full'
                 />
               </div>
@@ -235,7 +246,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               {/* Sort By */}
               <div className='form-control w-full'>
                 <label className='label'>
-                  <span className='label-text'>Ordenar por</span>
+                  <span className='label-text'>{t.sortBy}</span>
                 </label>
                 <select
                   name='sortBy'
@@ -243,16 +254,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   onChange={handleInputChange}
                   className='select select-bordered w-full'
                 >
-                  <option value=''>Sin ordenar</option>
-                  <option value='name'>Nombre</option>
-                  <option value='price'>Precio</option>
+                  <option value=''>{t.noSort}</option>
+                  <option value='name'>{t.sortName}</option>
+                  <option value='price'>{t.sortPrice}</option>
                 </select>
               </div>
 
               {/* Sort Direction */}
               <div className='form-control w-full'>
                 <label className='label'>
-                  <span className='label-text'>Dirección</span>
+                  <span className='label-text'>{t.direction}</span>
                 </label>
                 <select
                   name='sortDirection'
@@ -260,15 +271,41 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   onChange={handleInputChange}
                   className='select select-bordered w-full'
                 >
-                  <option value='asc'>Ascendente</option>
-                  <option value='desc'>Descendente</option>
+                  <option value='asc'>{t.ascending}</option>
+                  <option value='desc'>{t.descending}</option>
                 </select>
               </div>
             </div>
+          </div>
+          <div className="flex justify-end p-4">
+            <button
+              type="button"
+              onClick={() => {
+                setFormState({
+                  searchQuery: '',
+                  category: '',
+                  size: '',
+                  minPrice: '',
+                  maxPrice: '',
+                  sortBy: '',
+                  sortDirection: 'asc',
+                });
+                const params = new URLSearchParams();
+                if (regionCode) {
+                  params.set('region', regionCode);
+                }
+                router.push(`?${params.toString()}`);
+              }}
+              className="btn btn-secondary"
+            >
+              <FaBroom className="mr-2" />
+              {t.clean_filters}
+            </button>
           </div>
         </form>
       </div>
     </div>
   );
 };
+
 export default SearchBar;

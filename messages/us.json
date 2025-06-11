@@ -147,5 +147,26 @@
     "send_message": "Send Message",
     "validation_error": "Please complete all required fields.",
     "success_message": "Thank you for contacting us! We will respond to you shortly."
+  },
+  "searchBar": {
+    "title": "Filters and Sorting",
+    "search": "Search",
+    "searchPlaceholder": "Search products...",
+    "category": "Category",
+    "allCategories": "All categories",
+    "size": "Size",
+    "allSizes": "All sizes",
+    "minPrice": "Min Price",
+    "maxPrice": "Max Price",
+    "sortBy": "Sort By",
+    "direction": "Direction",
+    "noSort": "No sorting",
+    "sortName": "Name",
+    "sortPrice": "Price",
+    "ascending": "Ascending",
+    "descending": "Descending",
+    "minPricePlaceholder": "0",
+    "maxPricePlaceholder": "10000",
+    "clean_filters": "Clear filters"
   }
 }

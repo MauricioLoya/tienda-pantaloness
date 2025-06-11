@@ -169,12 +169,14 @@ export class ProductListRepository implements IProductListRepository {
       }
 
       // Build the orderBy condition
-      const orderBy: Record<string, 'asc' | 'desc' | undefined> = {};
+      let orderBy:
+        | Prisma.ProductOrderByWithRelationInput
+        | Prisma.ProductOrderByWithRelationInput[] = {};
       if (sortBy && sortBy.trim() !== '') {
         if (sortBy === 'name') {
-          orderBy.name = sortDirection;
+          orderBy = { name: sortDirection };
         } else if (sortBy === 'price') {
-          orderBy.basePrice = sortDirection;
+          orderBy = { createdAt: 'desc' };
         }
       }
 
@@ -198,15 +200,13 @@ export class ProductListRepository implements IProductListRepository {
           },
         },
       });
-
-      return products.map(product => {
-        // Check for products with discount
+      const transformedProducts = products.map(product => {
         let hasDiscount = false;
-        const variantWithLowestDiscount = product.ProductVariant.reduce((prev, current) => {
+        const variantWithLowestPrice = product.ProductVariant.reduce((prev, current) => {
           if (current.discount && current.discount > 0) {
             hasDiscount = true;
           }
-          return current.discount && current.discount < prev.discount ? current : prev;
+          return current.price < prev.price ? current : prev;
         }, product.ProductVariant[0]);
 
         return {
@@ -214,14 +214,28 @@ export class ProductListRepository implements IProductListRepository {
           slug: product.slug ?? '',
           name: product.name,
           description: product.description,
-          price: variantWithLowestDiscount.price,
-          discountedPrice: variantWithLowestDiscount.discountPrice,
-          discountPercentage: variantWithLowestDiscount.discount,
+          price: variantWithLowestPrice.price,
+          discountedPrice: variantWithLowestPrice.discountPrice,
+          discountPercentage: variantWithLowestPrice.discount,
           thumbnail: product.ProductImage[0]?.url ?? 'not-found',
           hasDiscount,
           isAvailable: product.active,
         };
       });
+      if (sortBy === 'price') {
+        transformedProducts.sort((a, b) => {
+          const priceA = a.discountedPrice || a.price;
+          const priceB = b.discountedPrice || b.price;
+
+          if (sortDirection === 'asc') {
+            return priceA - priceB;
+          } else {
+            return priceB - priceA;
+          }
+        });
+      }
+
+      return transformedProducts;
     } catch (error) {
       console.error('Error searching products:', error);
       throw error;

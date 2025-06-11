@@ -150,5 +150,26 @@
     "send_message": "Enviar Mensaje",
     "validation_error": "Por favor completa todos los campos requeridos.",
     "success_message": "¡Gracias por contactarnos! Te responderemos a la brevedad."
+  },
+  "searchBar": {
+    "title": "Filtros y Ordenamiento",
+    "search": "Buscar",
+    "searchPlaceholder": "Buscar productos...",
+    "category": "Categoría",
+    "allCategories": "Todas las categorías",
+    "size": "Talla",
+    "allSizes": "Todas las tallas",
+    "minPrice": "Precio mínimo",
+    "maxPrice": "Precio máximo",
+    "sortBy": "Ordenar por",
+    "direction": "Dirección",
+    "noSort": "Sin ordenar",
+    "sortName": "Nombre",
+    "sortPrice": "Precio",
+    "ascending": "Ascendente",
+    "descending": "Descendente",
+    "minPricePlaceholder": "0",
+    "maxPricePlaceholder": "10000",
+    "clean_filters": "Limpiar filtros"
   }
 }
