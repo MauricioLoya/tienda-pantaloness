@@ -51,7 +51,11 @@ export class ProductListRepository implements IProductListRepository {
   async productDetail(slug: string): Promise<ProductDetail | null> {
     try {
       const product = await prisma.product.findFirst({
-        where: { slug },
+        where: {
+          slug,
+          active: true,
+          isDeleted: false,
+        },
         include: {
           ProductVariant: true,
           ProductImage: {
@@ -87,22 +91,11 @@ export class ProductListRepository implements IProductListRepository {
     sortDirection,
     category,
   }: SearchParams): Promise<ItemProduct[]> {
-    console.log('Search params:', {
-      regionCode,
-      searchQuery,
-      size,
-      minPrice,
-      maxPrice,
-      sortBy,
-      sortDirection,
-    });
-
     try {
-      // Build the where condition for search filters
       const where: Prisma.ProductWhereInput = {
         regionId: regionCode,
         active: true,
-        // Ensure products have at least one variant
+        isDeleted: false,
         ProductVariant: {
           some: {},
         },

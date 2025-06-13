@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Category } from '../definitions';
+import { useTranslations } from 'next-intl';
 import ProductCard from '@/modules/product-list/componentes/ProductCard';
 import { ItemProduct } from '@/modules/product-list/definitions';
 import { Link } from '@/i18n/navigation';
@@ -11,6 +12,8 @@ interface CategorySectionProps {
 }
 
 const CategorySection: React.FC<CategorySectionProps> = ({ category, products }) => {
+  const t = useTranslations('HomePage');
+
   return (
     <div className='category-section'>
       <div className='flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4'>
@@ -22,7 +25,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, products })
           href={`/productos?category=${category.id}`}
           className='inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition'
         >
-          Ver todos <span className='ml-2'>→</span>
+          {t('view_more')} <span className='ml-2'>→</span>
         </Link>
       </div>
 
