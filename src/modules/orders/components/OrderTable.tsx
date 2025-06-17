@@ -6,7 +6,8 @@ import FilterBar, { FilterCriteria, FilterOption, SearchColumn } from '@/lib/com
 import { RegionItem } from '@/modules/region/definitions';
 import GenericDataTable, { TableHeader } from '@/lib/components/GenericDataTable';
 import { DetailsEntity } from '@/lib/components/ButtonComponents';
-
+import { getStatusLabel } from '@/lib/utils';
+import { OrderStatusLabels } from '@/lib/types';
 
 type Props = {
   values: OrderAdminTableRow[];
@@ -39,9 +40,10 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
       type: 'select',
       defaultValue: 'Todos',
       options: [
-        { label: 'Pendiente', value: 'pending' },
-        { label: 'Completado', value: 'completed' },
-        { label: 'Cancelado', value: 'cancelled' },
+        ...Object.entries(OrderStatusLabels).map(([value, label]) => ({
+          value,
+          label,
+        }))
       ],
     },
     {
@@ -116,7 +118,7 @@ const OrderTable: React.FC<Props> = ({ values, regions }) => {
       clientEmail: order.client.email,
       clientPhone: order.client.phone,
       total: `$${order.totalAmount.toFixed(2)}`,
-      state: order.status,
+      state: getStatusLabel(order.status),
       date: order.createdAt.toISOString().split('T')[0],
       items: order.itemsCount,
       region: (() => {

@@ -4,22 +4,16 @@ import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { OrderStatusInput } from '../definitions';
+import { OrderStatus, OrderStatusLabels } from '@/lib/types';
 
-const orderStatusOptions = [
-  'Procesando',
-  'Enviado',
-  'Entregado',
-  'Cancelado',
-  'Reembolsado',
-];
+const orderStatusOptions = Object.entries(OrderStatusLabels);
 
 const validationSchema = Yup.object().shape({
   status: Yup.string()
-    .oneOf(orderStatusOptions, 'Estado inválido')
+    .oneOf(Object.keys(OrderStatusLabels), 'Estado inválido')
     .required('El estado es requerido'),
   shippingDetails: Yup.string().optional(),
 });
-
 
 interface OrderFormProps {
   initialData?: Partial<OrderStatusInput>;
@@ -28,7 +22,7 @@ interface OrderFormProps {
 }
 
 const OrderForm: React.FC<OrderFormProps> = ({
-  initialData = { status: 'Pendiente', shippingDetails: '' },
+  initialData = { status: OrderStatus.PENDING, shippingDetails: '' },
   onSuccess,
   onClose
 }) => {
@@ -48,9 +42,9 @@ const OrderForm: React.FC<OrderFormProps> = ({
               <label className="block text-sm font-medium text-gray-700">Estado de la orden</label>
               <Field as="select" name="status" className="select select-bordered w-full">
                 <option value="">Selecciona un estado</option>
-                {orderStatusOptions.map(status => (
-                  <option key={status} value={status}>
-                    {status}
+                {orderStatusOptions.map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
                   </option>
                 ))}
               </Field>

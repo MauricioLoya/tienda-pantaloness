@@ -2,6 +2,7 @@ import { createTranslator } from 'next-intl';
 import mx from '../../messages/mx.json';
 import us from '../../messages/us.json';
 import { notFound } from 'next/navigation';
+import { OrderStatus, OrderStatusLabels } from './types';
 
 export const formatPrice = (price: number): string => {
   return new Intl.NumberFormat('es-MX', {
@@ -125,3 +126,6 @@ export function numericRouteGuard(rawId: string): number {
   }
   return parseInt(rawId, 10);
 }
+
+export const getStatusLabel = (status: string): string =>
+  OrderStatusLabels[status as OrderStatus] ?? status;

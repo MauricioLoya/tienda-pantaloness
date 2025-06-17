@@ -2,7 +2,7 @@ import React from 'react';
 import { OrderRepository } from '../definitions';
 import DisplayInfo from '@/lib/components/DisplayInfo';
 import OrderDetailsActions from './OrderDetailActions';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, getStatusLabel } from '@/lib/utils';
 import dayjs from 'dayjs';
 type Props = {
   id: number;
@@ -10,7 +10,7 @@ type Props = {
 const OrderDetail: React.FC<Props> = async ({ id }) => {
   const orderRepo = new OrderRepository();
   const detail = await orderRepo.getOrderById(id);
-  console.log('detail', detail);
+
   if (!detail) {
     return <div>Orden no encontrada</div>;
   }
@@ -33,7 +33,7 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
             info={[
               {
                 label: 'Estado',
-                value: detail.order.status,
+                value: getStatusLabel(detail.order.status)
               },
               {
                 label: 'Número de Orden',
@@ -91,7 +91,7 @@ const OrderDetail: React.FC<Props> = async ({ id }) => {
               },
               {
                 label: 'Estado',
-                value: detail.order.state,
+                value: getStatusLabel(detail.order.status),
               },
               {
                 label: 'Código Postal',
