@@ -22,6 +22,7 @@ export type ToastType = 'success' | 'error' | 'info';
 
 export enum OrderStatus {
   PENDING = 'pending',
+  PENDING_SHIPPED = 'pending_shipment',
   SHIPPED = 'shipped',
   REFUNDED = 'refunded',
   COMPLETED = 'completed',
@@ -30,6 +31,7 @@ export enum OrderStatus {
 
 export const OrderStatusLabels: Record<OrderStatus, string> = {
   [OrderStatus.PENDING]: 'Pendiente',
+  [OrderStatus.PENDING_SHIPPED]: 'Pendiente de envio',
   [OrderStatus.SHIPPED]: 'Enviado',
   [OrderStatus.CANCELLED]: 'Cancelado',
   [OrderStatus.REFUNDED]: 'Reembolsado',

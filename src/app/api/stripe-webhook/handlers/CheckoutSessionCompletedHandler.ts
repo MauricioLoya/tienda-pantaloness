@@ -17,11 +17,9 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
   private mapStripePaymentStatusToOrderStatus(paymentStatus: string): OrderStatus {
     switch (paymentStatus) {
       case 'paid':
-        return OrderStatus.COMPLETED;
+        return OrderStatus.PENDING_SHIPPED;
       case 'unpaid':
         return OrderStatus.PENDING;
-      case 'no_payment_required':
-        return OrderStatus.COMPLETED;
       default:
         return OrderStatus.PENDING;
     }
@@ -95,9 +93,6 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
       });
 
       for (const item of lineItems.data) {
-        console.log('item', item);
-        // const productIdFromName = item.price?.metadata.productId;
-        // const variantIdFromName = item.price?.metadata.variantId;
         const [variantIdFromName, productIdFromName] = extractNumbersFromBrackets(
           item.description || ''
         );
@@ -145,15 +140,16 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
             paidPrice,
           },
         });
-
-        await tx.productVariant.update({
-          where: { id: purchasedVariant.id },
-          data: {
-            stock: {
-              decrement: quantity,
+        if (orderStatus === OrderStatus.PENDING_SHIPPED) {
+          await tx.productVariant.update({
+            where: { id: purchasedVariant.id },
+            data: {
+              stock: {
+                decrement: quantity,
+              },
             },
-          },
-        });
+          });
+        }
       }
 
       await tx.payment.create({
