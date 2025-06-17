@@ -22,6 +22,16 @@ export type ToastType = 'success' | 'error' | 'info';
 
 export enum OrderStatus {
   PENDING = 'pending',
+  SHIPPED = 'shipped',
+  REFUNDED = 'refunded',
   COMPLETED = 'completed',
   CANCELLED = 'cancelled',
 }
+
+export const OrderStatusLabels: Record<OrderStatus, string> = {
+  [OrderStatus.PENDING]: 'Pendiente',
+  [OrderStatus.SHIPPED]: 'Enviado',
+  [OrderStatus.CANCELLED]: 'Cancelado',
+  [OrderStatus.REFUNDED]: 'Reembolsado',
+  [OrderStatus.COMPLETED]: 'Completado',
+};
