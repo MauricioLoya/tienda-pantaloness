@@ -7,6 +7,77 @@ import { formatPrice } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import { VariantItem } from '../definitions';
 
+// Función para determinar urgencia y mensaje del stock
+const getStockUrgencyMessage = (stock: number, t: ReturnType<typeof useTranslations>) => {
+  if (stock <= 0) return null;
+
+  if (stock === 1) {
+    return {
+      emoji: '🚨',
+      message: t('stock_last_item'),
+      color: 'text-red-600',
+      bgColor: 'bg-red-50 border-red-200',
+      intensity: 'high'
+    };
+  }
+
+  if (stock <= 3) {
+    return {
+      emoji: '🔥',
+      message: t('stock_very_low', { count: stock }),
+      color: 'text-red-500',
+      bgColor: 'bg-red-50 border-red-200',
+      intensity: 'high'
+    };
+  }
+
+  if (stock <= 5) {
+    return {
+      emoji: '⚡',
+      message: t('stock_low', { count: stock }),
+      color: 'text-orange-500',
+      bgColor: 'bg-orange-50 border-orange-200',
+      intensity: 'medium'
+    };
+  }
+
+  if (stock <= 10) {
+    return {
+      emoji: '⏰',
+      message: t('stock_limited', { count: stock }),
+      color: 'text-yellow-600',
+      bgColor: 'bg-yellow-50 border-yellow-200',
+      intensity: 'low'
+    };
+  }
+
+  return null; // No mostrar mensaje si hay mucho stock
+};
+
+// Componente de Stock Countdown
+const StockCountdown = ({ stock, t }: { stock: number; t: ReturnType<typeof useTranslations> }) => {
+  const urgency = getStockUrgencyMessage(stock, t);
+
+  if (!urgency) return null;
+
+  return (
+    <div className={`
+      flex items-center gap-2 p-3 rounded-lg border-2 ${urgency.bgColor}
+      ${urgency.intensity === 'high' ? 'animate-pulse' : ''}
+    `}>
+      <span className="text-lg">{urgency.emoji}</span>
+      <span className={`font-semibold ${urgency.color}`}>
+        {urgency.message}
+      </span>
+      {urgency.intensity === 'high' && (
+        <span className="text-xs text-gray-500 ml-auto">
+          {t('hurry_up')}
+        </span>
+      )}
+    </div>
+  );
+};
+
 
 interface ProductVariantSelectorProps {
   variants: VariantItem[];
@@ -189,6 +260,11 @@ const ProductVariantSelector = ({
           </div>
         )}
       </div>
+
+      {/* Stock Countdown Component */}
+      {selectedVariant && (
+        <StockCountdown stock={selectedVariant.stock} t={t} />
+      )}
 
       {/* Add to Cart Button */}
       <AddToCartButton

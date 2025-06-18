@@ -121,7 +121,7 @@ export class CheckoutSessionCompletedHandler implements WebhookEventHandler {
         );
 
         if (!purchasedVariant) {
-          console.log(`Variante no encontrada: ${variantIdFromName}`);
+          console.error(`❌ Variant not found: ${variantIdFromName}`);
           continue;
         }
 

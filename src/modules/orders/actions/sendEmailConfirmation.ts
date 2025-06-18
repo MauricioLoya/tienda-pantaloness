@@ -1,9 +1,12 @@
 'use server';
 
+import { validateAdminSession } from '@/lib/auth-validation';
 import { OrderRepository } from '@/modules/orders/definitions';
 import { ResendEmailService } from '@/services/email/ResendEmailService';
 
 export async function sendEmailConfirmation(orderId: number) {
+  await validateAdminSession();
+
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) {
     throw new Error('Resend API key is not defined');

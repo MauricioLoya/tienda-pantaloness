@@ -50,7 +50,6 @@ export class CategoryRepository implements ICategoryRepository {
 
   async update(id: number, data: CategoryItem): Promise<CategoryItem> {
     try {
-      console.log(data);
       const updatedCategory = await prisma.category.update({
         where: { id },
         data: {
@@ -60,7 +59,6 @@ export class CategoryRepository implements ICategoryRepository {
           backgroundUrl: data.backgroundUrl,
         },
       });
-      console.log(updatedCategory);
       return fromDatabase(updatedCategory);
     } catch (error) {
       throw error;

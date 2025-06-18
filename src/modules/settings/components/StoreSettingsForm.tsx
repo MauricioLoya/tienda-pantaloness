@@ -150,8 +150,6 @@ const StoreSettingsForm: React.FC<Props> = ({ initialValues, regions }) => {
 
   const handleSubmit = async (values: SettingsFormValues) => {
     try {
-      console.log("Submitting values:", values);
-
       // Make sure we send exactly the data structure expected by the server
       const dataToSave = {
         ...values,

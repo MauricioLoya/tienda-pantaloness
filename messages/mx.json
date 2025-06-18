@@ -62,7 +62,12 @@
     "available_items": "{stock} disponibles",
     "sold_out_status": "Agotado",
     "final_price": "Precio final",
-    "discount_percentage": "%{percentage} OFF"
+    "discount_percentage": "%{percentage} OFF",
+    "stock_last_item": "¡ÚLTIMO DISPONIBLE!",
+    "stock_very_low": "¡Solo quedan {count} disponibles!",
+    "stock_low": "¡Pocos disponibles! Solo {count} unidades",
+    "stock_limited": "Stock limitado - {count} disponibles",
+    "hurry_up": "¡Date prisa!"
   },
   "Navbar": {
     "brand_name": "JosePhine Jean's",

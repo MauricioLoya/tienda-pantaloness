@@ -21,7 +21,6 @@ const ActivateCategory: React.FC<ActivateCategoryProps> = ({
   const { showToast } = useToast();
 
   const handleConfirmActivate = async () => {
-    console.log('Deleting category', category);
     await ActivateCategoryAction(category.id);
     showToast('Categoría activada correctamente', 'success');
     router.refresh();

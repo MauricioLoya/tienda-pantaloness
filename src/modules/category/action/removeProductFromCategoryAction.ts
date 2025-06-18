@@ -1,11 +1,13 @@
 'use server';
 
+import { validateAdminPermission } from '@/lib/auth-validation';
 import { prisma } from '@/lib/prima/client';
 
 export async function removeProductFromCategoryAction(
   categoryId: number,
   productId: number
 ): Promise<void> {
+  await validateAdminPermission('update', 'Category');
   try {
     await prisma.productCategory.deleteMany({
       where: {

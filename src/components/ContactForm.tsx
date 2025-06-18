@@ -42,8 +42,6 @@ const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
     }
 
     // Continue with form submission
-    console.log('Form data submitted:', formData);
-
     // Show success message
     setFormStatus({
       submitted: true,

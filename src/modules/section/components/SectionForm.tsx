@@ -231,7 +231,6 @@ const SectionForm: React.FC<SectionFormProps> = ({
                   selected={values.highlightProducts ?? []}
                   availableProducts={availableProducts}
                   onChange={selected => {
-                    console.log('CURRENT', selected);
                     setFieldValue('highlightProducts', selected);
                   }}
                 />

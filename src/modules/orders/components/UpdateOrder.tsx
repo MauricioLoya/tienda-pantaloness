@@ -39,7 +39,7 @@ const UpdateOrder: React.FC<UpdateOrderProps> = ({ order }) => {
                             showToast('Orden actualizada correctamente', 'success');
                             router.refresh();
                         } catch (error) {
-                            console.log(error);
+                            console.error('Error updating order:', error);
                             showToast('Error al actualizar la orden', 'error');
                         }
                     }}

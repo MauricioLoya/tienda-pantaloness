@@ -1,9 +1,11 @@
 'use server';
 
+import { validateAdminPermission } from '@/lib/auth-validation';
 import { SettingsFormValues } from '../definitions';
 import { SettingsRepository } from '../definitions';
 
 export async function saveSettingsAction(values: SettingsFormValues) {
+  await validateAdminPermission('update', 'Config');
   try {
     const settingsRepo = new SettingsRepository();
 

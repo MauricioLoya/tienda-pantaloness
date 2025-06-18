@@ -15,7 +15,6 @@ const ProductDetails = async ({ slug, selectedSize }: Props) => {
 
   try {
     const productDetail = await productRepository.productDetail(slug);
-    console.log('Product Detail:', productDetail);
     if (!productDetail) {
       notFound();
     }
@@ -54,7 +53,7 @@ const ProductDetails = async ({ slug, selectedSize }: Props) => {
       </div>
     );
   } catch (error) {
-    console.log(error);
+    console.error('Error loading product details:', error);
     return notFound();
   }
 };

@@ -2,11 +2,11 @@
 
 import { ReactNode } from 'react';
 import { useAbilityContext } from './ability-context';
-import { Action, Subject } from './ability';
+import { ActionPermission, SubjectPermission } from './ability';
 
 type CanProps = {
-  I: Action;
-  a: Subject;
+  I: ActionPermission;
+  a: SubjectPermission;
   children: ReactNode;
   fallback?: ReactNode;
 };

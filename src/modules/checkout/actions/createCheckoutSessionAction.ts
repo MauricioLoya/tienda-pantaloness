@@ -62,7 +62,7 @@ export async function createCheckoutSessionAction(
     );
 
     if (!isValid) {
-      console.log('errors:', errors);
+      console.error('Checkout validation errors:', errors);
       return {
         success: false,
         message: 'Error al procesar los items del carrito.',

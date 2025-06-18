@@ -33,9 +33,6 @@ const HighlightProductSelector: React.FC<HighlightProductSelectorProps> = ({
 
   const handleRemove = (id: number) => {
     const updatedSelected = selected.filter(p => p.id !== id);
-    console.log('id:', id);
-    console.log('updatedSelected:', updatedSelected);
-
     onChange(updatedSelected);
   };
 

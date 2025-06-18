@@ -8,7 +8,6 @@ import { UpdatePromotionAction } from '../actions/updatePromotionAction';
 import { FaEdit } from 'react-icons/fa';
 import { useToast } from '@/lib/components/ToastContext';
 import { RegionItem } from '@/modules/region/definitions';
-import { format } from 'date-fns';
 
 interface UpdatePromotionProps {
   promotion: PromotionItem;
@@ -18,12 +17,7 @@ interface UpdatePromotionProps {
 const UpdatePromotion: React.FC<UpdatePromotionProps> = ({ promotion, regions }) => {
   const router = useRouter();
   const { showToast } = useToast();
-  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  console.log('userTimeZone', userTimeZone);
-  console.log('original', promotion.startDate);
-  console.log('startDate', format(new Date(promotion.startDate + 'Z'), 'yyyy-MM-dd'));
-  console.log('original 2', promotion.endDate);
-  console.log('endDate', format(new Date(promotion.endDate + 'Z'), 'yyyy-MM-dd'));
+
   function formatDateForInput(d?: string | Date): string {
     if (!d) return '';
     const dateObj = typeof d === 'string' ? new Date(d) : d;
