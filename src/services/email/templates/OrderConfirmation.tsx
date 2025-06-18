@@ -109,9 +109,6 @@ const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ region, order
                     <Text className="text-[#1d1d1b] font-bold m-0 text-right">{t('price')}</Text>
                   </Column>
                   <Column className="px-[12px] py-[12px]">
-                    <Text className="text-[#1d1d1b] font-bold m-0 text-right">{t('paidPrice')}</Text>
-                  </Column>
-                  <Column className="px-[12px] py-[12px]">
                     <Text className="text-[#1d1d1b] font-bold m-0 text-right">{t('quantity')}</Text>
                   </Column>
                   <Column className="px-[12px] py-[12px]">
@@ -120,25 +117,35 @@ const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ region, order
                 </Row>
 
                 {/* Table Items */}
-                {items.map((item, index) => (
-                  <Row key={index} className="border-b border-solid border-gray-200 last:border-b-0">
-                    <Column className="px-[12px] py-[12px]">
-                      <Text className="text-[#1d1d1b] m-0">{item.name}</Text>
-                    </Column>
-                    <Column className="px-[12px] py-[12px]">
-                      <Text className="text-[#1d1d1b] m-0 text-right">{item.price}</Text>
-                    </Column>
-                    <Column className="px-[12px] py-[12px]">
-                      <Text className="text-[#1d1d1b] m-0 text-right">{item.paidPrice}</Text>
-                    </Column>
-                    <Column className="px-[12px] py-[12px]">
-                      <Text className="text-[#1d1d1b] m-0 text-right">{item.quantity}</Text>
-                    </Column>
-                    <Column className="px-[12px] py-[12px]">
-                      <Text className="text-[#1d1d1b] m-0 text-right">{item.subtotal}</Text>
-                    </Column>
-                  </Row>
-                ))}
+                {items.map((item, index) => {
+                  const hasDiscount = item.paidPrice !== item.price;
+
+                  return (
+                    <Row key={index} className="border-b border-solid border-gray-200 last:border-b-0">
+                      <Column className="px-[12px] py-[12px]">
+                        <Text className="text-[#1d1d1b] m-0">{item.name}</Text>
+                      </Column>
+                      <Column className="px-[12px] py-[12px]">
+                        <div style={{ textAlign: 'right' }}>
+                          {/* Precio pagado (siempre visible) */}
+                          <Text className="text-[#1d1d1b] m-0 text-right">{item.paidPrice}</Text>
+                          {/* Precio original (solo si hay descuento) */}
+                          {hasDiscount && (
+                            <Text className="text-[#666666] text-[12px] m-0 text-right" style={{ textDecoration: 'line-through' }}>
+                              {item.price}
+                            </Text>
+                          )}
+                        </div>
+                      </Column>
+                      <Column className="px-[12px] py-[12px]">
+                        <Text className="text-[#1d1d1b] m-0 text-right">{item.quantity}</Text>
+                      </Column>
+                      <Column className="px-[12px] py-[12px]">
+                        <Text className="text-[#1d1d1b] m-0 text-right">{item.subtotal}</Text>
+                      </Column>
+                    </Row>
+                  );
+                })}
 
                 {discount && (
                   <Row className="border-b border-solid border-gray-200 last:border-b-0">
@@ -146,7 +153,7 @@ const OrderConfirmationEmail: React.FC<Readonly<Props>> = async ({ region, order
                       <Text className="text-[#1d1d1b] m-0 text-left">{t('discount_code')} {discount.code}</Text>
                     </Column>
                     <Column className="px-[12px] py-[12px]">
-                      <Text className="text-[#1d1d1b] m-0 text-right">{discount.amount}</Text>
+                      <Text className="text-[#1d1d1b] m-0 text-right"> - {discount.amount}</Text>
                     </Column>
                   </Row>
                 )}
